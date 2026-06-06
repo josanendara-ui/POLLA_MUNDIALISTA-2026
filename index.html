@@ -333,7 +333,7 @@
                 <li>Si acertó al Campeón del Mundo</li>
                 <li>Mayor cantidad de aciertos en Fase Final</li>
                 <li>Orden de registro (quien se inscribió primero)</li>
-            </</ol>
+            </ol> <!-- CORREGIDO: antes estaba </</ol> -->
             <p style="text-align:center; color:var(--gold); font-weight:700; font-style:italic; margin-bottom:16px;">No se vale llorar si perdieron 😉</p>
             <button class="btn" onclick="APP.goToScreen('screenPredictions')">Continuar</button>
         </div>
@@ -1172,6 +1172,7 @@
             if (count) count.textContent = `${picked}/32 selecciones`;
         }
 
+        // *** CORRECCIÓN PRINCIPAL: se usa best3 directamente, sin .slice() para que los equipos se consuman secuencialmente ***
         function renderBracketInto(root, matches, grouped, best3, myKo, interactive) {
             const roundsMap = {};
             matches.forEach(m => { if (!roundsMap[m.round]) roundsMap[m.round] = []; roundsMap[m.round].push(m); });
@@ -1188,8 +1189,9 @@
                     const card = document.createElement('div'); card.className = 'match' + (rn === 'final' ? ' bracket-champion' : ''); card.setAttribute('data-match-id', m.id);
                     const meta = document.createElement('div'); meta.className = 'match-meta'; meta.innerHTML = `<span>Partido ${m.id}</span><span>${rn}</span>`; card.appendChild(meta);
                     
-                    const lName = resolveBracketTokenGeneral(m.local, matches, myKo, grouped, best3.slice());
-                    const vName = resolveBracketTokenGeneral(m.visitor, matches, myKo, grouped, best3.slice());
+                    // Usamos best3 directamente, no una copia, para consumir los equipos en orden
+                    const lName = resolveBracketTokenGeneral(m.local, matches, myKo, grouped, best3);
+                    const vName = resolveBracketTokenGeneral(m.visitor, matches, myKo, grouped, best3);
                     
                     const localDisabled = !interactive || lName.startsWith('Ganador') || lName.startsWith('Mejor') || lName.startsWith('Perdedor') || STATE.status === 'closed';
                     const visDisabled = !interactive || vName.startsWith('Ganador') || vName.startsWith('Mejor') || vName.startsWith('Perdedor') || STATE.status === 'closed';
