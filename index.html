@@ -215,12 +215,10 @@
         <div class="screen active" id="screenWelcome" style="padding-bottom:24px;">
             <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center;">
 
-                <!-- Trofeo animado -->
                 <div style="font-size:4.8rem; margin-bottom:8px; filter:drop-shadow(0 8px 20px rgba(251,191,36,0.45)); animation:welcomeFloat 3s ease-in-out infinite;">🏆</div>
                 <h2 style="font-size:1.65rem; font-weight:900; margin-bottom:4px; background:linear-gradient(135deg,#ffd84d,#FBBF24,#c99a00); -webkit-background-clip:text; background-clip:text; color:transparent;">Oráculo Mundialista</h2>
                 <p style="color:var(--text-muted); text-align:center; font-size:0.9rem; margin-bottom:14px; padding:0 10px;">Demuestra cuánto sabes de fútbol y compite por ser el <span style="color:var(--gold);font-weight:700;">Oráculo Futbolero</span> de la Familia.</p>
 
-                <!-- Countdown + Cierre -->
                 <div style="width:100%; max-width:340px; background:linear-gradient(135deg,rgba(30,41,59,0.9),rgba(15,23,42,0.85)); backdrop-filter:blur(16px); border:1px solid rgba(251,191,36,0.35); border-left:4px solid var(--gold); border-radius:14px; padding:14px 16px; margin-bottom:16px; box-shadow:0 4px 20px rgba(251,191,36,0.12);">
                     <p style="font-size:0.85rem; color:var(--text-main); display:flex; align-items:flex-start; gap:8px; margin-bottom:10px;">
                         <span style="font-size:1.3rem; line-height:1;">⚠️</span>
@@ -246,14 +244,11 @@
                     </div>
                 </div>
 
-                <!-- Cierre official warning -->
                 <p id="closureWarning" style="color:#EF4444; font-weight:bold; font-size:0.9rem; margin-bottom:12px;"></p>
 
-                <!-- Botones de acceso -->
                 <button class="btn" onclick="APP.goToScreen('screenRegister')" style="max-width:340px;">🎯 Crear Mi Usuario</button>
                 <button class="btn secondary" onclick="APP.goToScreen('screenLogin')" style="max-width:340px;">Ya tengo usuario</button>
 
-                <!-- Sistema de puntos -->
                 <div style="width:100%; max-width:340px; margin-top:20px; background:linear-gradient(135deg,rgba(30,41,59,0.85),rgba(15,23,42,0.8)); backdrop-filter:blur(16px); border:1px solid rgba(255,255,255,0.08); border-radius:16px; padding:14px; box-shadow:0 4px 20px rgba(0,0,0,0.3);">
                     <p style="text-align:center; font-weight:800; font-size:0.9rem; color:var(--gold); margin-bottom:12px; letter-spacing:0.3px;">💎 Sistema de Puntos</p>
                     <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
@@ -338,7 +333,7 @@
                 <li>Si acertó al Campeón del Mundo</li>
                 <li>Mayor cantidad de aciertos en Fase Final</li>
                 <li>Orden de registro (quien se inscribió primero)</li>
-            </ol>
+            </</ol>
             <p style="text-align:center; color:var(--gold); font-weight:700; font-style:italic; margin-bottom:16px;">No se vale llorar si perdieron 😉</p>
             <button class="btn" onclick="APP.goToScreen('screenPredictions')">Continuar</button>
         </div>
@@ -435,7 +430,7 @@
         </div>
 
         <div class="screen" id="screenAdmin">
-            <h3 style="margin-bottom:16px; font-size:1.2rem;">Panel de Administrador</h3>
+            <h3 style="margin-bottom:16px; font-size:1.2rem;">Panel de Administrator</h3>
             <div id="adminLoginForm">
                 <input type="password" id="adminPassword" class="input-field" placeholder="Contraseña de Administrador" style="text-align:center;">
                 <button class="btn" onclick="APP.adminLogin()">Ingresar</button>
@@ -671,7 +666,6 @@
         ];
 
         // === DEFINICIÓN DE CRUCES (tokens) para partidos 73..104 según requerimiento ===
-        // local/visitor tokens: '1A','2B','Best3' or 'Winner73' (dependen)
         const KNOCKOUT_DEFS = [
             // Dieciseisavos (73..88)
             { id: 73, round: 'dieciseisavos', local: '2A', visitor: '2B' },
@@ -690,7 +684,7 @@
             { id: 86, round: 'dieciseisavos', local: '1J', visitor: '2H' },
             { id: 87, round: 'dieciseisavos', local: '1K', visitor: 'Best3' },
             { id: 88, round: 'dieciseisavos', local: '2D', visitor: '2G' },
-            // Octavos (89..96) - mapping to winners
+            // Octavos (89..96)
             { id: 89, round: 'octavos', local: 'Winner74', visitor: 'Winner77' },
             { id: 90, round: 'octavos', local: 'Winner73', visitor: 'Winner75' },
             { id: 91, round: 'octavos', local: 'Winner76', visitor: 'Winner78' },
@@ -708,7 +702,7 @@
             { id: 101, round: 'semis', local: 'Winner97', visitor: 'Winner98' },
             { id: 102, round: 'semis', local: 'Winner99', visitor: 'Winner100' },
             // Tercer puesto (103)
-            { id: 103, round: 'tercero', local: 'Losers101', visitor: 'Losers102' }, // represent los perdedores de semis
+            { id: 103, round: 'tercero', local: 'Losers101', visitor: 'Losers102' },
             // Final (104)
             { id: 104, round: 'final', local: 'Winner101', visitor: 'Winner102' }
         ];
@@ -723,9 +717,9 @@
             specials: {},
             officialResults: {},
             officialSpecials: {},
-            knockoutPreds: {}, // user predictions for knockout: knockout_preds/{uid}/{matchId} => team
-            officialKnockout: {}, // official winners per match id
-            officialKnockoutMatches: {}, // official mapping id->{local,visitor}
+            knockoutPreds: {}, 
+            officialKnockout: {}, 
+            officialKnockoutMatches: {}, 
             status: 'open',
             myId: localStorage.getItem('polla_myId'),
             currentUser: null,
@@ -785,7 +779,7 @@
         }
 
         function isMatchClosed(matchId) {
-            if (STATE.adminConnected) return false; // admin siempre puede editar
+            if (STATE.adminConnected) return false; 
             if (STATE.status === 'closed') return true;
             const match = ALL_MATCHES.find(m => m.id === matchId);
             return match && new Date() > new Date(match.kickoff);
@@ -880,16 +874,14 @@
 
         function logout() { localStorage.removeItem('polla_myId'); STATE.myId = null; STATE.currentUser = null; goToScreen('screenWelcome'); }
 
-        // === PRONÓSTICOS RONDA DE GRUPOS (manteniendo lógica) ===
+        // === PRONÓSTICOS RONDA DE GRUPOS ===
         function renderPredictions() {
             if (!STATE.currentUser) return;
             const container = DOM.get('matchesContainer');
             if (!container) return;
 
-            // Preserve scroll position to avoid jumping to top on re-render
             const screen = DOM.get('screenPredictions');
             const scrollBefore = screen ? screen.scrollTop : 0;
-            // If user is typing in an input, skip full re-render to avoid disruption
             const focused = document.activeElement;
             if (focused && focused.classList.contains('score-box') && container.contains(focused)) {
                 updateProgress();
@@ -920,7 +912,6 @@
                 </div>`;
             });
             container.innerHTML = html;
-            // Restore scroll after re-render
             if (screen) requestAnimationFrame(() => { screen.scrollTop = scrollBefore; });
         }
 
@@ -938,7 +929,7 @@
             }).catch(err => { console.error(err); triggerToast('❌ Error'); });
         }
 
-        // === TABLAS y RANKING (reutilizado) ===
+        // === TABLAS y RANKING ===
         function renderTables() {
             const isBracket = STATE.currentTablesView === 'bracket';
             DOM.get('tabGroupsView')?.classList.toggle('active', !isBracket);
@@ -1005,15 +996,13 @@
             DOM.get('rankingContent').innerHTML = html + '</table>';
         }
 
-        // === PUNTUACIÓN: motor ampliado que incluye fase final ===
+        // === PUNTUACIÓN ===
         function calculatePointsEngine() {
-            // recalc users points fully
             Object.keys(STATE.users).forEach(uid => {
                 let pts = 0; let exacts = 0;
                 const uPreds = STATE.predictions[uid] || {};
                 const uSpec = STATE.specials[uid] || {};
 
-                // grupos: exacto 3pts, ganador 1pt
                 ALL_MATCHES.forEach(m => {
                     const off = STATE.officialResults[m.id];
                     const pr = uPreds[m.id];
@@ -1027,7 +1016,6 @@
                     }
                 });
 
-                // especiales oficiales
                 const oSp = STATE.officialSpecials || {};
                 if (oSp.revelacion && uSpec.seleccion_revelacion === oSp.revelacion) pts += 5;
                 if (oSp.decepcion && uSpec.seleccion_decepcion === oSp.decepcion) pts += 5;
@@ -1035,7 +1023,6 @@
                 if (oSp.campeon && uSpec.campeon_mundial === oSp.campeon) pts += 10;
                 if (oSp.goleador && uSpec.goleador_mundial && oSp.goleador && uSpec.goleador_mundial.trim().toLowerCase() === oSp.goleador.trim().toLowerCase()) pts += 10;
 
-                // knockout points: por cada match oficial definido en STATE.officialKnockout
                 const uKo = STATE.knockoutPreds[uid] || {};
                 Object.keys(STATE.officialKnockout || {}).forEach(mid => {
                     const officialWinner = STATE.officialKnockout[mid];
@@ -1043,9 +1030,7 @@
                     if (officialWinner && userPick && userPick === officialWinner) {
                         const def = KNOCKOUT_DEFS.find(d => d.id === parseInt(mid));
                         if (def) {
-                            const rnd = def.round;
-                            const award = KO_POINTS[rnd] || 0;
-                            pts += award;
+                            pts += (KO_POINTS[def.round] || 0);
                         }
                     }
                 });
@@ -1056,9 +1041,7 @@
         }
 
         // === GENERACIÓN DE POSICIONES AUTOMÁTICAS Y BRACKET ===
-        // compute standings from a given predictions map (either officialResults or user's predictions)
         function computeStandingsFromResults(resultsMap) {
-            // resultsMap: mapping matchId -> {gl,gv}
             const standings = {};
             Object.keys(GROUPS).forEach(g => {
                 GROUPS[g].forEach(t => {
@@ -1078,35 +1061,27 @@
                 }
             });
 
-            // compute dg and sort per group
             const grouped = {};
             Object.keys(GROUPS).forEach(g => {
                 grouped[g] = Object.values(standings).filter(s => s.group === g);
                 grouped[g].forEach(t => t.dg = t.gf - t.gc);
                 grouped[g].sort((a,b) => b.pts - a.pts || b.dg - a.dg || b.gf - a.gf);
             });
-            return grouped; // grouped by group letter -> sorted array
+            return grouped;
         }
 
         function computeBestThirds(groupedStandings) {
-            // collect third-place teams from each group (if exist)
             const thirds = [];
             Object.keys(groupedStandings).forEach(g => {
                 const arr = groupedStandings[g];
-                if (arr && arr[2]) {
-                    thirds.push({ group: g, team: arr[2] });
-                }
+                if (arr && arr[2]) thirds.push({ group: g, team: arr[2] });
             });
-            // sort best thirds by pts,dg,gf
             thirds.sort((a,b) => b.team.pts - a.team.pts || b.team.dg - a.team.dg || b.team.gf - a.team.gf);
             return thirds.map(x => x.team.team);
         }
 
-        // Build knockout matches (array of objects with id, round, local, visitor) given group standings + bestThirds
         function buildKnockoutFromStandings(grouped, bestThirds) {
-            // We'll resolve tokens for dieciseisavos, for subsequent rounds we reference WinnerXX placeholders
-            // For Best3 placeholders we consume bestThirds in order of appearance
-            const best3Queue = bestThirds.slice(); // clone
+            const best3Queue = bestThirds.slice(); 
             function resolveToken(token) {
                 if (!token) return '';
                 if (token === 'Best3') return best3Queue.length ? best3Queue.shift() : 'Mejor 3°';
@@ -1118,38 +1093,30 @@
                     const g = token.slice(1);
                     return (grouped[g] && grouped[g][1]) ? grouped[g][1].team : `2${g}`;
                 }
-                // else token could be placeholder WinnerXX - return placeholder
                 return token;
             }
 
-            const matches = KNOCKOUT_DEFS.map(def => {
+            return KNOCKOUT_DEFS.map(def => {
                 let local = def.local, visitor = def.visitor;
-                // only resolve tokens that are 1X,2X,Best3 for initial round
                 if (def.round === 'dieciseisavos') {
                     local = resolveToken(local);
                     visitor = resolveToken(visitor);
                 } else {
-                    // keep Winner tokens as-is, they will be resolved later according to user picks or official winners
-                    // but if grouped contains resolved winners (not expected), handle
                     if (/^[12][A-L]$/.test(local)) local = resolveToken(local);
                     if (/^[12][A-L]$/.test(visitor)) visitor = resolveToken(visitor);
                 }
                 return { id: def.id, round: def.round, local, visitor };
             });
-            return matches;
         }
 
-        // generate official bracket based on officialResults (admin)
         function generateOfficialBracketAndSave() {
             const grouped = computeStandingsFromResults(STATE.officialResults);
             const best3 = computeBestThirds(grouped);
             const matches = buildKnockoutFromStandings(grouped, best3);
-            // save official matches mapping to DB for reference
             const mapping = {};
             matches.forEach(m => mapping[m.id] = { local: m.local, visitor: m.visitor, round: m.round });
             db.ref('official_knockout_matches').set(mapping).then(() => {
                 triggerToast('✅ Bracket oficial generado');
-                // optionally save to STATE (will be synced by listener)
             }).catch(err => console.error(err));
         }
 
@@ -1163,6 +1130,36 @@
             const grouped = computeStandingsFromResults(userResults);
             const best3 = computeBestThirds(grouped);
             return { grouped, best3, matches: buildKnockoutFromStandings(grouped, best3) };
+        }
+
+        /* ==========================================================================
+           MODIFICACIÓN Y LOGICA OPTIMIZADA DE LA FASE FINAL 
+           ========================================================================== */
+
+        // Helper central recursivo para resolver tokens del árbol eliminatorio de forma limpia y consistente
+        function resolveBracketTokenGeneral(token, matches, myKo, grouped, best3) {
+            if (!token) return '';
+            if (token === 'Best3') return best3.length ? best3.shift() : 'Mejor 3°';
+            if (/^[12][A-L]$/.test(token)) {
+                const g = token.slice(1);
+                const pos = parseInt(token[0], 10) - 1;
+                return (grouped[g] && grouped[g][pos]) ? grouped[g][pos].team : `Por definir (${token})`;
+            }
+            if (token.startsWith('Winner')) {
+                const refId = token.replace('Winner', '');
+                return myKo[refId] || `Ganador M${refId}`;
+            }
+            if (token.startsWith('Losers')) {
+                const refId = token.replace('Losers', '');
+                const parentMatch = matches.find(x => x.id === parseInt(refId, 10));
+                if (!parentMatch) return `Perdedor M${refId}`;
+                const pLocal = resolveBracketTokenGeneral(parentMatch.local, matches, myKo, grouped, best3);
+                const pVisitor = resolveBracketTokenGeneral(parentMatch.visitor, matches, myKo, grouped, best3);
+                const winner = myKo[refId];
+                if (!winner || winner.startsWith('Ganador') || winner.startsWith('Por definir')) return `Perdedor M${refId}`;
+                return winner === pLocal ? pVisitor : pLocal;
+            }
+            return token;
         }
 
         function renderTablesBracket() {
@@ -1180,18 +1177,23 @@
             matches.forEach(m => { if (!roundsMap[m.round]) roundsMap[m.round] = []; roundsMap[m.round].push(m); });
             const order = ['dieciseisavos','octavos','cuartos','semis','tercero','final'];
             root.innerHTML = '';
+            
             order.forEach(rn => {
                 if (!roundsMap[rn]) return;
                 const col = document.createElement('div'); col.className = 'round';
                 const title = document.createElement('div'); title.className = 'round-title'; title.textContent = rn === 'dieciseisavos' ? 'Dieciseisavos' : rn === 'octavos' ? 'Octavos' : rn === 'cuartos' ? 'Cuartos' : rn === 'semis' ? 'Semifinales' : rn === 'tercero' ? 'Tercer lugar' : 'Final';
                 col.appendChild(title);
+                
                 roundsMap[rn].forEach(m => {
                     const card = document.createElement('div'); card.className = 'match' + (rn === 'final' ? ' bracket-champion' : ''); card.setAttribute('data-match-id', m.id);
                     const meta = document.createElement('div'); meta.className = 'match-meta'; meta.innerHTML = `<span>Partido ${m.id}</span><span>${rn}</span>`; card.appendChild(meta);
-                    const lName = resolveBracketToken(m.local, grouped, best3.slice(), myKo);
-                    const vName = resolveBracketToken(m.visitor, grouped, best3.slice(), myKo);
-                    const localDisabled = !interactive || lName.startsWith('Ganador') || lName.startsWith('Mejor') || STATE.status === 'closed';
-                    const visDisabled = !interactive || vName.startsWith('Ganador') || vName.startsWith('Mejor') || STATE.status === 'closed';
+                    
+                    const lName = resolveBracketTokenGeneral(m.local, matches, myKo, grouped, best3.slice());
+                    const vName = resolveBracketTokenGeneral(m.visitor, matches, myKo, grouped, best3.slice());
+                    
+                    const localDisabled = !interactive || lName.startsWith('Ganador') || lName.startsWith('Mejor') || lName.startsWith('Perdedor') || STATE.status === 'closed';
+                    const visDisabled = !interactive || vName.startsWith('Ganador') || vName.startsWith('Mejor') || vName.startsWith('Perdedor') || STATE.status === 'closed';
+                    
                     card.appendChild(createKoButton(m.id, lName, myKo[m.id] === lName, localDisabled));
                     card.appendChild(createKoButton(m.id, vName, myKo[m.id] === vName, visDisabled));
                     const connector = document.createElement('span'); connector.className = 'connector'; card.appendChild(connector);
@@ -1201,29 +1203,12 @@
             });
         }
 
-        function resolveBracketToken(token, grouped, best3, myKo) {
-            if (!token) return '';
-            if (token === 'Best3') return best3.length ? best3.shift() : 'Mejor 3°';
-            if (/^[12][A-L]$/.test(token)) {
-                const g = token.slice(1);
-                return (grouped[g] && grouped[g][parseInt(token[0]) - 1]) ? grouped[g][parseInt(token[0]) - 1].team : token;
-            }
-            if (token.startsWith('Winner')) { const ref = token.replace('Winner',''); return myKo[ref] || `Ganador ${ref}`; }
-            if (token.startsWith('Losers')) { const ref = token.replace('Losers',''); return `Perdedor ${ref}`; }
-            return token;
-        }
-
-        // === RENDER FASE FINAL para usuario actual ===
         function renderFaseFinal() {
-            // La visibilidad de la pantalla la maneja goToScreen via clase .active
-            // Solo salimos si no está habilitada
             if (!STATE.faseFinalEnabled) return;
-
             const root = DOM.get('bracketRoot');
             if (!root) return;
 
-            // compute user's own standings from their predictions (so bracket is personalized)
-            const userResults = {}; // map matchId -> {gl,gv} based on user's predictions
+            const userResults = {};
             const userPreds = STATE.predictions[STATE.myId] || {};
             let filledCount = 0;
             ALL_MATCHES.forEach(m => {
@@ -1234,109 +1219,28 @@
                 }
             });
 
-            // Show placeholder message if no group predictions yet
             if (filledCount === 0) {
-                root.innerHTML = `<div style="text-align:center; padding:32px 16px; color:var(--text-muted);">
+                root.innerHTML = `<div style="text-align:center; padding:32px 16px; color:var(--text-muted); width: 100%; grid-column: 1/-1;">
                     <div style="font-size:3rem; margin-bottom:12px;">⚽</div>
                     <p style="font-weight:700; color:var(--text-main); margin-bottom:8px;">El bracket aún no tiene equipos</p>
                     <p style="font-size:0.85rem;">Completa los pronósticos de la <strong style="color:var(--gold);">Fase de Grupos</strong> primero.<br>Conforme llenes los resultados, aquí aparecerán los clasificados.</p>
-                    <button class="btn secondary" style="margin-top:16px; max-width:220px;" onclick="APP.goToScreen('screenPredictions')">Ir a Pronósticos ⚽</button>
+                    <button class="btn secondary" style="margin-top:16px; max-width:220px; margin-left:auto; margin-right:auto;" onclick="APP.goToScreen('screenPredictions')">Ir a Pronósticos ⚽</button>
                 </div>`;
                 root.onclick = null;
                 return;
             }
+
             const grouped = computeStandingsFromResults(userResults);
             const best3 = computeBestThirds(grouped);
             const matches = buildKnockoutFromStandings(grouped, best3);
-
-            // For resolving winners from user's saved knockout preds, use STATE.knockoutPreds[myId]
             const myKo = STATE.knockoutPreds[STATE.myId] || {};
 
-            // Render grouped by rounds
-            const roundsMap = {};
-            matches.forEach(m => { if (!roundsMap[m.round]) roundsMap[m.round] = []; roundsMap[m.round].push(m); });
+            renderBracketInto(root, matches, grouped, best3, myKo, true);
 
-            // order rounds
-            const order = ['dieciseisavos','octavos','cuartos','semis','tercero','final'];
-            root.innerHTML = '';
-            order.forEach(rn => {
-                if (!roundsMap[rn]) return;
-                const col = document.createElement('div'); col.className = 'round';
-                const title = document.createElement('div'); title.className = 'round-title'; title.textContent = rn === 'dieciseisavos' ? 'Dieciseisavos' : rn === 'octavos' ? 'Octavos' : rn === 'cuartos' ? 'Cuartos' : rn === 'semis' ? 'Semifinales' : rn === 'tercero' ? 'Tercer Lugar' : 'Final';
-                col.appendChild(title);
-                roundsMap[rn].forEach(m => {
-                    const card = document.createElement('div'); card.className = 'match' + (rn === 'final' ? ' bracket-champion' : ''); card.setAttribute('data-match-id', m.id);
-                    const meta = document.createElement('div'); meta.className = 'match-meta'; meta.innerHTML = `<span>M${m.id}</span><span>${m.round}</span>`; card.appendChild(meta);
-
-                    // resolve team names: if team token starts with 'Winner' or 'Losers', attempt to resolve from myKo; otherwise show team name or placeholder
-                    function resolveTeam(token) {
-                        if (!token) return '';
-                        if (token.startsWith('Winner')) {
-                            const ref = token.replace('Winner','');
-                            // check myKo for ref
-                            const w = myKo[ref];
-                            return w || `Ganador ${ref}`;
-                        }
-                        if (token.startsWith('Losers')) {
-                            const ref = token.replace('Losers','');
-                            // losers of a match: if official or myKo present we can't deterministically know loser unless we track previous match result; show placeholder
-                            const w = myKo[ref];
-                            if (w) {
-                                // determine loser: if previous match participants known, choose the opposite
-                                // here we do best effort: get participants from user's matches (search definitions)
-                                const def = KNOCKOUT_DEFS.find(d => d.id === parseInt(ref));
-                                if (def) {
-                                    const pLocal = def.local, pVisitor = def.visitor;
-                                    // if myKo[ref] equals pLocal, loser is pVisitor (resolve pVisitor name possibly token)
-                                    const resolvedLocal = tryResolveTokenToName(pLocal, grouped, best3, myKo);
-                                    const resolvedVis = tryResolveTokenToName(pVisitor, grouped, best3, myKo);
-                                    return w === resolvedLocal ? (resolvedVis || `Perdedor ${ref}`) : (resolvedLocal || `Perdedor ${ref}`);
-                                }
-                            }
-                            return `Perdedor ${ref}`;
-                        }
-                        // otherwise token is team name already
-                        return token;
-                    }
-
-                    function tryResolveTokenToName(token, grouped, best3, myKo) {
-                        if (!token) return '';
-                        if (token === 'Best3') return best3.length ? best3.shift() : 'Por definir';
-                        if (/^[12][A-L]$/.test(token)) {
-                            const g = token.slice(1);
-                            const pos = parseInt(token[0]) - 1;
-                            return (grouped[g] && grouped[g][pos]) ? grouped[g][pos].team : `Por definir (Gr. ${g})`;
-                        }
-                        if (token.startsWith('Winner')) {
-                            const ref = token.replace('Winner','');
-                            return myKo[ref] || `Ganador ${ref}`;
-                        }
-                        return token;
-                    }
-
-                    const lName = tryResolveTokenToName(m.local, grouped, best3.slice(), myKo);
-                    const vName = tryResolveTokenToName(m.visitor, grouped, best3.slice(), myKo);
-                    const localDisabled = lName.startsWith('Ganador') || lName.startsWith('Mejor') || STATE.status === 'closed';
-                    const visDisabled = vName.startsWith('Ganador') || vName.startsWith('Mejor') || STATE.status === 'closed';
-
-                    const selLocal = myKo[m.id] === lName;
-                    const selVis = myKo[m.id] === vName;
-                    const btnL = createKoButton(m.id, lName, selLocal, localDisabled);
-                    const btnV = createKoButton(m.id, vName, selVis, visDisabled);
-
-                    card.appendChild(btnL);
-                    card.appendChild(btnV);
-                    const connector = document.createElement('span'); connector.className = 'connector'; card.appendChild(connector);
-                    col.appendChild(card);
-                });
-                root.appendChild(col);
-            });
-
-            // attach delegation listeners
             root.onclick = function(e) {
                 const btn = e.target.closest('.ko-team-btn');
                 if (!btn || btn.disabled) return;
-                const mid = parseInt(btn.dataset.matchId,10);
+                const mid = parseInt(btn.dataset.matchId, 10);
                 const team = btn.dataset.team;
                 APP.saveKo(mid, team);
             };
@@ -1346,7 +1250,7 @@
                 if (!active || !active.classList.contains('ko-team-btn')) return;
                 e.preventDefault();
                 if (active.disabled) return;
-                const mid = parseInt(active.dataset.matchId,10);
+                const mid = parseInt(active.dataset.matchId, 10);
                 const team = active.dataset.team;
                 APP.saveKo(mid, team);
             };
@@ -1359,19 +1263,54 @@
             if (disabled) btn.disabled = true;
             btn.dataset.matchId = matchId;
             btn.dataset.team = teamName;
-            btn.innerHTML = `<span class="team-left"><span class="flag">${FLAGS[teamName] || '🏳️'}</span><span class="team-name">${teamName}</span></span><span class="ko-icon">✅</span>`;
+            
+            const isPlaceholder = teamName.startsWith('Ganador') || teamName.startsWith('Perdedor') || teamName.startsWith('Por definir') || teamName.startsWith('Mejor');
+            const flagIcon = isPlaceholder ? '🏴‍☠️' : (FLAGS[teamName] || '🏳️');
+            
+            btn.innerHTML = `<span class="team-left"><span class="flag">${flagIcon}</span><span class="team-name">${teamName}</span></span><span class="ko-icon">✅</span>`;
             return btn;
         }
 
-        // save single knockout pick for current user
         async function saveKo(mid, team) {
             if (!STATE.myId) { triggerToast('Inicia sesión'); return; }
             try {
-                await db.ref(`knockout_preds/${STATE.myId}/${mid}`).set(team);
                 if (!STATE.knockoutPreds[STATE.myId]) STATE.knockoutPreds[STATE.myId] = {};
                 STATE.knockoutPreds[STATE.myId][mid] = team;
+
+                // Cómputo local inmediato para realizar limpieza automática de cascadas inconsistentes
+                const userResults = {};
+                const userPreds = STATE.predictions[STATE.myId] || {};
+                ALL_MATCHES.forEach(m => {
+                    const p = userPreds[m.id];
+                    if (p && p.gl !== '' && p.gv !== '' && !isNaN(p.gl) && !isNaN(p.gv)) userResults[m.id] = { gl: parseInt(p.gl), gv: parseInt(p.gv) };
+                });
+                const grouped = computeStandingsFromResults(userResults);
+                const best3 = computeBestThirds(grouped);
+                const matches = buildKnockoutFromStandings(grouped, best3);
+                const myKo = STATE.knockoutPreds[STATE.myId];
+
+                // Limpieza iterativa hacia adelante para limpiar deselecciones o ramas rotas del árbol
+                const orderOfMatches = KNOCKOUT_DEFS.map(d => d.id).sort((a,b) => a - b);
+                orderOfMatches.forEach(id => {
+                    const currentPick = myKo[id];
+                    if (!currentPick) return;
+                    
+                    const matchObj = matches.find(m => m.id === id);
+                    if (matchObj) {
+                        const allowedLocal = resolveBracketTokenGeneral(matchObj.local, matches, myKo, grouped, best3.slice());
+                        const allowedVisitor = resolveBracketTokenGeneral(matchObj.visitor, matches, myKo, grouped, best3.slice());
+                        
+                        if (currentPick !== allowedLocal && currentPick !== allowedVisitor) {
+                            delete myKo[id];
+                        }
+                    }
+                });
+
+                // Persistencia integral del set corregido
+                await db.ref(`knockout_preds/${STATE.myId}`).set(myKo);
+                STATE.knockoutPreds[STATE.myId] = myKo;
+                
                 renderFaseFinal();
-                // 🏆 Celebración al elegir el campeón (partido 104 = Final)
                 if (mid === 104) {
                     showChampionCelebration(team);
                 } else {
@@ -1380,9 +1319,12 @@
             } catch (e) { console.error(e); triggerToast('❌ Error'); }
         }
 
+        /* ==========================================================================
+           FIN DE LAS MODIFICACIONES DE LA FASE FINAL
+           ========================================================================== */
+
         function showChampionCelebration(team) {
             const flag = FLAGS[team] || '🏆';
-            // Confetti
             for (let i = 0; i < 40; i++) {
                 const el = document.createElement('div');
                 el.style.cssText = `position:fixed; left:${Math.random()*100}vw; top:-10px; font-size:${1+Math.random()}rem; z-index:9999; pointer-events:none; animation:confettiFall ${2+Math.random()*2}s linear ${Math.random()*0.5}s forwards;`;
@@ -1390,7 +1332,6 @@
                 document.body.appendChild(el);
                 setTimeout(() => el.remove(), 4000);
             }
-            // Modal de campeón
             const modal = document.createElement('div');
             modal.style.cssText = 'position:fixed; inset:0; z-index:10000; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,0.85); backdrop-filter:blur(8px);';
             modal.innerHTML = `<div style="background:linear-gradient(135deg,#1e293b,#0f172a); border:2px solid var(--gold); border-radius:20px; padding:32px 24px; text-align:center; max-width:340px; width:90%; box-shadow:0 0 60px rgba(251,191,36,0.4);">
@@ -1403,13 +1344,12 @@
             document.body.appendChild(modal);
         }
 
-        // batch save selected KO picks (collect from DOM)
         function saveAllKoDrafts() {
             const root = DOM.get('bracketRoot'); if (!root) return;
             const toSave = {};
             root.querySelectorAll('.ko-team-btn.selected').forEach(b => {
                 const mid = b.dataset.matchId; const team = b.dataset.team;
-                if (mid && team) toSave[mid] = team;
+                if (mid && team && !team.startsWith('Ganador') && !team.startsWith('Perdedor')) toSave[mid] = team;
             });
             const promises = Object.keys(toSave).map(mid => db.ref(`knockout_preds/${STATE.myId}/${mid}`).set(toSave[mid]));
             Promise.all(promises).then(() => {
@@ -1422,7 +1362,6 @@
 
         // === ADMIN: cargar paneles y guardar oficiales ===
         function adminLoadResults() {
-            // carga panel para grupos (mantener la funcionalidad previa)
             let html = '';
             ALL_MATCHES.forEach(m => {
                 const r = STATE.officialResults[m.id] || { gl: '', gv: '' };
@@ -1443,13 +1382,11 @@
             html += `<button class="btn" style="margin-top:12px;" onclick="APP.saveAdmMatchesCloud()">💾 Guardar Resultados Oficiales</button>`;
             DOM.get('adminContent').innerHTML = html;
 
-            // knockout admin content: inputs for matches 73..104 winners
             let htmlK = '';
             KNOCKOUT_DEFS.forEach(d => {
                 const defOfficialMatch = (STATE.officialKnockoutMatches && STATE.officialKnockoutMatches[d.id]) ? STATE.officialKnockoutMatches[d.id] : null;
                 const local = defOfficialMatch ? defOfficialMatch.local : d.local;
                 const visitor = defOfficialMatch ? defOfficialMatch.visitor : d.visitor;
-                const officialWinner = (STATE.officialKnockout && STATE.officialKnockout[d.id]) ? STATE.officialKnockout[d.id] : '';
                 htmlK += `
                 <div class="match-row" style="background:var(--bg-input); margin-bottom:8px;">
                     <div class="match-date">📅 Partido N°${d.id} — ${d.round}</div>
@@ -1467,9 +1404,7 @@
             htmlK += `<button class="btn secondary" onclick="APP.generateOfficialBracket()">Generar Bracket Oficial desde resultados de grupos</button>`;
             DOM.get('adminKnockoutContent').innerHTML = htmlK;
 
-            // admin users list
             renderAdminUsers();
-            // load official specials options
             populateAdminSpecialsOptions();
         }
 
@@ -1479,7 +1414,6 @@
             DOM.qAll('.adm-gv').forEach(el => { if(!matrix[el.dataset.mid]) matrix[el.dataset.mid]={}; matrix[el.dataset.mid].gv = el.value === '' ? null : parseInt(el.value); });
             db.ref('official_results').set(matrix).then(() => {
                 alert('Resultados actualizados. Puntos recalculados en red familiar.');
-                // generar bracket oficial automáticamente si desea
                 generateOfficialBracketAndSave();
                 triggerToast('Resultados guardados');
             }).catch(err => { console.error(err); alert('Error al guardar'); });
@@ -1495,7 +1429,6 @@
             }).catch(err => { console.error(err); });
         }
 
-        // generate official bracket (admin button)
         function generateOfficialBracket() {
             generateOfficialBracketAndSave();
         }
@@ -1540,7 +1473,6 @@
             } catch (e) { console.error(e); triggerToast('Error'); }
         }
 
-        // save official specials (admin)
         function saveOfficialSpecials() {
             const revel = DOM.get('officialRevelacion').value;
             const decep = DOM.get('officialDecepcion').value;
@@ -1551,7 +1483,7 @@
             db.ref('official_specials').set(payload).then(() => triggerToast('Especiales oficiales guardados')).catch(err => console.error(err));
         }
 
-        // === ESPECIALES: poblar dropdowns con banderas ===
+        // === ESPECIALES ===
         function populateSpecials() {
             if (!STATE.currentUser) return;
             const mySpec = STATE.specials[STATE.myId] || {};
@@ -1574,7 +1506,6 @@
             const elRev = DOM.get('officialRevelacion'); if (elRev) elRev.innerHTML = '<option value="">--</option>' + selOpts;
             const elDec = DOM.get('officialDecepcion'); if (elDec) elDec.innerHTML = '<option value="">--</option>' + selOpts;
             const elCam = DOM.get('officialCampeon'); if (elCam) elCam.innerHTML = '<option value="">--</option>' + selOpts;
-            // populate current
             if (STATE.officialSpecials) {
                 if (elRev) elRev.value = STATE.officialSpecials.revelacion || '';
                 if (elDec) elDec.value = STATE.officialSpecials.decepcion || '';
@@ -1591,13 +1522,10 @@
             });
         }
 
-        // === ADMIN Save official knockout results in batch ===
         function saveOfficialKnockoutBatch(map) {
-            // map: mid -> winner
             db.ref('official_knockout').update(map).then(() => triggerToast('Resultados fase final guardados')).catch(err => console.error(err));
         }
 
-        // === UTIL: save single official special/public helper expose ===
         async function loadOfficialSpecials() {
             const snap = await db.ref('official_specials').get();
             const data = snap.val() || {};
@@ -1632,9 +1560,7 @@
             if (lastSync) setSyncStatus('Última sincronización: ' + lastSync, 'var(--text-muted)');
         }
 
-        function toSpanish(name) {
-            return API_TO_SPANISH[name] || name;
-        }
+        function toSpanish(name) { return API_TO_SPANISH[name] || name; }
 
         async function syncFromAPI() {
             const apiKey = localStorage.getItem('fd_api_key');
@@ -1642,16 +1568,12 @@
             setSyncStatus('🔄 Conectando con football-data.org...', 'var(--gold)');
 
             try {
-                // ── 1. Fase de grupos ──────────────────────────────────────
                 const resp = await fetch(
                     'https://api.football-data.org/v4/competitions/WC/matches?status=FINISHED',
                     { headers: { 'X-Auth-Token': apiKey } }
                 );
 
-                if (resp.status === 400) {
-                    // Copa del Mundo 2026 puede no estar activa aún; intentar sin filtro de status
-                    return syncFromAPIAll(apiKey);
-                }
+                if (resp.status === 400) return syncFromAPIAll(apiKey);
                 if (!resp.ok) {
                     const err = await resp.json().catch(() => ({}));
                     setSyncStatus('❌ Error ' + resp.status + ': ' + (err.message || 'revisa tu API Key'), 'var(--error)');
@@ -1674,7 +1596,6 @@
                     const isGroup = stage === 'GROUP_STAGE' || stage === 'GROUPS';
 
                     if (isGroup) {
-                        // Buscar en nuestro calendario
                         const ourMatch = ALL_MATCHES.find(m =>
                             (m.local === home && m.visitante === away) ||
                             (m.local === away && m.visitante === home)
@@ -1688,16 +1609,13 @@
                             groupCount++;
                         }
                     } else {
-                        // Fase eliminatoria: buscar en official_knockout_matches por equipos
                         const round = API_STAGE_TO_ROUND[stage];
                         if (!round) return;
                         const winner = apiM.score?.winner === 'HOME_TEAM' ? home : away;
-                        // Buscar partido en officialKnockoutMatches por equipos
                         Object.entries(STATE.officialKnockoutMatches || {}).forEach(([mid, mdata]) => {
                             const mLocal = toSpanish(mdata.local);
                             const mVisitor = toSpanish(mdata.visitor);
-                            if ((mLocal === home && mVisitor === away) ||
-                                (mLocal === away && mVisitor === home)) {
+                            if ((mLocal === home && mVisitor === away) || (mLocal === away && mVisitor === home)) {
                                 koWinnerUpdates[mid] = winner;
                                 koCount++;
                             }
@@ -1705,7 +1623,6 @@
                     }
                 });
 
-                // ── 2. Guardar en Firebase ─────────────────────────────────
                 const promises = [];
                 if (groupCount > 0) promises.push(db.ref('official_results').update(groupUpdates));
                 if (koCount > 0) promises.push(db.ref('official_knockout').update(koWinnerUpdates));
@@ -1724,7 +1641,6 @@
                     setSyncStatus(`ℹ️ Sin resultados nuevos · ${now}`, 'var(--text-muted)');
                     triggerToast('ℹ️ Sin resultados nuevos todavía');
                 }
-
             } catch (err) {
                 console.error('API sync error:', err);
                 setSyncStatus('❌ Error de conexión. Revisa tu internet.', 'var(--error)');
@@ -1732,7 +1648,6 @@
             }
         }
 
-        // Fallback: pedir todos los partidos sin filtro de status (por si el torneo no empezó)
         async function syncFromAPIAll(apiKey) {
             setSyncStatus('🔄 Obteniendo calendario completo...', 'var(--gold)');
             try {
@@ -1742,7 +1657,7 @@
                 );
                 if (!resp.ok) {
                     const err = await resp.json().catch(() => ({}));
-                    setSyncStatus('❌ ' + (err.message || 'API Key inválida o torneo no disponible'), 'var(--error)');
+                    setSyncStatus('❌ ' + (err.message || 'API Key inválida'), 'var(--error)');
                     return;
                 }
                 const data = await resp.json();
@@ -1752,9 +1667,6 @@
                     triggerToast('ℹ️ El torneo aún no ha comenzado');
                     return;
                 }
-                // Re-usar lógica pasando los partidos filtrados
-                const fakeData = { matches: finishedMatches };
-                // Reconstruir con los matches filtrados (llamar syncFromAPI de nuevo no causa loop)
                 const groupUpdates = {};
                 let groupCount = 0;
                 finishedMatches.forEach(apiM => {
@@ -1762,10 +1674,7 @@
                     const away = toSpanish(apiM.awayTeam.name);
                     const fts = apiM.score?.fullTime;
                     if (!fts || fts.home === null || fts.away === null) return;
-                    const ourMatch = ALL_MATCHES.find(m =>
-                        (m.local === home && m.visitante === away) ||
-                        (m.local === away && m.visitante === home)
-                    );
+                    const ourMatch = ALL_MATCHES.find(m => (m.local === home && m.visitante === away) || (m.local === away && m.visitante === home));
                     if (ourMatch) {
                         const reversed = ourMatch.local === away;
                         groupUpdates[ourMatch.id] = { gl: reversed ? fts.away : fts.home, gv: reversed ? fts.home : fts.away };
@@ -1788,7 +1697,7 @@
 
         function toggleAutoSync(enabled) {
             if (enabled) {
-                syncFromAPI(); // sync inmediato
+                syncFromAPI();
                 autoSyncInterval = setInterval(syncFromAPI, 5 * 60 * 1000);
                 setSyncStatus('🟢 Auto-sync activo (cada 5 min)', 'var(--green)');
             } else {
@@ -1798,8 +1707,7 @@
             }
         }
 
-        // === ADMIN: special helpers for external access ===
-        // Expose some functions as methods to be called by inline buttons
+        // === WINDOW EXP_APP ===
         window.APP = {
             goToScreen,
             registerUser,
@@ -1811,7 +1719,7 @@
                 if (STATE.status === 'closed') return;
                 db.ref(`specials/${STATE.myId}/${field}`).set(val).then(() => triggerToast('✅ Guardado')).catch(err => { console.error(err); triggerToast('❌ Error'); });
             },
-            saveKo, // user knockout pick
+            saveKo,
             saveAllKoDrafts,
             setTablesView,
             adminLogin: function() {
@@ -1824,7 +1732,7 @@
             },
             adminSetStatus: function(st) { db.ref('status').set(st).then(() => triggerToast('Status actualizado')); },
             adminResetMundial: function() {
-                if (confirm('🚨 ATENCIÓN: Se eliminarán todos los resultados oficiales cargados en la nube.')) {
+                if (confirm('🚨 ATENCIÓN: Se de-vincularán los resultados familiares ingresados.')) {
                     db.ref('official_results').remove();
                     db.ref('official_specials').remove();
                     db.ref('official_knockout').remove();
@@ -1862,13 +1770,9 @@
             toggleAutoSync
         };
 
-        // wire some helper global functions used by inline handlers
         window.APP.setTableGroupActive = setTableGroupActive;
 
-        // === COUNTDOWN AL CIERRE DE LA POLLA ===
-        // === GUARDAR COMODINES Y VOLVER AL MENÚ ===
         function saveAndGoMenu() {
-            // saveSpecial already fires onchange, here we just confirm and navigate
             const fields = [
                 { id: 'selRevelacion', key: 'seleccion_revelacion' },
                 { id: 'selDecepcion', key: 'seleccion_decepcion' },
@@ -1882,19 +1786,18 @@
                 return db.ref(`specials/${STATE.myId}/${f.key}`).set(el.value.trim());
             });
             Promise.all(promises).then(() => {
-                triggerToast('✅ Comodines guardados');
+                triggerToast('Comodines guardados');
                 goToScreen('screenMenu');
-            }).catch(err => { console.error(err); triggerToast('❌ Error al guardar'); });
+            }).catch(err => { console.error(err); triggerToast('❌ Error'); });
         }
 
         function startCountdown() {
-            const deadline = new Date('2026-06-10T23:59:59-05:00'); // Ecuador UTC-5
+            const deadline = new Date('2026-06-10T23:59:59-05:00');
             function tick() {
                 const now = new Date();
                 const diff = deadline - now;
                 if (diff <= 0) {
-                    const els = ['cdDays','cdHours','cdMins','cdSecs'];
-                    els.forEach(id => { const el = document.getElementById(id); if (el) el.textContent = '0'; });
+                    ['cdDays','cdHours','cdMins','cdSecs'].forEach(id => { const el = document.getElementById(id); if (el) el.textContent = '00'; });
                     return;
                 }
                 const days  = Math.floor(diff / 86400000);
@@ -1904,27 +1807,21 @@
                 const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = String(val).padStart(2,'0'); };
                 set('cdDays', days); set('cdHours', hours); set('cdMins', mins); set('cdSecs', secs);
             }
-            tick();
-            setInterval(tick, 1000);
+            tick(); setInterval(tick, 1000);
         }
         startCountdown();
 
-        // === RENDERS/INITS ===
         function refreshUIAfterData() {
-            // update user badge and menu button for fase final
             const ub = DOM.get('userBadge'); if (ub) ub.textContent = STATE.currentUser ? `👤 ${STATE.currentUser.nombre_apodo}` : '👤 Sin sesión';
             const btnFF = DOM.get('btnFaseFinalMenu'); if (btnFF) btnFF.style.display = STATE.faseFinalEnabled ? 'inline-flex' : 'none';
             const activeScreen = document.querySelector('.screen.active');
             const navPred2 = DOM.get('navItemPredictions'); if (navPred2) navPred2.style.display = (activeScreen && activeScreen.id === 'screenPredictions') ? 'flex' : 'none';
             const navFF = DOM.get('navItemFaseFinal'); if (navFF) navFF.style.display = (STATE.faseFinalEnabled && activeScreen && activeScreen.id === 'screenFaseFinal') ? 'flex' : 'none';
-            // re-render admin lists if panel open
             if (STATE.adminConnected) renderAdminUsers();
         }
 
-        // ensure initial screen
         if (STATE.myId) goToScreen('screenMenu'); else goToScreen('screenWelcome');
 
-        // expose some internals for bracket rendering
         window.renderFaseFinal = renderFaseFinal;
         window.generateOfficialBracket = generateOfficialBracketAndSave;
         window.saveAllKoDrafts = saveAllKoDrafts;
