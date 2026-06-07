@@ -10,10 +10,12 @@
         :root {
             --bg-body: #101826;
             --bg-card: #172033;
+            --bg-card-soft: #1F2A3F;
             --bg-input: #0D1422;
             --gold: #F7C948;
             --green: #2DD4BF;
             --green-dark: #0F766E;
+            --coral: #FB7185;
             --sky: #60A5FA;
             --text-main: #F8FAFC;
             --text-muted: #A7B4C7;
@@ -151,6 +153,10 @@
         /* utilities */
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .grid-full { grid-column: span 2; }
+        .text-center { text-align: center; }
+        .mt-24 { margin-top: 24px; }
+        .flex-center { display: flex; flex-direction: column; justify-content: center; align-items: center; flex: 1; }
+        .small { font-size:0.85rem; color:var(--text-muted); }
         .admin-users { display:flex; flex-direction:column; gap:8px; max-height:260px; overflow:auto; padding-right:6px; }
         .admin-user { background:var(--bg-input); padding:10px; border-radius:8px; border:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; gap:8px; }
         .admin-user .meta { display:flex; flex-direction:column; gap:4px; }
@@ -158,6 +164,7 @@
         .tables-switch { display:flex; gap:6px; padding:4px; border:1px solid var(--border); background:rgba(255,255,255,0.035); border-radius:999px; margin-bottom:14px; }
         .tables-switch button { flex:1; border:0; border-radius:999px; padding:10px 12px; background:transparent; color:var(--text-muted); font-weight:900; cursor:pointer; }
         .tables-switch button.active { background:var(--green); color:#06201C; }
+        .bracket-help { display:flex; justify-content:space-between; gap:12px; align-items:center; color:var(--text-muted); font-size:0.82rem; margin-bottom:10px; }
     </style>
 </head>
 <body>
@@ -329,6 +336,7 @@
                 <div id="liveGroupStandings"></div>
             </div>
             <div id="tablesBracketBlock" style="display:none;">
+                <div class="bracket-help"><span>Desliza horizontalmente para ver todos los cruces.</span><span id="bracketCountText"></span></div>
                 <div class="bracket-panel"><div id="tablesBracketRoot" class="bracket" role="region" aria-label="Diagrama de fase final"></div></div>
             </div>
         </div>
@@ -370,7 +378,7 @@
         <div class="screen" id="screenFaseFinal" aria-live="polite" aria-label="Fase Final del Mundial">
           <h3 style="margin-bottom:8px; font-size:1.2rem;">🔥 Fase Final</h3>
           <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:12px;">
-            Selecciona el ganador de cada cruce.
+            Selecciona el ganador de cada cruce. Los emparejamientos se actualizan automáticamente según tus tablas de grupos.
           </p>
 
           <div class="bracket-panel">
@@ -548,6 +556,7 @@
             'THIRD_PLACE': 'tercero', 'FINAL': 'final'
         };
 
+        // CALENDARIO CORREGIDO: Arabia Saudita (M37) y República Democrática del Congo (M48)
         const ALL_MATCHES = [
             { id: 1, grupo: "A", local: "México", visitante: "Sudáfrica", kickoff: "2026-06-11T15:00:00-04:00", fechaStr: "Jue 11 Jun 15:00" },
             { id: 2, grupo: "A", local: "Corea del Sur", visitante: "Chequia", kickoff: "2026-06-11T22:00:00-04:00", fechaStr: "Jue 11 Jun 22:00" },
@@ -585,7 +594,7 @@
             { id: 34, grupo: "E", local: "Alemania", visitante: "Costa de Marfil", kickoff: "2026-06-20T16:00:00-04:00", fechaStr: "Sáb 20 Jun 16:00" },
             { id: 35, grupo: "E", local: "Ecuador", visitante: "Curazao", kickoff: "2026-06-20T22:00:00-04:00", fechaStr: "Sáb 20 Jun 22:00" },
             { id: 36, grupo: "F", local: "Túnez", visitante: "Japón", kickoff: "2026-06-21T00:00:00-04:00", fechaStr: "Sáb 20 Jun 00:00*" },
-            { id: 37, grupo: "H", local: "España", visitante: "Arabia Saudí", kickoff: "2026-06-21T12:00:00-04:00", fechaStr: "Dom 21 Jun 12:00" },
+            { id: 37, grupo: "H", local: "España", visitante: "Arabia Saudita", kickoff: "2026-06-21T12:00:00-04:00", fechaStr: "Dom 21 Jun 12:00" },
             { id: 38, grupo: "G", local: "Bélgica", visitante: "Irán", kickoff: "2026-06-21T15:00:00-04:00", fechaStr: "Dom 21 Jun 15:00" },
             { id: 39, grupo: "H", local: "Uruguay", visitante: "Cabo Verde", kickoff: "2026-06-21T18:00:00-04:00", fechaStr: "Dom 21 Jun 18:00" },
             { id: 40, grupo: "G", local: "Nueva Zelanda", visitante: "Egipto", kickoff: "2026-06-21T21:00:00-04:00", fechaStr: "Dom 21 Jun 21:00" },
@@ -596,7 +605,7 @@
             { id: 45, grupo: "K", local: "Portugal", visitante: "Uzbekistán", kickoff: "2026-06-23T13:00:00-04:00", fechaStr: "Mar 23 Jun 13:00" },
             { id: 46, grupo: "L", local: "Inglaterra", visitante: "Ghana", kickoff: "2026-06-23T16:00:00-04:00", fechaStr: "Mar 23 Jun 16:00" },
             { id: 47, grupo: "L", local: "Panamá", visitante: "Croacia", kickoff: "2026-06-23T19:00:00-04:00", fechaStr: "Mar 23 Jun 19:00" },
-            { id: 48, grupo: "K", local: "Colombia", visitante: "RD Congo", kickoff: "2026-06-23T22:00:00-04:00", fechaStr: "Mar 23 Jun 22:00" },
+            { id: 48, grupo: "K", local: "Colombia", visitante: "República Democrática del Congo", kickoff: "2026-06-23T22:00:00-04:00", fechaStr: "Mar 23 Jun 22:00" },
             { id: 49, grupo: "B", local: "Suiza", visitante: "Canadá", kickoff: "2026-06-24T15:00:00-04:00", fechaStr: "Mié 24 Jun 15:00" },
             { id: 50, grupo: "B", local: "Bosnia y Herzegovina", visitante: "Catar", kickoff: "2026-06-24T15:00:00-04:00", fechaStr: "Mié 24 Jun 15:00" },
             { id: 51, grupo: "C", local: "Escocia", visitante: "Brasil", kickoff: "2026-06-24T18:00:00-04:00", fechaStr: "Mié 24 Jun 18:00" },
@@ -748,7 +757,6 @@
             if (id === 'screenRanking') renderRanking();
             if (id === 'screenLogin') populateExistingUsers();
             if (id === 'screenAdmin' && STATE.adminConnected) { adminLoadResults(); loadApiKeyToInput(); }
-            
             if (id === 'screenFaseFinal') renderFaseFinal();
 
             const ub = DOM.get('userBadge'); if (ub) ub.textContent = STATE.currentUser ? `👤 ${STATE.currentUser.nombre_apodo}` : '👤 Sin sesión';
@@ -1133,7 +1141,6 @@
                 if (!STATE.knockoutPreds[STATE.myId]) STATE.knockoutPreds[STATE.myId] = {};
                 STATE.knockoutPreds[STATE.myId][mid] = team;
 
-                // Validación y Limpieza
                 const userResults = {}; const userPreds = STATE.predictions[STATE.myId] || {};
                 ALL_MATCHES.forEach(m => {
                     const p = userPreds[m.id]; if (p && p.gl !== '' && p.gv !== '' && !isNaN(p.gl) && !isNaN(p.gv)) userResults[m.id] = { gl: parseInt(p.gl), gv: parseInt(p.gv) };
@@ -1320,22 +1327,6 @@
             }
         }
 
-        function toggleFaseFinal(enable) {
-            db.ref('fase_final_enabled').set(!!enable).then(() => { triggerToast(enable ? 'Fase Final habilitada' : 'Fase Final deshabilitada'); });
-        }
-
-        function saveOfficialKnockoutBatch(map) {
-            db.ref('official_knockout').update(map).then(() => triggerToast('Resultados fase final guardados')).catch(err => console.error(err));
-        }
-
-        async function loadOfficialSpecials() {
-            const snap = await db.ref('official_specials').get(); const data = snap.val() || {};
-            if (data) { STATE.officialSpecials = data; populateAdminSpecialsOptions(); triggerToast('Especiales cargados'); }
-        }
-
-        let autoSyncInterval = null;
-        function setSyncStatus(msg, color) { const el = document.getElementById('syncStatus'); if (el) { el.textContent = msg; el.style.color = color || 'var(--text-muted)'; } }
-
         function saveApiKey() {
             const val = document.getElementById('fdApiKey')?.value.trim(); if (!val) { triggerToast('⚠️ Ingresa una API Key'); return; }
             localStorage.setItem('fd_api_key', val); triggerToast('✅ API Key guardada'); setSyncStatus('Key guardada. Listo para sincronizar.', 'var(--green)');
@@ -1347,6 +1338,9 @@
         }
 
         function toSpanish(name) { return API_TO_SPANISH[name] || name; }
+
+        let autoSyncInterval = null;
+        function setSyncStatus(msg, color) { const el = document.getElementById('syncStatus'); if (el) { el.textContent = msg; el.style.color = color || 'var(--text-muted)'; } }
 
         async function syncFromAPI() {
             const apiKey = localStorage.getItem('fd_api_key'); if (!apiKey) { triggerToast('⚠️ Guarda tu API Key primero'); return; }
@@ -1440,7 +1434,6 @@
                     db.ref('official_results').remove(); db.ref('official_specials').remove(); db.ref('official_knockout').remove(); db.ref('official_knockout_matches').remove(); triggerToast('Reiniciado');
                 }
             },
-            // FUNCIÓN ACTUALIZADA: CSV CON FASE FINAL (32 COLUMNAS NUEVAS)
             adminExportCSV: function() {
                 let csv = 'Usuario,Puntos,Exactos,Comodine_Revelacion,Comodine_Decepcion,Ecuador_Etapa,Campeon_Mundial,Goleador_Mundial,';
                 for(let i=1;i<=72;i++) csv += `P${i}_Local,P${i}_Visitante,`;
@@ -1458,7 +1451,7 @@
                 const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = `Polla_Familiar_2026_Master_${new Date().toISOString().slice(0,10)}.csv`; link.click();
             },
             adminLoadResults, generateOfficialBracket, saveOfficialSpecials, loadOfficialSpecials, toggleFaseFinal,
-            adminDeleteUser, adminResetUser, saveAdmMatchesCloud, saveOfficialKoFromInput, saveOfficialKnockoutBatch, saveApiKey, syncFromAPI, toggleAutoSync,
+            adminDeleteUser, adminResetUser, saveAdmMatchesCloud, saveOfficialKoFromInput, saveApiKey, syncFromAPI, toggleAutoSync,
             
             saveAndGoFaseFinal: function() {
                 const fields = [
