@@ -107,25 +107,93 @@
         .lock-banner { background: #1e293b; border: 1px solid #ef4444; border-left: 4px solid #ef4444; color: white; padding: 12px; border-radius: var(--radius); text-align: left; font-weight: 600; margin: 16px 0; font-size: 0.9rem; }
 
         /* ==========================================================================
-           BRACKET ARBOL DE ELIMINACIÓN CONTINUO - MEJORADO Y OPTIMIZADO
+           BRACKET FASE FINAL: Matemáticamente Dinámico y Responsivo
            ========================================================================== */
-        .bracket-panel { overflow-x: auto; overflow-y: hidden; border: 1px solid var(--border); border-radius: var(--radius); background: rgba(13,20,34,0.72); box-shadow: var(--shadow); padding: 24px 16px; -webkit-overflow-scrolling: touch; }
+        .bracket-panel {
+            overflow-x: auto; /* Scroll horizontal si es necesario */
+            overflow-y: visible; /* Permite scroll vertical nativo de la pantalla */
+            background: rgba(13,20,34,0.72);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 24px 0;
+            box-shadow: var(--shadow);
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .bracket {
+            display: flex;
+            min-width: 1200px; /* Evita que el bracket se apachurre en móvil */
+            /* ¡No se define altura fija! Se adapta al contenido de la 1era columna */
+        }
+
+        /* Columnas de cada ronda */
+        .round {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            position: relative;
+        }
+
+        .round-title {
+            text-align: center; font-size: 0.75rem; color: var(--gold);
+            font-weight: 800; text-transform: uppercase; margin-bottom: 24px;
+            letter-spacing: 0.5px;
+        }
+
+        /* "Slot" que sirve como caja envolvente geométrica. Agrupa el espacio */
+        .match-slot {
+            flex: 1; /* Se estira proporcionalmente en su columna */
+            display: flex;
+            align-items: center; /* Centra el partido verticalmente */
+            justify-content: center;
+            position: relative;
+            padding: 0 16px;
+            min-height: 86px; /* Da la altura natural a todo el contenedor general */
+        }
+
+        .match {
+            width: 100%;
+            background: linear-gradient(180deg, rgba(31,42,63,0.98), rgba(17,24,39,0.96));
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 8px;
+            position: relative;
+            z-index: 2;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+            display: flex; flex-direction: column; gap: 6px;
+        }
         
-        /* Contenedor Flex con un Canvas de altura geométrica fija para alineamiento matemático */
-        .bracket { display: flex; gap: 46px; min-width: 1160px; height: 1420px; position: relative; overflow: visible; box-sizing: border-box; }
-        
-        /* Distribución automática en base a la altura compartida del árbol */
-        .round { display: flex; flex-direction: column; justify-content: space-around; flex: 1; height: 100%; position: relative; box-sizing: border-box; }
-        
-        /* La última ronda centra verticalmente la final y acomoda el 3er puesto abajo */
-        .round-final { justify-content: center; gap: 110px; }
-        
-        .round-title { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); z-index: 10; font-size: 0.74rem; font-weight: 800; color: var(--gold); text-transform: uppercase; letter-spacing: 0.8px; background: #1e2a3f; border: 1px solid var(--border); border-radius: 999px; padding: 6px 12px; white-space: nowrap; box-shadow: 0 4px 12px rgba(0,0,0,0.4); }
-        
-        .match { display: flex; flex-direction: column; gap: 6px; padding: 10px; border-radius: 8px; background: linear-gradient(180deg, rgba(31,42,63,0.98), rgba(17,24,39,0.96)); border: 1px solid var(--border); position: relative; box-shadow: 0 10px 24px rgba(0,0,0,0.22); box-sizing: border-box; z-index: 5; }
-        .match.bracket-champion { border-color: rgba(247,201,72,0.5); background: linear-gradient(180deg, rgba(247,201,72,0.12), rgba(31,42,63,0.96)); box-shadow: 0 0 20px rgba(247, 201, 72, 0.15); }
-        .match.match-third { border-color: var(--sky); background: linear-gradient(180deg, rgba(96,165,250,0.08), rgba(17,24,39,0.96)); opacity: 0.85; }
-        
+        .match.bracket-champion { border-color: rgba(247,201,72,0.5); box-shadow: 0 0 20px rgba(247, 201, 72, 0.15); }
+
+        /* LÍNEA DE SALIDA (A la derecha del partido actual) */
+        .round:not(:last-child) .match::after {
+            content: ""; position: absolute; right: -17px; top: 50%;
+            width: 16px; height: 2px; background: rgba(45,212,191,0.4);
+            z-index: 1;
+        }
+
+        /* LÍNEA DE CONEXIÓN EN LLAVE '[' (A la izquierda del contenedor del partido siguiente) */
+        .round:not(:first-child) .match-slot::before {
+            content: ""; position: absolute; left: 0; top: 25%;
+            width: 16px; height: 50%; /* 50% garantiza conexión perfecta en space-around */
+            border: 2px solid rgba(45,212,191,0.4);
+            border-right: none; border-radius: 4px 0 0 4px;
+            box-sizing: border-box; z-index: 1;
+        }
+
+        /* LÍNEA RECEPTORA HORIZONTAL (Tocando el lado izquierdo de la tarjeta) */
+        .round:not(:first-child) .match-slot::after {
+            content: ""; position: absolute; left: 16px; top: 50%;
+            width: 16px; height: 2px; background: rgba(45,212,191,0.4);
+            z-index: 1;
+        }
+
+        /* Partido de Tercer puesto flota abajo sin molestar el CSS grid de la Final */
+        .match-third-container {
+            position: absolute; bottom: 0; left: 16px; right: 16px; z-index: 5;
+        }
+
+        /* Contenido interior de botones */
         .ko-team-btn { display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; border-radius: 7px; min-height: 42px; background: var(--bg-input); color: var(--text-muted); border: 1px solid var(--border); font-weight: 800; cursor: pointer; transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease; width: 100%; text-align: left; }
         .ko-team-btn .team-left { display: flex; gap: 10px; align-items: center; }
         .ko-team-btn .flag { font-size: 1.25rem; }
@@ -135,22 +203,6 @@
         .ko-team-btn.selected { background: linear-gradient(90deg, rgba(45,212,191,0.18), rgba(247,201,72,0.08)); border-color: var(--green); color: #fff; box-shadow: 0 8px 22px rgba(45,212,191,0.14); }
         .ko-team-btn .ko-icon { font-size: 1.1rem; color: var(--green); opacity: 0; transition: opacity 0.12s ease, transform 0.12s ease; }
         .ko-team-btn.selected .ko-icon { opacity: 1; transform: scale(1.05); }
-        
-        /* CONEXIONES DE ÁRBOLES MATEMÁTICAS */
-        /* Línea saliente derecha (conecta hasta la mitad exacta del gap de 46px) */
-        .round:not(.round-final) .match::after { content: ""; position: absolute; right: -23px; top: 50%; width: 23px; height: 2px; background: var(--border); z-index: 1; }
-        
-        /* Modificadores de distancias verticales por ronda calculados geométricamente */
-        .round-octavos { --connect-h: 44.3px; }
-        .round-cuartos { --connect-h: 88.7px; }
-        .round-semis   { --connect-h: 177.5px; }
-        .match-final-game { --connect-h: 355px; }
-        
-        /* Línea receptora izquierda en forma de llave completa [ */
-        .round-octavos .match::before, .round-cuartos .match::before, .round-semis .match::before, .match-final-game::before { content: ""; position: absolute; left: -23px; top: 50%; width: 23px; height: calc(var(--connect-h) * 2); transform: translateY(-50%); border: 2px solid var(--border); border-right: none; box-sizing: border-box; z-index: 1; }
-        
-        /* Desactivar conectores flotantes en el partido de consuelo (3er puesto) */
-        .match.match-third::before, .match.match-third::after { display: none !important; }
         
         .match-meta { display: flex; justify-content: space-between; font-size: 0.72rem; text-transform: uppercase; font-weight: 800; color: var(--text-muted); margin-bottom: 6px; }
 
@@ -486,7 +538,7 @@
     (function() {
         'use strict';
 
-        // === Firebase config (NO MODIFICAR) ===
+        // === Firebase config ===
         firebase.initializeApp({
             apiKey: "AIzaSyBfNHaQUBTRydtClhbaEAYqotZuWq8vmzI",
             authDomain: "polla-mundialista-16e59.firebaseapp.com",
@@ -498,7 +550,7 @@
         });
         const db = firebase.database();
 
-        // === CONSTANTES y DATOS (reutilizados) ===
+        // === DATOS ===
         const GROUPS = {
             A: ['México', 'Sudáfrica', 'Corea del Sur', 'Chequia'],
             B: ['Canadá', 'Bosnia y Herzegovina', 'Catar', 'Suiza'],
@@ -623,7 +675,7 @@
             { id: 60, grupo: "D", local: "Paraguay", visitante: "Australia", kickoff: "2026-06-25T22:00:00-04:00", fechaStr: "Jue 25 Jun 22:00" },
             { id: 61, grupo: "I", local: "Noruega", visitante: "Francia", kickoff: "2026-06-26T15:00:00-04:00", fechaStr: "Vie 26 Jun 15:00" },
             { id: 62, grupo: "I", local: "Senegal", visitante: "Irak", kickoff: "2026-06-26T15:00:00-04:00", fechaStr: "Vie 26 Jun 15:00" },
-            { id: 63, group: "H", local: "Cabo Verde", visitante: "Arabia Saudita", kickoff: "2026-06-26T20:00:00-04:00", fechaStr: "Vie 26 Jun 20:00" },
+            { id: 63, grupo: "H", local: "Cabo Verde", visitante: "Arabia Saudita", kickoff: "2026-06-26T20:00:00-04:00", fechaStr: "Vie 26 Jun 20:00" },
             { id: 64, grupo: "H", local: "Uruguay", visitante: "España", kickoff: "2026-06-26T20:00:00-04:00", fechaStr: "Vie 26 Jun 20:00" },
             { id: 65, grupo: "G", local: "Egipto", visitante: "Irán", kickoff: "2026-06-26T23:00:00-04:00", fechaStr: "Vie 26 Jun 23:00" },
             { id: 66, grupo: "G", local: "Nueva Zelanda", visitante: "Bélgica", kickoff: "2026-06-26T23:00:00-04:00", fechaStr: "Vie 26 Jun 23:00" },
@@ -674,6 +726,16 @@
             { id: 104, round: 'final', local: 'Winner101', visitor: 'Winner102' }
         ];
 
+        /* ORDEN LÓGICO DEL MUNDIAL PARA RENDERIZAR */
+        /* Al renderizar en este orden visual en lugar de numérico, las llaves de flexbox empatan perfecto matemáticamente */
+        const BRACKET_LAYOUT = [
+            { round: 'dieciseisavos', title: 'Dieciseisavos', matches: [74, 77, 73, 75, 83, 84, 81, 82, 76, 78, 79, 80, 86, 88, 85, 87] },
+            { round: 'octavos', title: 'Octavos', matches: [89, 90, 93, 94, 91, 92, 95, 96] },
+            { round: 'cuartos', title: 'Cuartos', matches: [97, 98, 99, 100] },
+            { round: 'semis', title: 'Semifinales', matches: [101, 102] },
+            { round: 'final', title: 'Fase Final', matches: [104] } // El 3er puesto (103) se inyecta suelto abajo
+        ];
+
         const KO_POINTS = { dieciseisavos: 1, octavos: 2, cuartos: 3, semis: 4, final: 5, tercero: 2 };
 
         const STATE = {
@@ -704,9 +766,7 @@
                 STATE.currentUser = STATE.users[STATE.myId];
             }
 
-            calculatePointsEngine();
-            updateProgress();
-            refreshUIAfterData();
+            calculatePointsEngine(); updateProgress(); refreshUIAfterData();
 
             const activeScreenId = document.querySelector('.screen.active')?.id || 'screenWelcome';
             goToScreen(activeScreenId);
@@ -731,17 +791,13 @@
 
         function updateProgress() {
             if (!STATE.myId) return;
-            const userPreds = STATE.predictions[STATE.myId] || {};
-            let count = 0;
+            const userPreds = STATE.predictions[STATE.myId] || {}; let count = 0;
             ALL_MATCHES.forEach(m => {
                 const p = userPreds[m.id];
-                if (p && p.gl !== '' && p.gv !== '' && p.gl !== undefined && p.gv !== undefined && p.gl !== null && p.gv !== null && !isNaN(p.gl) && !isNaN(p.gv)) {
-                    count++;
-                }
+                if (p && p.gl !== '' && p.gv !== '' && p.gl !== undefined && p.gv !== undefined && p.gl !== null && p.gv !== null && !isNaN(p.gl) && !isNaN(p.gv)) count++;
             });
             const pct = Math.round((count / 72) * 100);
-            const pText = DOM.get('progressText');
-            const pBar = DOM.get('progressBar');
+            const pText = DOM.get('progressText'); const pBar = DOM.get('progressBar');
             if (pText) pText.textContent = `Pronósticos completados: ${count} / 72 partidos`;
             if (pBar) pBar.style.width = `${pct}%`;
         }
@@ -760,10 +816,7 @@
             if (id === 'screenRanking') renderRanking();
             if (id === 'screenLogin') populateExistingUsers();
             if (id === 'screenAdmin' && STATE.adminConnected) { adminLoadResults(); loadApiKeyToInput(); }
-            if (id === 'screenFaseFinal') {
-                if (!STATE.faseFinalEnabled) { goToScreen('screenMenu'); return; }
-                renderFaseFinal();
-            }
+            if (id === 'screenFaseFinal') { if (!STATE.faseFinalEnabled) { goToScreen('screenMenu'); return; } renderFaseFinal(); }
 
             const ub = DOM.get('userBadge'); if (ub) ub.textContent = STATE.currentUser ? `👤 ${STATE.currentUser.nombre_apodo}` : '👤 Sin sesión';
             const cw = DOM.get('closureWarning'); if (cw && id === 'screenWelcome') cw.textContent = STATE.status === 'closed' ? '🔒 LA POLLA MUNDIALISTA ESTÁ TOTALMENTE CERRADA' : '';
@@ -805,15 +858,11 @@
         function renderPredictions() {
             if (!STATE.currentUser) return;
             const container = DOM.get('matchesContainer'); if (!container) return;
-
             const screen = DOM.get('screenPredictions'); const scrollBefore = screen ? screen.scrollTop : 0;
             const focused = document.activeElement;
-            if (focused && focused.classList.contains('score-box') && container.contains(focused)) {
-                updateProgress(); return;
-            }
+            if (focused && focused.classList.contains('score-box') && container.contains(focused)) { updateProgress(); return; }
 
             let html = ''; const myPreds = STATE.predictions[STATE.myId] || {};
-
             ALL_MATCHES.forEach(m => {
                 const p = myPreds[m.id] || { gl: '', gv: '' };
                 const closed = isMatchClosed(m.id); const dis = closed ? 'disabled' : '';
@@ -853,8 +902,7 @@
             const isBracket = STATE.currentTablesView === 'bracket';
             DOM.get('tabGroupsView')?.classList.toggle('active', !isBracket);
             DOM.get('tabBracketView')?.classList.toggle('active', isBracket);
-            const groupsBlock = DOM.get('tablesGroupsBlock');
-            const bracketBlock = DOM.get('tablesBracketBlock');
+            const groupsBlock = DOM.get('tablesGroupsBlock'); const bracketBlock = DOM.get('tablesBracketBlock');
             if (groupsBlock) groupsBlock.style.display = isBracket ? 'none' : 'block';
             if (bracketBlock) bracketBlock.style.display = isBracket ? 'block' : 'none';
             const container = DOM.get('groupTabsContainer');
@@ -876,9 +924,7 @@
                     const gl = parseInt(p.gl); const gv = parseInt(p.gv);
                     const tl = matrix[m.local]; const tv = matrix[m.visitante];
                     tl.pj++; tv.pj++; tl.gf += gl; tl.gc += gv; tv.gf += gv; tv.gc += gl;
-                    if (gl > gv) { tl.pg++; tl.pts += 3; tv.pp++; }
-                    else if (gl < gv) { tv.pg++; tv.pts += 3; tl.pp++; }
-                    else { tl.pe++; tv.pe++; tl.pts++; tv.pts++; }
+                    if (gl > gv) { tl.pg++; tl.pts += 3; tv.pp++; } else if (gl < gv) { tv.pg++; tv.pts += 3; tl.pp++; } else { tl.pe++; tv.pe++; tl.pts++; tv.pts++; }
                 }
             });
 
@@ -917,7 +963,6 @@
         function calculatePointsEngine() {
             Object.keys(STATE.users).forEach(uid => {
                 let pts = 0; let exacts = 0; const uPreds = STATE.predictions[uid] || {}; const uSpec = STATE.specials[uid] || {};
-
                 ALL_MATCHES.forEach(m => {
                     const off = STATE.officialResults[m.id]; const pr = uPreds[m.id];
                     if (off && pr && off.gl !== undefined && off.gv !== undefined && pr.gl !== undefined && pr.gv !== undefined) {
@@ -928,7 +973,6 @@
                         }
                     }
                 });
-
                 const oSp = STATE.officialSpecials || {};
                 if (oSp.revelacion && uSpec.seleccion_revelacion === oSp.revelacion) pts += 5;
                 if (oSp.decepcion && uSpec.seleccion_decepcion === oSp.decepcion) pts += 5;
@@ -943,28 +987,21 @@
                         const def = KNOCKOUT_DEFS.find(d => d.id === parseInt(mid)); if (def) pts += (KO_POINTS[def.round] || 0);
                     }
                 });
-
                 STATE.users[uid].total_puntos = pts; STATE.users[uid].exacts = exacts;
             });
         }
 
         function computeStandingsFromResults(resultsMap) {
             const standings = {};
-            Object.keys(GROUPS).forEach(g => {
-                GROUPS[g].forEach(t => { standings[t] = { team: t, group: g, pj:0, pts:0, gf:0, gc:0, dg:0, pg:0, pe:0, pp:0 }; });
-            });
-
+            Object.keys(GROUPS).forEach(g => { GROUPS[g].forEach(t => { standings[t] = { team: t, group: g, pj:0, pts:0, gf:0, gc:0, dg:0, pg:0, pe:0, pp:0 }; }); });
             ALL_MATCHES.forEach(m => {
                 const res = resultsMap[m.id];
                 if (res && res.gl !== undefined && res.gv !== undefined && res.gl !== null && res.gv !== null && !isNaN(res.gl) && !isNaN(res.gv)) {
                     const gl = parseInt(res.gl), gv = parseInt(res.gv); const tl = standings[m.local], tv = standings[m.visitante];
                     tl.pj++; tv.pj++; tl.gf += gl; tl.gc += gv; tv.gf += gv; tv.gc += gl;
-                    if (gl > gv) { tl.pg++; tl.pts += 3; tv.pp++; }
-                    else if (gl < gv) { tv.pg++; tv.pts += 3; tl.pp++; }
-                    else { tl.pe++; tv.pe++; tl.pts++; tv.pts++; }
+                    if (gl > gv) { tl.pg++; tl.pts += 3; tv.pp++; } else if (gl < gv) { tv.pg++; tv.pts += 3; tl.pp++; } else { tl.pe++; tv.pe++; tl.pts++; tv.pts++; }
                 }
             });
-
             const grouped = {};
             Object.keys(GROUPS).forEach(g => {
                 grouped[g] = Object.values(standings).filter(s => s.group === g); grouped[g].forEach(t => t.dg = t.gf - t.gc);
@@ -987,7 +1024,6 @@
                 if (token.startsWith('2')) { const g = token.slice(1); return (grouped[g] && grouped[g][1]) ? grouped[g][1].team : `2${g}`; }
                 return token;
             }
-
             return KNOCKOUT_DEFS.map(def => {
                 let local = def.local, visitor = def.visitor;
                 if (def.round === 'dieciseisavos') { local = resolveToken(local); visitor = resolveToken(visitor); } 
@@ -1012,13 +1048,13 @@
             return { grouped, best3, matches: buildKnockoutFromStandings(grouped, best3) };
         }
 
-        function resolveBracketTokenGeneral(token, matches, myKo, grouped, best3) {
-            if (!token) return ''; if (token === 'Best3') return best3.length ? best3.shift() : 'Mejor 3°';
+        function resolveBracketTokenGeneral(token, matches, myKo, grouped, best3Queue) {
+            if (!token) return ''; if (token === 'Best3') return best3Queue.length ? best3Queue.shift() : 'Mejor 3°';
             if (/^[12][A-L]$/.test(token)) { const g = token.slice(1); const pos = parseInt(token[0], 10) - 1; return (grouped[g] && grouped[g][pos]) ? grouped[g][pos].team : `Por definir (${token})`; }
             if (token.startsWith('Winner')) { const refId = token.replace('Winner', ''); return myKo[refId] || `Ganador M${refId}`; }
             if (token.startsWith('Losers')) {
                 const refId = token.replace('Losers', ''); const parentMatch = matches.find(x => x.id === parseInt(refId, 10)); if (!parentMatch) return `Perdedor M${refId}`;
-                const pLocal = resolveBracketTokenGeneral(parentMatch.local, matches, myKo, grouped, best3); const pVisitor = resolveBracketTokenGeneral(parentMatch.visitor, matches, myKo, grouped, best3);
+                const pLocal = resolveBracketTokenGeneral(parentMatch.local, matches, myKo, grouped, best3Queue); const pVisitor = resolveBracketTokenGeneral(parentMatch.visitor, matches, myKo, grouped, best3Queue);
                 const winner = myKo[refId]; if (!winner || winner.startsWith('Ganador') || winner.startsWith('Por definir')) return `Perdedor M${refId}`;
                 return winner === pLocal ? pVisitor : pLocal;
             }
@@ -1033,77 +1069,88 @@
             const count = DOM.get('bracketCountText'); if (count) count.textContent = `${picked}/32 selecciones`;
         }
 
-        /* REDISEÑO DEL CONSTRUCTOR DE INTERFAZ DEL BRACKET */
+        /* RENDERING 100% DINÁMICO GEOMÉTRICO (SIN ALTURAS FIJAS) */
         function renderBracketInto(root, matches, grouped, best3, myKo, interactive) {
             root.innerHTML = '';
-            const best3Copy = best3.slice();
-            const roundsMap = {};
-            matches.forEach(m => { if (!roundsMap[m.round]) roundsMap[m.round] = []; roundsMap[m.round].push(m); });
             
-            // Declaración limpia de columnas estructurales
-            const columnsDef = [
-                { key: 'dieciseisavos', title: 'Dieciseisavos', className: 'round-dieciseisavos' },
-                { key: 'octavos', title: 'Octavos', className: 'round-octavos' },
-                { key: 'cuartos', title: 'Cuartos', className: 'round-cuartos' },
-                { key: 'semis', title: 'Semifinales', className: 'round-semis' },
-                { key: 'final', title: 'Fase Final', className: 'round-final' } 
-            ];
+            // 1. Resolvemos todos los nombres ESTRICTAMENTE EN ORDEN NUMÉRICO para no gastar los "Best 3" aleatoriamente.
+            const resolvedNames = {};
+            const best3NumQueue = [...best3];
+            const sortedMatches = [...matches].sort((a, b) => a.id - b.id);
+            sortedMatches.forEach(m => {
+                resolvedNames[m.id] = {
+                    local: resolveBracketTokenGeneral(m.local, matches, myKo, grouped, best3NumQueue),
+                    visitor: resolveBracketTokenGeneral(m.visitor, matches, myKo, grouped, best3NumQueue)
+                };
+            });
 
-            columnsDef.forEach(colDef => {
-                const col = document.createElement('div');
-                col.className = `round ${colDef.className}`;
+            // 2. Pintamos las columnas con el orden visual lógico para emparejar llaves matemáticamente
+            BRACKET_LAYOUT.forEach(colDef => {
+                const col = document.createElement('div'); col.className = 'round';
                 
-                const title = document.createElement('div');
-                title.className = 'round-title';
-                title.textContent = colDef.title;
+                const title = document.createElement('div'); title.className = 'round-title'; title.textContent = colDef.title;
                 col.appendChild(title);
 
-                if (colDef.key !== 'final') {
-                    const roundMatches = roundsMap[colDef.key] || [];
-                    roundMatches.forEach(m => {
-                        col.appendChild(createMatchCardDOM(m, matches, myKo, grouped, best3Copy, interactive));
+                if (colDef.round !== 'final') {
+                    colDef.matches.forEach(matchId => {
+                        const m = matches.find(x => x.id === matchId);
+                        if (m) col.appendChild(createMatchSlot(m, resolvedNames[m.id], myKo, interactive));
                     });
                 } else {
-                    // Columna de Cierre: Acopla la Final en el centro y el Tercer Puesto debajo
+                    // La Gran Final va en el centro geométrico de la última columna
                     const finalMatch = matches.find(m => m.id === 104);
                     if (finalMatch) {
-                        const finalCard = createMatchCardDOM(finalMatch, matches, myKo, grouped, best3Copy, interactive);
-                        finalCard.classList.add('match-final-game', 'bracket-champion');
-                        const tag = document.createElement('div');
-                        tag.style.cssText = 'font-size:0.68rem; color:var(--gold); font-weight:900; text-align:center; margin-bottom:4px; letter-spacing:1.5px;';
-                        tag.textContent = '👑 GRAN FINAL';
-                        finalCard.insertBefore(tag, finalCard.firstChild);
-                        col.appendChild(finalCard);
+                        const finalSlot = createMatchSlot(finalMatch, resolvedNames[104], myKo, interactive, '👑 GRAN FINAL');
+                        finalSlot.querySelector('.match').classList.add('bracket-champion');
+                        col.appendChild(finalSlot);
                     }
                     
-                    const terceroMatch = matches.find(m => m.id === 103);
-                    if (terceroMatch) {
-                        const terceroCard = createMatchCardDOM(terceroMatch, matches, myKo, grouped, best3Copy, interactive);
-                        terceroCard.classList.add('match-third');
-                        const tag = document.createElement('div');
-                        tag.style.cssText = 'font-size:0.68rem; color:var(--sky); font-weight:900; text-align:center; margin-bottom:4px; letter-spacing:1.5px;';
-                        tag.textContent = '🥉 TERCER PUESTO';
-                        terceroCard.insertBefore(tag, terceroCard.firstChild);
-                        col.appendChild(terceroCard);
+                    // Tercer Puesto flota libremente debajo para no dañar las llaves CSS
+                    const thirdMatch = matches.find(m => m.id === 103);
+                    if (thirdMatch) {
+                        const thirdContainer = document.createElement('div'); thirdContainer.className = 'match-third-container';
+                        const thirdCard = document.createElement('div'); thirdCard.className = 'match';
+                        thirdCard.dataset.matchId = 103;
+                        thirdCard.innerHTML = `<div style="font-size:0.65rem; color:var(--sky); font-weight:900; text-align:center; margin-bottom:4px; letter-spacing:1px;">🥉 TERCER PUESTO</div>
+                                               <div class="match-meta"><span>Partido 103</span></div>`;
+                        
+                        const lName = resolvedNames[103].local; const vName = resolvedNames[103].visitor;
+                        const lDis = !interactive || lName.startsWith('Ganador') || lName.startsWith('Mejor') || lName.startsWith('Perdedor') || STATE.status === 'closed';
+                        const vDis = !interactive || vName.startsWith('Ganador') || vName.startsWith('Mejor') || vName.startsWith('Perdedor') || STATE.status === 'closed';
+                        
+                        thirdCard.appendChild(createKoButton(103, lName, myKo[103] === lName, lDis));
+                        thirdCard.appendChild(createKoButton(103, vName, myKo[103] === vName, vDis));
+                        thirdContainer.appendChild(thirdCard);
+                        col.appendChild(thirdContainer);
                     }
                 }
                 root.appendChild(col);
             });
         }
 
-        function createMatchCardDOM(m, matches, myKo, grouped, best3Copy, interactive) {
-            const card = document.createElement('div'); card.className = 'match'; card.setAttribute('data-match-id', m.id);
+        // Crea el "hueco" (slot) que alinea horizontal y verticalmente al partido con flex-box puro
+        function createMatchSlot(m, resolvedNames, myKo, interactive, customTitle) {
+            const slot = document.createElement('div'); slot.className = 'match-slot';
+            const card = document.createElement('div'); card.className = 'match'; card.dataset.matchId = m.id;
+
+            if (customTitle) {
+                const tag = document.createElement('div');
+                tag.style.cssText = 'font-size:0.65rem; color:var(--gold); font-weight:900; text-align:center; margin-bottom:4px; letter-spacing:1px;';
+                tag.textContent = customTitle;
+                card.appendChild(tag);
+            }
+
             const meta = document.createElement('div'); meta.className = 'match-meta'; meta.innerHTML = `<span>Partido ${m.id}</span>`; card.appendChild(meta);
             
-            const lName = resolveBracketTokenGeneral(m.local, matches, myKo, grouped, best3Copy);
-            const vName = resolveBracketTokenGeneral(m.visitor, matches, myKo, grouped, best3Copy);
+            const lName = resolvedNames.local; const vName = resolvedNames.visitor;
+            const lDis = !interactive || lName.startsWith('Ganador') || lName.startsWith('Mejor') || lName.startsWith('Perdedor') || STATE.status === 'closed';
+            const vDis = !interactive || vName.startsWith('Ganador') || vName.startsWith('Mejor') || vName.startsWith('Perdedor') || STATE.status === 'closed';
             
-            const localDisabled = !interactive || lName.startsWith('Ganador') || lName.startsWith('Mejor') || lName.startsWith('Perdedor') || STATE.status === 'closed';
-            const visDisabled = !interactive || vName.startsWith('Ganador') || vName.startsWith('Mejor') || vName.startsWith('Perdedor') || STATE.status === 'closed';
+            card.appendChild(createKoButton(m.id, lName, myKo[m.id] === lName, lDis));
+            card.appendChild(createKoButton(m.id, vName, myKo[m.id] === vName, vDis));
             
-            card.appendChild(createKoButton(m.id, lName, myKo[m.id] === lName, localDisabled));
-            card.appendChild(createKoButton(m.id, vName, myKo[m.id] === vName, visDisabled));
-            return card;
+            slot.appendChild(card);
+            return slot;
         }
 
         function renderFaseFinal() {
@@ -1160,22 +1207,22 @@
                 if (!STATE.knockoutPreds[STATE.myId]) STATE.knockoutPreds[STATE.myId] = {};
                 STATE.knockoutPreds[STATE.myId][mid] = team;
 
+                // Validación y Limpieza
                 const userResults = {}; const userPreds = STATE.predictions[STATE.myId] || {};
                 ALL_MATCHES.forEach(m => {
                     const p = userPreds[m.id]; if (p && p.gl !== '' && p.gv !== '' && !isNaN(p.gl) && !isNaN(p.gv)) userResults[m.id] = { gl: parseInt(p.gl), gv: parseInt(p.gv) };
                 });
                 const data = getUserGeneratedKnockoutMatches();
                 const myKo = STATE.knockoutPreds[STATE.myId];
+                
+                const resolvedNames = {}; const best3NumQueue = [...data.best3];
+                const sortedMatches = [...data.matches].sort((a,b) => a.id - b.id);
+                sortedMatches.forEach(m => { resolvedNames[m.id] = { local: resolveBracketTokenGeneral(m.local, data.matches, myKo, data.grouped, best3NumQueue), visitor: resolveBracketTokenGeneral(m.visitor, data.matches, myKo, data.grouped, best3NumQueue) }; });
 
                 const orderOfMatches = KNOCKOUT_DEFS.map(d => d.id).sort((a,b) => a - b);
                 orderOfMatches.forEach(id => {
                     const currentPick = myKo[id]; if (!currentPick) return;
-                    const matchObj = data.matches.find(m => m.id === id);
-                    if (matchObj) {
-                        const allowedLocal = resolveBracketTokenGeneral(matchObj.local, data.matches, myKo, data.grouped, data.best3.slice());
-                        const allowedVisitor = resolveBracketTokenGeneral(matchObj.visitor, data.matches, myKo, data.grouped, data.best3.slice());
-                        if (currentPick !== allowedLocal && currentPick !== allowedVisitor) delete myKo[id];
-                    }
+                    if (currentPick !== resolvedNames[id].local && currentPick !== resolvedNames[id].visitor) delete myKo[id];
                 });
 
                 await db.ref(`knockout_preds/${STATE.myId}`).set(myKo); STATE.knockoutPreds[STATE.myId] = myKo;
@@ -1292,8 +1339,7 @@
                 const actions = document.createElement('div'); actions.style.display='flex'; actions.style.gap='8px';
                 const btnDel = document.createElement('button'); btnDel.className='btn-icon'; btnDel.textContent='🗑️'; btnDel.title='Eliminar usuario'; btnDel.onclick = () => { if(confirm('¿Eliminar usuario y sus datos?')) APP.adminDeleteUser(u.id); };
                 const btnReset = document.createElement('button'); btnReset.className='btn-icon'; btnReset.textContent='♻️'; btnReset.title='Reiniciar usuario'; btnReset.onclick = () => { if(confirm('¿Reiniciar usuario (puntos/predicciones)?')) APP.adminResetUser(u.id); };
-                actions.appendChild(btnReset); actions.appendChild(btnDel); div.appendChild(meta); div.appendChild(actions); div.appendChild(meta); div.appendChild(actions);
-                div.appendChild(meta); div.appendChild(actions); container.appendChild(div);
+                actions.appendChild(btnReset); actions.appendChild(btnDel); div.appendChild(meta); div.appendChild(actions); container.appendChild(div);
             });
         }
 
