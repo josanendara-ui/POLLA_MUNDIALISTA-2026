@@ -108,8 +108,8 @@
            BRACKET FASE FINAL: Matemáticamente Dinámico y Responsivo
            ========================================================================== */
         .bracket-panel {
-            overflow-x: auto;
-            overflow-y: visible;
+            overflow-x: auto; 
+            overflow-y: visible; 
             background: rgba(13,20,34,0.72);
             border: 1px solid var(--border);
             border-radius: var(--radius);
@@ -120,7 +120,7 @@
 
         .bracket {
             display: flex;
-            min-width: 1200px;
+            min-width: 1200px; 
         }
 
         .round {
@@ -143,7 +143,7 @@
             justify-content: center;
             position: relative;
             padding: 0 16px;
-            min-height: 86px;
+            min-height: 86px; 
         }
 
         .match {
@@ -168,7 +168,7 @@
 
         .round:not(:first-child) .match-slot::before {
             content: ""; position: absolute; left: 0; top: 25%;
-            width: 16px; height: 50%;
+            width: 16px; height: 50%; 
             border: 2px solid rgba(45,212,191,0.4);
             border-right: none; border-radius: 4px 0 0 4px;
             box-sizing: border-box; z-index: 1;
@@ -202,6 +202,7 @@
             .score-box { width: 38px; height: 42px; }
         }
 
+        /* utilities */
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .grid-full { grid-column: span 2; }
         .text-center { text-align: center; }
@@ -302,6 +303,7 @@
                             <div style="font-size:0.7rem; color:var(--text-muted);">Máximo goleador</div>
                         </div>
                     </div>
+                    <p style="text-align:center; font-size:0.72rem; color:var(--text-muted); font-style:italic; margin-top:10px;">No se vale llorar si perdieron 😉</p>
                 </div>
             </div>
         </div>
@@ -431,7 +433,9 @@
             Selecciona el ganador de cada cruce. Los emparejamientos se actualizan automáticamente según tus tablas de grupos.
           </p>
 
-          <div class="bracket-panel"><div id="bracketRoot" class="bracket" role="region" aria-label="Llave eliminatoria"></div></div>
+          <div class="bracket-panel">
+              <div id="bracketRoot" class="bracket" role="region" aria-label="Llave eliminatoria"></div>
+          </div>
 
           <div style="display:flex; gap:8px; margin-top:12px;">
             <button class="btn secondary" onclick="APP.goToScreen('screenMenu')">Volver al Menú</button>
@@ -445,7 +449,9 @@
                 <button class="btn secondary" style="padding:24px 0; display:flex; flex-direction:column; align-items:center; gap:8px;" onclick="APP.goToScreen('screenPredictions')"><span style="font-size:1.6rem;">⚽</span><span style="font-size:0.85rem;">Pronósticos</span></button>
                 <button class="btn secondary" style="padding:24px 0; display:flex; flex-direction:column; align-items:center; gap:8px;" onclick="APP.goToScreen('screenTables')"><span style="font-size:1.6rem;">📊</span><span style="font-size:0.85rem;">Tablas Grupos</span></button>
                 <button class="btn secondary" style="padding:24px 0; display:flex; flex-direction:column; align-items:center; gap:8px;" onclick="APP.goToScreen('screenRanking')"><span style="font-size:1.6rem;">🏆</span><span style="font-size:0.85rem;">Leaderboard</span></button>
+                
                 <button id="btnFaseFinalMenu" class="btn secondary" style="padding:24px 0; display:flex; flex-direction:column; align-items:center; gap:8px;" onclick="APP.goToScreen('screenFaseFinal')"><span style="font-size:1.6rem;">🔥</span><span style="font-size:0.85rem;">Fase Final</span></button>
+                
                 <button class="btn secondary" style="padding:24px 0; display:flex; flex-direction:column; align-items:center; gap:8px;" onclick="APP.goToScreen('screenSpecial')"><span style="font-size:1.6rem;">🌟</span><span style="font-size:0.85rem;">Comodines</span></button>
                 <button class="btn secondary grid-full" style="font-size:0.85rem;" onclick="APP.goToScreen('screenAdmin')">🔧 Panel de Administrador</button>
             </div>
@@ -462,6 +468,11 @@
                 <div style="display:flex; gap:10px; margin-bottom:16px;">
                     <button class="btn secondary" style="flex:1;" onclick="APP.adminSetStatus('open')">🔓 Abrir Quiniela</button>
                     <button class="btn secondary" style="flex:1; border-color:#EF4444; color:#EF4444;" onclick="APP.adminSetStatus('closed')">🔒 Forzar Cierre</button>
+                </div>
+
+                <div style="display:flex; gap:10px; margin-bottom:12px;">
+                    <button class="btn secondary" style="flex:1;" onclick="APP.toggleFaseFinal(true)">✅ Habilitar Fase Final</button>
+                    <button class="btn secondary" style="flex:1;" onclick="APP.toggleFaseFinal(false)">❌ Deshabilitar Fase Final</button>
                 </div>
 
                 <button class="btn gold" style="margin-bottom:20px;" onclick="APP.adminExportCSV()">📥 Exportar datos a Excel (CSV)</button>
@@ -725,7 +736,7 @@
             { round: 'octavos', title: 'Octavos', matches: [89, 90, 93, 94, 91, 92, 95, 96] },
             { round: 'cuartos', title: 'Cuartos', matches: [97, 98, 99, 100] },
             { round: 'semis', title: 'Semifinales', matches: [101, 102] },
-            { round: 'final', title: 'Fase Final', matches: [104] }
+            { round: 'final', title: 'Fase Final', matches: [104] } // El 3er puesto (103) se inyecta suelto abajo
         ];
 
         const KO_POINTS = { dieciseisavos: 1, octavos: 2, cuartos: 3, semis: 4, final: 5, tercero: 2 };
@@ -734,7 +745,8 @@
             users: {}, predictions: {}, specials: {}, officialResults: {}, officialSpecials: {},
             knockoutPreds: {}, officialKnockout: {}, officialKnockoutMatches: {}, status: 'open',
             myId: localStorage.getItem('polla_myId'), currentUser: null, currentSelectedGroup: 'A',
-            currentTablesView: 'groups', adminConnected: sessionStorage.getItem('p26adm') === '1'
+            currentTablesView: 'groups', adminConnected: sessionStorage.getItem('p26adm') === '1',
+            faseFinalEnabled: false
         };
 
         let toastTimeout;
@@ -751,6 +763,7 @@
             STATE.officialKnockout = data.official_knockout || {};
             STATE.officialKnockoutMatches = data.official_knockout_matches || {};
             STATE.status = data.status || 'open';
+            STATE.faseFinalEnabled = !!data.fase_final_enabled;
 
             if (STATE.myId && STATE.users[STATE.myId]) {
                 STATE.currentUser = STATE.users[STATE.myId];
@@ -806,12 +819,14 @@
             if (id === 'screenRanking') renderRanking();
             if (id === 'screenLogin') populateExistingUsers();
             if (id === 'screenAdmin' && STATE.adminConnected) { adminLoadResults(); loadApiKeyToInput(); }
+            
+            // FASE FINAL AHORA SIEMPRE ACCESIBLE EN EL FLUJO
             if (id === 'screenFaseFinal') renderFaseFinal();
 
             const ub = DOM.get('userBadge'); if (ub) ub.textContent = STATE.currentUser ? `👤 ${STATE.currentUser.nombre_apodo}` : '👤 Sin sesión';
             const cw = DOM.get('closureWarning'); if (cw && id === 'screenWelcome') cw.textContent = STATE.status === 'closed' ? '🔒 LA POLLA MUNDIALISTA ESTÁ TOTALMENTE CERRADA' : '';
 
-            // Se asegura de que la Fase Final esté siempre visible
+            // Asegurar que navs y botones estén correctos
             const btnFF = DOM.get('btnFaseFinalMenu'); if (btnFF) btnFF.style.display = 'inline-flex';
             const navPred = DOM.get('navItemPredictions'); if (navPred) navPred.style.display = id === 'screenPredictions' ? 'flex' : 'none';
             const navFF = DOM.get('navItemFaseFinal'); if (navFF) navFF.style.display = (id === 'screenFaseFinal') ? 'flex' : 'none';
@@ -1378,6 +1393,22 @@
             }
         }
 
+        function toggleFaseFinal(enable) {
+            db.ref('fase_final_enabled').set(!!enable).then(() => { triggerToast(enable ? 'Fase Final habilitada' : 'Fase Final deshabilitada'); });
+        }
+
+        function saveOfficialKnockoutBatch(map) {
+            db.ref('official_knockout').update(map).then(() => triggerToast('Resultados fase final guardados')).catch(err => console.error(err));
+        }
+
+        async function loadOfficialSpecials() {
+            const snap = await db.ref('official_specials').get(); const data = snap.val() || {};
+            if (data) { STATE.officialSpecials = data; populateAdminSpecialsOptions(); triggerToast('Especiales cargados'); }
+        }
+
+        let autoSyncInterval = null;
+        function setSyncStatus(msg, color) { const el = document.getElementById('syncStatus'); if (el) { el.textContent = msg; el.style.color = color || 'var(--text-muted)'; } }
+
         function saveApiKey() {
             const val = document.getElementById('fdApiKey')?.value.trim(); if (!val) { triggerToast('⚠️ Ingresa una API Key'); return; }
             localStorage.setItem('fd_api_key', val); triggerToast('✅ API Key guardada'); setSyncStatus('Key guardada. Listo para sincronizar.', 'var(--green)');
@@ -1389,9 +1420,6 @@
         }
 
         function toSpanish(name) { return API_TO_SPANISH[name] || name; }
-
-        let autoSyncInterval = null;
-        function setSyncStatus(msg, color) { const el = document.getElementById('syncStatus'); if (el) { el.textContent = msg; el.style.color = color || 'var(--text-muted)'; } }
 
         async function syncFromAPI() {
             const apiKey = localStorage.getItem('fd_api_key'); if (!apiKey) { triggerToast('⚠️ Guarda tu API Key primero'); return; }
@@ -1498,10 +1526,10 @@
                 const blob = new Blob(["\uFEFF" + csv], { type: 'text/csv;charset=utf-8;' });
                 const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = `Polla_Familiar_2026_Master_${new Date().toISOString().slice(0,10)}.csv`; link.click();
             },
-            adminLoadResults, generateOfficialBracket, saveOfficialSpecials, loadOfficialSpecials,
-            adminDeleteUser, adminResetUser, saveAdmMatchesCloud, saveOfficialKoFromInput, saveApiKey, syncFromAPI, toggleAutoSync,
+            adminLoadResults, generateOfficialBracket, saveOfficialSpecials, loadOfficialSpecials, toggleFaseFinal,
+            adminDeleteUser, adminResetUser, saveAdmMatchesCloud, saveOfficialKoFromInput, saveOfficialKnockoutBatch, saveApiKey, syncFromAPI, toggleAutoSync,
             
-            // Nueva función para dirigir al usuario a la Fase Final
+            // Función nueva de navegación desde Especiales a Fase Final
             saveAndGoFaseFinal: function() {
                 const fields = [
                     { id: 'selRevelacion', key: 'seleccion_revelacion' }, { id: 'selDecepcion', key: 'seleccion_decepcion' },
