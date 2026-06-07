@@ -104,14 +104,12 @@
         .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-20px); background: var(--green); color: #06201C; padding: 10px 20px; border-radius: 30px; font-weight: 700; font-size: 0.85rem; z-index: 1000; opacity: 0; transition: 0.3s; pointer-events: none; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
         .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-        .lock-banner { background: #1e293b; border: 1px solid #ef4444; border-left: 4px solid #ef4444; color: white; padding: 12px; border-radius: var(--radius); text-align: left; font-weight: 600; margin: 16px 0; font-size: 0.9rem; }
-
         /* ==========================================================================
            BRACKET FASE FINAL: Matemáticamente Dinámico y Responsivo
            ========================================================================== */
         .bracket-panel {
-            overflow-x: auto; /* Scroll horizontal si es necesario */
-            overflow-y: visible; /* Permite scroll vertical nativo de la pantalla */
+            overflow-x: auto;
+            overflow-y: visible;
             background: rgba(13,20,34,0.72);
             border: 1px solid var(--border);
             border-radius: var(--radius);
@@ -122,11 +120,9 @@
 
         .bracket {
             display: flex;
-            min-width: 1200px; /* Evita que el bracket se apachurre en móvil */
-            /* ¡No se define altura fija! Se adapta al contenido de la 1era columna */
+            min-width: 1200px;
         }
 
-        /* Columnas de cada ronda */
         .round {
             display: flex;
             flex-direction: column;
@@ -140,15 +136,14 @@
             letter-spacing: 0.5px;
         }
 
-        /* "Slot" que sirve como caja envolvente geométrica. Agrupa el espacio */
         .match-slot {
-            flex: 1; /* Se estira proporcionalmente en su columna */
+            flex: 1;
             display: flex;
-            align-items: center; /* Centra el partido verticalmente */
+            align-items: center;
             justify-content: center;
             position: relative;
             padding: 0 16px;
-            min-height: 86px; /* Da la altura natural a todo el contenedor general */
+            min-height: 86px;
         }
 
         .match {
@@ -165,35 +160,30 @@
         
         .match.bracket-champion { border-color: rgba(247,201,72,0.5); box-shadow: 0 0 20px rgba(247, 201, 72, 0.15); }
 
-        /* LÍNEA DE SALIDA (A la derecha del partido actual) */
         .round:not(:last-child) .match::after {
             content: ""; position: absolute; right: -17px; top: 50%;
             width: 16px; height: 2px; background: rgba(45,212,191,0.4);
             z-index: 1;
         }
 
-        /* LÍNEA DE CONEXIÓN EN LLAVE '[' (A la izquierda del contenedor del partido siguiente) */
         .round:not(:first-child) .match-slot::before {
             content: ""; position: absolute; left: 0; top: 25%;
-            width: 16px; height: 50%; /* 50% garantiza conexión perfecta en space-around */
+            width: 16px; height: 50%;
             border: 2px solid rgba(45,212,191,0.4);
             border-right: none; border-radius: 4px 0 0 4px;
             box-sizing: border-box; z-index: 1;
         }
 
-        /* LÍNEA RECEPTORA HORIZONTAL (Tocando el lado izquierdo de la tarjeta) */
         .round:not(:first-child) .match-slot::after {
             content: ""; position: absolute; left: 16px; top: 50%;
             width: 16px; height: 2px; background: rgba(45,212,191,0.4);
             z-index: 1;
         }
 
-        /* Partido de Tercer puesto flota abajo sin molestar el CSS grid de la Final */
         .match-third-container {
             position: absolute; bottom: 0; left: 16px; right: 16px; z-index: 5;
         }
 
-        /* Contenido interior de botones */
         .ko-team-btn { display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; border-radius: 7px; min-height: 42px; background: var(--bg-input); color: var(--text-muted); border: 1px solid var(--border); font-weight: 800; cursor: pointer; transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease; width: 100%; text-align: left; }
         .ko-team-btn .team-left { display: flex; gap: 10px; align-items: center; }
         .ko-team-btn .flag { font-size: 1.25rem; }
@@ -212,7 +202,6 @@
             .score-box { width: 38px; height: 42px; }
         }
 
-        /* utilities */
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .grid-full { grid-column: span 2; }
         .text-center { text-align: center; }
@@ -313,7 +302,6 @@
                             <div style="font-size:0.7rem; color:var(--text-muted);">Máximo goleador</div>
                         </div>
                     </div>
-                    <p style="text-align:center; font-size:0.72rem; color:var(--text-muted); font-style:italic; margin-top:10px;">No se vale llorar si perdieron 😉</p>
                 </div>
             </div>
         </div>
@@ -351,16 +339,25 @@
                 </table>
             </div>
 
+            <div class="card" style="margin-top:16px; background:rgba(247, 201, 72, 0.08); border-color:rgba(247, 201, 72, 0.4);">
+                <p style="font-weight:900; font-size:0.95rem; color:var(--gold); margin-bottom:8px;">🌟 Puntos de Comodines</p>
+                <p style="font-size:0.85rem; color:var(--text-main); line-height:1.5;">
+                    ¡No olvides llenar la sección de <strong>Comodines Especiales</strong>! Acertar el Campeón del Mundo, el Goleador o cuál será la selección revelación te dará una lluvia de puntos extra que puede cambiar por completo la tabla de posiciones al final del torneo.
+                </p>
+            </div>
+
             <p style="font-weight:800; font-size:0.9rem; color:var(--text-main); margin-top:16px; margin-bottom:8px;">Reglas de Desempate (Leaderboard):</p>
-            <ol style="font-size:0.8rem; color:var(--text-muted); margin-left:20px; margin-bottom:16px; line-height:1.8;">
+            <ol style="font-size:0.8rem; color:var(--text-muted); margin-left:20px; margin-bottom:24px; line-height:1.8;">
                 <li>Puntos totales</li>
                 <li>Mayor cantidad de marcadores exactos</li>
                 <li>Si acertó al Campeón del Mundo</li>
                 <li>Mayor cantidad de aciertos en Fase Final</li>
                 <li>Orden de registro (quien se inscribió primero)</li>
             </ol>
-            <p style="text-align:center; color:var(--gold); font-weight:700; font-style:italic; margin-bottom:16px;">No se vale llorar si perdieron 😉</p>
-            <button class="btn" onclick="APP.goToScreen('screenPredictions')">Continuar</button>
+
+            <p style="text-align:center; font-size:1.1rem; color:var(--gold); font-weight:900; margin-bottom:20px;">🍀 ¡Mucha suerte y que gane el mejor!</p>
+
+            <button class="btn" onclick="APP.goToScreen('screenPredictions')">Empezar Pronósticos</button>
         </div>
 
         <div class="screen" id="screenPredictions">
@@ -402,7 +399,7 @@
         </div>
 
         <div class="screen" id="screenSpecial">
-            <h3 style="margin-bottom:16px; font-size:1.2rem;">Preguntas Especiales</h3>
+            <h3 style="margin-bottom:16px; font-size:1.2rem;">Comodines Especiales 🌟</h3>
             <div class="card">
                 <label style="font-size:0.85rem; color:var(--text-muted); font-weight:700; display:block; margin-bottom:4px;">🌟 Selección revelación</label>
                 <select id="selRevelacion" class="input-field" onchange="APP.saveSpecial('seleccion_revelacion', this.value)"></select>
@@ -423,8 +420,9 @@
                 <label style="font-size:0.85rem; color:var(--text-muted); font-weight:700; display:block; margin-top:10px; margin-bottom:4px;">⚽ Máximo goleador</label>
                 <input type="text" id="txtGoleador" class="input-field" placeholder="Escribe el nombre del jugador" onchange="APP.saveSpecial('goleador_mundial', this.value)">
             </div>
-            <button class="btn" style="margin-top:4px;" onclick="APP.saveAndGoMenu()">💾 Guardar Comodines y Volver</button>
-            <button class="btn secondary" onclick="APP.goToScreen('screenMenu')">Volver sin guardar</button>
+            
+            <button class="btn" style="margin-top:4px;" onclick="APP.saveAndGoFaseFinal()">💾 Guardar e ir a Fase Final</button>
+            <button class="btn secondary" onclick="APP.goToScreen('screenPredictions')">Volver a Fase de Grupos</button>
         </div>
 
         <div class="screen" id="screenFaseFinal" aria-live="polite" aria-label="Fase Final del Mundial">
@@ -447,7 +445,7 @@
                 <button class="btn secondary" style="padding:24px 0; display:flex; flex-direction:column; align-items:center; gap:8px;" onclick="APP.goToScreen('screenPredictions')"><span style="font-size:1.6rem;">⚽</span><span style="font-size:0.85rem;">Pronósticos</span></button>
                 <button class="btn secondary" style="padding:24px 0; display:flex; flex-direction:column; align-items:center; gap:8px;" onclick="APP.goToScreen('screenTables')"><span style="font-size:1.6rem;">📊</span><span style="font-size:0.85rem;">Tablas Grupos</span></button>
                 <button class="btn secondary" style="padding:24px 0; display:flex; flex-direction:column; align-items:center; gap:8px;" onclick="APP.goToScreen('screenRanking')"><span style="font-size:1.6rem;">🏆</span><span style="font-size:0.85rem;">Leaderboard</span></button>
-                <button id="btnFaseFinalMenu" class="btn secondary" style="padding:24px 0; display:flex; flex-direction:column; align-items:center; gap:8px; display:none;" onclick="APP.goToScreen('screenFaseFinal')"><span style="font-size:1.6rem;">🔥</span><span style="font-size:0.85rem;">Fase Final</span></button>
+                <button id="btnFaseFinalMenu" class="btn secondary" style="padding:24px 0; display:flex; flex-direction:column; align-items:center; gap:8px;" onclick="APP.goToScreen('screenFaseFinal')"><span style="font-size:1.6rem;">🔥</span><span style="font-size:0.85rem;">Fase Final</span></button>
                 <button class="btn secondary" style="padding:24px 0; display:flex; flex-direction:column; align-items:center; gap:8px;" onclick="APP.goToScreen('screenSpecial')"><span style="font-size:1.6rem;">🌟</span><span style="font-size:0.85rem;">Comodines</span></button>
                 <button class="btn secondary grid-full" style="font-size:0.85rem;" onclick="APP.goToScreen('screenAdmin')">🔧 Panel de Administrador</button>
             </div>
@@ -464,11 +462,6 @@
                 <div style="display:flex; gap:10px; margin-bottom:16px;">
                     <button class="btn secondary" style="flex:1;" onclick="APP.adminSetStatus('open')">🔓 Abrir Quiniela</button>
                     <button class="btn secondary" style="flex:1; border-color:#EF4444; color:#EF4444;" onclick="APP.adminSetStatus('closed')">🔒 Forzar Cierre</button>
-                </div>
-
-                <div style="display:flex; gap:10px; margin-bottom:12px;">
-                    <button class="btn secondary" style="flex:1;" onclick="APP.toggleFaseFinal(true)">✅ Habilitar Fase Final</button>
-                    <button class="btn secondary" style="flex:1;" onclick="APP.toggleFaseFinal(false)">❌ Deshabilitar Fase Final</button>
                 </div>
 
                 <button class="btn gold" style="margin-bottom:20px;" onclick="APP.adminExportCSV()">📥 Exportar datos a Excel (CSV)</button>
@@ -727,13 +720,12 @@
         ];
 
         /* ORDEN LÓGICO DEL MUNDIAL PARA RENDERIZAR */
-        /* Al renderizar en este orden visual en lugar de numérico, las llaves de flexbox empatan perfecto matemáticamente */
         const BRACKET_LAYOUT = [
             { round: 'dieciseisavos', title: 'Dieciseisavos', matches: [74, 77, 73, 75, 83, 84, 81, 82, 76, 78, 79, 80, 86, 88, 85, 87] },
             { round: 'octavos', title: 'Octavos', matches: [89, 90, 93, 94, 91, 92, 95, 96] },
             { round: 'cuartos', title: 'Cuartos', matches: [97, 98, 99, 100] },
             { round: 'semis', title: 'Semifinales', matches: [101, 102] },
-            { round: 'final', title: 'Fase Final', matches: [104] } // El 3er puesto (103) se inyecta suelto abajo
+            { round: 'final', title: 'Fase Final', matches: [104] }
         ];
 
         const KO_POINTS = { dieciseisavos: 1, octavos: 2, cuartos: 3, semis: 4, final: 5, tercero: 2 };
@@ -742,8 +734,7 @@
             users: {}, predictions: {}, specials: {}, officialResults: {}, officialSpecials: {},
             knockoutPreds: {}, officialKnockout: {}, officialKnockoutMatches: {}, status: 'open',
             myId: localStorage.getItem('polla_myId'), currentUser: null, currentSelectedGroup: 'A',
-            currentTablesView: 'groups', adminConnected: sessionStorage.getItem('p26adm') === '1',
-            faseFinalEnabled: false
+            currentTablesView: 'groups', adminConnected: sessionStorage.getItem('p26adm') === '1'
         };
 
         let toastTimeout;
@@ -760,7 +751,6 @@
             STATE.officialKnockout = data.official_knockout || {};
             STATE.officialKnockoutMatches = data.official_knockout_matches || {};
             STATE.status = data.status || 'open';
-            STATE.faseFinalEnabled = !!data.fase_final_enabled;
 
             if (STATE.myId && STATE.users[STATE.myId]) {
                 STATE.currentUser = STATE.users[STATE.myId];
@@ -816,14 +806,15 @@
             if (id === 'screenRanking') renderRanking();
             if (id === 'screenLogin') populateExistingUsers();
             if (id === 'screenAdmin' && STATE.adminConnected) { adminLoadResults(); loadApiKeyToInput(); }
-            if (id === 'screenFaseFinal') { if (!STATE.faseFinalEnabled) { goToScreen('screenMenu'); return; } renderFaseFinal(); }
+            if (id === 'screenFaseFinal') renderFaseFinal();
 
             const ub = DOM.get('userBadge'); if (ub) ub.textContent = STATE.currentUser ? `👤 ${STATE.currentUser.nombre_apodo}` : '👤 Sin sesión';
             const cw = DOM.get('closureWarning'); if (cw && id === 'screenWelcome') cw.textContent = STATE.status === 'closed' ? '🔒 LA POLLA MUNDIALISTA ESTÁ TOTALMENTE CERRADA' : '';
 
-            const btnFF = DOM.get('btnFaseFinalMenu'); if (btnFF) btnFF.style.display = STATE.faseFinalEnabled ? 'inline-flex' : 'none';
+            // Se asegura de que la Fase Final esté siempre visible
+            const btnFF = DOM.get('btnFaseFinalMenu'); if (btnFF) btnFF.style.display = 'inline-flex';
             const navPred = DOM.get('navItemPredictions'); if (navPred) navPred.style.display = id === 'screenPredictions' ? 'flex' : 'none';
-            const navFF = DOM.get('navItemFaseFinal'); if (navFF) navFF.style.display = (STATE.faseFinalEnabled && id === 'screenFaseFinal') ? 'flex' : 'none';
+            const navFF = DOM.get('navItemFaseFinal'); if (navFF) navFF.style.display = (id === 'screenFaseFinal') ? 'flex' : 'none';
 
             if (!['screenWelcome','screenLogin','screenRegister'].includes(id) && !STATE.currentUser) goToScreen('screenWelcome');
         }
@@ -1069,11 +1060,9 @@
             const count = DOM.get('bracketCountText'); if (count) count.textContent = `${picked}/32 selecciones`;
         }
 
-        /* RENDERING 100% DINÁMICO GEOMÉTRICO (SIN ALTURAS FIJAS) */
         function renderBracketInto(root, matches, grouped, best3, myKo, interactive) {
             root.innerHTML = '';
             
-            // 1. Resolvemos todos los nombres ESTRICTAMENTE EN ORDEN NUMÉRICO para no gastar los "Best 3" aleatoriamente.
             const resolvedNames = {};
             const best3NumQueue = [...best3];
             const sortedMatches = [...matches].sort((a, b) => a.id - b.id);
@@ -1084,7 +1073,6 @@
                 };
             });
 
-            // 2. Pintamos las columnas con el orden visual lógico para emparejar llaves matemáticamente
             BRACKET_LAYOUT.forEach(colDef => {
                 const col = document.createElement('div'); col.className = 'round';
                 
@@ -1097,7 +1085,6 @@
                         if (m) col.appendChild(createMatchSlot(m, resolvedNames[m.id], myKo, interactive));
                     });
                 } else {
-                    // La Gran Final va en el centro geométrico de la última columna
                     const finalMatch = matches.find(m => m.id === 104);
                     if (finalMatch) {
                         const finalSlot = createMatchSlot(finalMatch, resolvedNames[104], myKo, interactive, '👑 GRAN FINAL');
@@ -1105,7 +1092,6 @@
                         col.appendChild(finalSlot);
                     }
                     
-                    // Tercer Puesto flota libremente debajo para no dañar las llaves CSS
                     const thirdMatch = matches.find(m => m.id === 103);
                     if (thirdMatch) {
                         const thirdContainer = document.createElement('div'); thirdContainer.className = 'match-third-container';
@@ -1128,7 +1114,6 @@
             });
         }
 
-        // Crea el "hueco" (slot) que alinea horizontal y verticalmente al partido con flex-box puro
         function createMatchSlot(m, resolvedNames, myKo, interactive, customTitle) {
             const slot = document.createElement('div'); slot.className = 'match-slot';
             const card = document.createElement('div'); card.className = 'match'; card.dataset.matchId = m.id;
@@ -1154,7 +1139,6 @@
         }
 
         function renderFaseFinal() {
-            if (!STATE.faseFinalEnabled) return;
             const root = DOM.get('bracketRoot'); if (!root) return;
 
             const userResults = {}; const userPreds = STATE.predictions[STATE.myId] || {}; let filledCount = 0;
@@ -1246,7 +1230,7 @@
                 <div style="font-size:1.8rem; font-weight:900; background:linear-gradient(135deg,#ffd84d,#FBBF24,#c99a00); -webkit-background-clip:text; background-clip:text; color:transparent; margin-bottom:4px;">¡CAMPEÓN DEL MUNDO!</div>
                 <div style="font-size:1.3rem; font-weight:800; color:#fff; margin-bottom:16px;">${team}</div>
                 <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:20px;">Has completado tu bracket. ¡Que se cumpla tu pronóstico! 🙏</p>
-                <button onclick="this.closest('[style*=fixed]').remove()" style="background:var(--gold); color:#000; font-weight:800; border:none; padding:12px 28px; border-radius:12px; font-size:1rem; cursor:pointer;">¡A esperar el Mundial! 🏆</button>
+                <button onclick="this.closest('[style*=fixed]').remove(); APP.goToScreen('screenMenu');" style="background:var(--gold); color:#000; font-weight:800; border:none; padding:12px 28px; border-radius:12px; font-size:1rem; cursor:pointer;">¡A esperar el Mundial! 🏆</button>
             </div>`;
             document.body.appendChild(modal);
         }
@@ -1394,22 +1378,6 @@
             }
         }
 
-        function toggleFaseFinal(enable) {
-            db.ref('fase_final_enabled').set(!!enable).then(() => { triggerToast(enable ? 'Fase Final habilitada' : 'Fase Final deshabilitada'); });
-        }
-
-        function saveOfficialKnockoutBatch(map) {
-            db.ref('official_knockout').update(map).then(() => triggerToast('Resultados fase final guardados')).catch(err => console.error(err));
-        }
-
-        async function loadOfficialSpecials() {
-            const snap = await db.ref('official_specials').get(); const data = snap.val() || {};
-            if (data) { STATE.officialSpecials = data; populateAdminSpecialsOptions(); triggerToast('Especiales cargados'); }
-        }
-
-        let autoSyncInterval = null;
-        function setSyncStatus(msg, color) { const el = document.getElementById('syncStatus'); if (el) { el.textContent = msg; el.style.color = color || 'var(--text-muted)'; } }
-
         function saveApiKey() {
             const val = document.getElementById('fdApiKey')?.value.trim(); if (!val) { triggerToast('⚠️ Ingresa una API Key'); return; }
             localStorage.setItem('fd_api_key', val); triggerToast('✅ API Key guardada'); setSyncStatus('Key guardada. Listo para sincronizar.', 'var(--green)');
@@ -1421,6 +1389,9 @@
         }
 
         function toSpanish(name) { return API_TO_SPANISH[name] || name; }
+
+        let autoSyncInterval = null;
+        function setSyncStatus(msg, color) { const el = document.getElementById('syncStatus'); if (el) { el.textContent = msg; el.style.color = color || 'var(--text-muted)'; } }
 
         async function syncFromAPI() {
             const apiKey = localStorage.getItem('fd_api_key'); if (!apiKey) { triggerToast('⚠️ Guarda tu API Key primero'); return; }
@@ -1527,23 +1498,27 @@
                 const blob = new Blob(["\uFEFF" + csv], { type: 'text/csv;charset=utf-8;' });
                 const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = `Polla_Familiar_2026_Master_${new Date().toISOString().slice(0,10)}.csv`; link.click();
             },
-            adminLoadResults, generateOfficialBracket, saveOfficialSpecials, loadOfficialSpecials, toggleFaseFinal,
-            adminDeleteUser, adminResetUser, saveAdmMatchesCloud, saveOfficialKoFromInput, saveOfficialKnockoutBatch, saveApiKey, saveAndGoMenu, syncFromAPI, toggleAutoSync
+            adminLoadResults, generateOfficialBracket, saveOfficialSpecials, loadOfficialSpecials,
+            adminDeleteUser, adminResetUser, saveAdmMatchesCloud, saveOfficialKoFromInput, saveApiKey, syncFromAPI, toggleAutoSync,
+            
+            // Nueva función para dirigir al usuario a la Fase Final
+            saveAndGoFaseFinal: function() {
+                const fields = [
+                    { id: 'selRevelacion', key: 'seleccion_revelacion' }, { id: 'selDecepcion', key: 'seleccion_decepcion' },
+                    { id: 'selEcuadorPos', key: 'posicion_ecuador' }, { id: 'selCampeon', key: 'campeon_mundial' }, { id: 'txtGoleador', key: 'goleador_mundial' },
+                ];
+                const promises = fields.map(f => {
+                    const el = DOM.get(f.id); if (!el || !el.value.trim()) return Promise.resolve();
+                    return db.ref(`specials/${STATE.myId}/${f.key}`).set(el.value.trim());
+                });
+                Promise.all(promises).then(() => { 
+                    triggerToast('Comodines guardados'); 
+                    goToScreen('screenFaseFinal'); 
+                }).catch(err => { console.error(err); triggerToast('❌ Error'); });
+            }
         };
 
         window.APP.setTableGroupActive = setTableGroupActive;
-
-        function saveAndGoMenu() {
-            const fields = [
-                { id: 'selRevelacion', key: 'seleccion_revelacion' }, { id: 'selDecepcion', key: 'seleccion_decepcion' },
-                { id: 'selEcuadorPos', key: 'posicion_ecuador' }, { id: 'selCampeon', key: 'campeon_mundial' }, { id: 'txtGoleador', key: 'goleador_mundial' },
-            ];
-            const promises = fields.map(f => {
-                const el = DOM.get(f.id); if (!el || !el.value.trim()) return Promise.resolve();
-                return db.ref(`specials/${STATE.myId}/${f.key}`).set(el.value.trim());
-            });
-            Promise.all(promises).then(() => { triggerToast('Comodines guardados'); goToScreen('screenMenu'); }).catch(err => { console.error(err); triggerToast('❌ Error'); });
-        }
 
         function startCountdown() {
             const deadline = new Date('2026-06-10T23:59:59-05:00');
@@ -1560,10 +1535,9 @@
 
         function refreshUIAfterData() {
             const ub = DOM.get('userBadge'); if (ub) ub.textContent = STATE.currentUser ? `👤 ${STATE.currentUser.nombre_apodo}` : '👤 Sin sesión';
-            const btnFF = DOM.get('btnFaseFinalMenu'); if (btnFF) btnFF.style.display = STATE.faseFinalEnabled ? 'inline-flex' : 'none';
             const activeScreen = document.querySelector('.screen.active');
             const navPred2 = DOM.get('navItemPredictions'); if (navPred2) navPred2.style.display = (activeScreen && activeScreen.id === 'screenPredictions') ? 'flex' : 'none';
-            const navFF = DOM.get('navItemFaseFinal'); if (navFF) navFF.style.display = (STATE.faseFinalEnabled && activeScreen && activeScreen.id === 'screenFaseFinal') ? 'flex' : 'none';
+            const navFF = DOM.get('navItemFaseFinal'); if (navFF) navFF.style.display = (activeScreen && activeScreen.id === 'screenFaseFinal') ? 'flex' : 'none';
             if (STATE.adminConnected) renderAdminUsers();
         }
 
