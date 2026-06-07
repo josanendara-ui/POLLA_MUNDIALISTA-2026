@@ -582,8 +582,7 @@
             'Francia': '🇫🇷', 'Senegal': '🇸🇳', 'Irak': '🇮🇶', 'Noruega': '🇳🇴',
             'Argentina': '🇦🇷', 'Argelia': '🇩🇿', 'Austria': '🇦🇹', 'Jordania': '🇯🇴',
             'Portugal': '🇵🇹', 'República Democrática del Congo': '🇨🇩', 'Uzbekistán': '🇺🇿', 'Colombia': '🇨🇴',
-            'Inglaterra': '🏴󠁧󠁢󠁥󠁮󠁧󠁿', 'Croacia': '🇭🇷', 'Ghana': '🇬🇭', 'Panamá': '🇵🇦',
-            'Arabia Saudí': '🇸🇦', 'RD Congo': '🇨🇩'
+            'Inglaterra': '🏴󠁧󠁢󠁥󠁮󠁧󠁿', 'Croacia': '🇭🇷', 'Ghana': '🇬🇭', 'Panamá': '🇵🇦'
         };
 
         const ALL_TEAMS = Object.values(GROUPS).flat();
@@ -653,7 +652,7 @@
             { id: 34, grupo: "E", local: "Alemania", visitante: "Costa de Marfil", kickoff: "2026-06-20T16:00:00-04:00", fechaStr: "Sáb 20 Jun 16:00" },
             { id: 35, grupo: "E", local: "Ecuador", visitante: "Curazao", kickoff: "2026-06-20T22:00:00-04:00", fechaStr: "Sáb 20 Jun 22:00" },
             { id: 36, grupo: "F", local: "Túnez", visitante: "Japón", kickoff: "2026-06-21T00:00:00-04:00", fechaStr: "Sáb 20 Jun 00:00*" },
-            { id: 37, grupo: "H", local: "España", visitante: "Arabia Saudí", kickoff: "2026-06-21T12:00:00-04:00", fechaStr: "Dom 21 Jun 12:00" },
+            { id: 37, grupo: "H", local: "España", visitante: "Arabia Saudita", kickoff: "2026-06-21T12:00:00-04:00", fechaStr: "Dom 21 Jun 12:00" },
             { id: 38, grupo: "G", local: "Bélgica", visitante: "Irán", kickoff: "2026-06-21T15:00:00-04:00", fechaStr: "Dom 21 Jun 15:00" },
             { id: 39, grupo: "H", local: "Uruguay", visitante: "Cabo Verde", kickoff: "2026-06-21T18:00:00-04:00", fechaStr: "Dom 21 Jun 18:00" },
             { id: 40, grupo: "G", local: "Nueva Zelanda", visitante: "Egipto", kickoff: "2026-06-21T21:00:00-04:00", fechaStr: "Dom 21 Jun 21:00" },
@@ -664,7 +663,7 @@
             { id: 45, grupo: "K", local: "Portugal", visitante: "Uzbekistán", kickoff: "2026-06-23T13:00:00-04:00", fechaStr: "Mar 23 Jun 13:00" },
             { id: 46, grupo: "L", local: "Inglaterra", visitante: "Ghana", kickoff: "2026-06-23T16:00:00-04:00", fechaStr: "Mar 23 Jun 16:00" },
             { id: 47, grupo: "L", local: "Panamá", visitante: "Croacia", kickoff: "2026-06-23T19:00:00-04:00", fechaStr: "Mar 23 Jun 19:00" },
-            { id: 48, grupo: "K", local: "Colombia", visitante: "RD Congo", kickoff: "2026-06-23T22:00:00-04:00", fechaStr: "Mar 23 Jun 22:00" },
+            { id: 48, grupo: "K", local: "Colombia", visitante: "República Democrática del Congo", kickoff: "2026-06-23T22:00:00-04:00", fechaStr: "Mar 23 Jun 22:00" },
             { id: 49, grupo: "B", local: "Suiza", visitante: "Canadá", kickoff: "2026-06-24T15:00:00-04:00", fechaStr: "Mié 24 Jun 15:00" },
             { id: 50, grupo: "B", local: "Bosnia y Herzegovina", visitante: "Catar", kickoff: "2026-06-24T15:00:00-04:00", fechaStr: "Mié 24 Jun 15:00" },
             { id: 51, grupo: "C", local: "Escocia", visitante: "Brasil", kickoff: "2026-06-24T18:00:00-04:00", fechaStr: "Mié 24 Jun 18:00" },
@@ -929,6 +928,7 @@
                 if (p && p.gl !== '' && p.gv !== '' && p.gl !== undefined && p.gv !== undefined && !isNaN(p.gl) && !isNaN(p.gv)) {
                     const gl = parseInt(p.gl); const gv = parseInt(p.gv);
                     const tl = matrix[m.local]; const tv = matrix[m.visitante];
+                    if (!tl || !tv) return; // seguridad: nombre de equipo no coincide con GROUPS
                     tl.pj++; tv.pj++; tl.gf += gl; tl.gc += gv; tv.gf += gv; tv.gc += gl;
                     if (gl > gv) { tl.pg++; tl.pts += 3; tv.pp++; } else if (gl < gv) { tv.pg++; tv.pts += 3; tl.pp++; } else { tl.pe++; tv.pe++; tl.pts++; tv.pts++; }
                 }
@@ -1004,6 +1004,7 @@
                 const res = resultsMap[m.id];
                 if (res && res.gl !== undefined && res.gv !== undefined && res.gl !== null && res.gv !== null && !isNaN(res.gl) && !isNaN(res.gv)) {
                     const gl = parseInt(res.gl), gv = parseInt(res.gv); const tl = standings[m.local], tv = standings[m.visitante];
+                    if (!tl || !tv) return; // seguridad: nombre de equipo no coincide con GROUPS
                     tl.pj++; tv.pj++; tl.gf += gl; tl.gc += gv; tv.gf += gv; tv.gc += gl;
                     if (gl > gv) { tl.pg++; tl.pts += 3; tv.pp++; } else if (gl < gv) { tv.pg++; tv.pts += 3; tl.pp++; } else { tl.pe++; tv.pe++; tl.pts++; tv.pts++; }
                 }
@@ -1116,8 +1117,8 @@
                                                <div class="match-meta"><span>Partido 103</span></div>`;
                         
                         const lName = resolvedNames[103].local; const vName = resolvedNames[103].visitor;
-                        const lDis = !interactive || lName.startsWith('Ganador') || lName.startsWith('Mejor') || lName.startsWith('Perdedor') || STATE.status === 'closed';
-                        const vDis = !interactive || vName.startsWith('Ganador') || vName.startsWith('Mejor') || vName.startsWith('Perdedor') || STATE.status === 'closed';
+                        const lDis = !interactive || lName.startsWith('Ganador') || lName.startsWith('Mejor') || lName.startsWith('Perdedor') || lName.startsWith('Por definir') || (STATE.status === 'closed' && !STATE.adminConnected);
+                        const vDis = !interactive || vName.startsWith('Ganador') || vName.startsWith('Mejor') || vName.startsWith('Perdedor') || vName.startsWith('Por definir') || (STATE.status === 'closed' && !STATE.adminConnected);
                         
                         thirdCard.appendChild(createKoButton(103, lName, myKo[103] === lName, lDis));
                         thirdCard.appendChild(createKoButton(103, vName, myKo[103] === vName, vDis));
@@ -1143,8 +1144,8 @@
             const meta = document.createElement('div'); meta.className = 'match-meta'; meta.innerHTML = `<span>Partido ${m.id}</span>`; card.appendChild(meta);
             
             const lName = resolvedNames.local; const vName = resolvedNames.visitor;
-            const lDis = !interactive || lName.startsWith('Ganador') || lName.startsWith('Mejor') || lName.startsWith('Perdedor') || STATE.status === 'closed';
-            const vDis = !interactive || vName.startsWith('Ganador') || vName.startsWith('Mejor') || vName.startsWith('Perdedor') || STATE.status === 'closed';
+            const lDis = !interactive || lName.startsWith('Ganador') || lName.startsWith('Mejor') || lName.startsWith('Perdedor') || lName.startsWith('Por definir') || (STATE.status === 'closed' && !STATE.adminConnected);
+            const vDis = !interactive || vName.startsWith('Ganador') || vName.startsWith('Mejor') || vName.startsWith('Perdedor') || vName.startsWith('Por definir') || (STATE.status === 'closed' && !STATE.adminConnected);
             
             card.appendChild(createKoButton(m.id, lName, myKo[m.id] === lName, lDis));
             card.appendChild(createKoButton(m.id, vName, myKo[m.id] === vName, vDis));
@@ -1344,18 +1345,41 @@
 
         async function adminDeleteUser(uid) {
             try {
-                await db.ref(`users/${uid}`).remove(); await db.ref(`predictions/${uid}`).remove();
-                await db.ref(`specials/${uid}`).remove(); await db.ref(`knockout_preds/${uid}`).remove();
-                triggerToast('Usuario eliminado');
-            } catch (e) { console.error(e); triggerToast('Error'); }
+                await db.ref(`users/${uid}`).remove();
+                await db.ref(`predictions/${uid}`).remove();
+                await db.ref(`specials/${uid}`).remove();
+                await db.ref(`knockout_preds/${uid}`).remove();
+                // Actualizar STATE local inmediatamente sin esperar Firebase
+                delete STATE.users[uid];
+                delete STATE.predictions[uid];
+                delete STATE.specials[uid];
+                delete STATE.knockoutPreds[uid];
+                renderAdminUsers();
+                triggerToast('✅ Usuario eliminado');
+            } catch (e) {
+                console.error('Error eliminando usuario:', e);
+                triggerToast('❌ Error: ' + (e.message || 'No se pudo eliminar'));
+            }
         }
 
         async function adminResetUser(uid) {
             try {
-                await db.ref(`predictions/${uid}`).remove(); await db.ref(`specials/${uid}`).remove(); await db.ref(`knockout_preds/${uid}`).remove();
-                await db.ref(`users/${uid}/total_puntos`).set(0); await db.ref(`users/${uid}/exacts`).set(0);
-                triggerToast('Usuario reiniciado');
-            } catch (e) { console.error(e); triggerToast('Error'); }
+                await db.ref(`predictions/${uid}`).remove();
+                await db.ref(`specials/${uid}`).remove();
+                await db.ref(`knockout_preds/${uid}`).remove();
+                await db.ref(`users/${uid}/total_puntos`).set(0);
+                await db.ref(`users/${uid}/exacts`).set(0);
+                // Actualizar STATE local inmediatamente
+                delete STATE.predictions[uid];
+                delete STATE.specials[uid];
+                delete STATE.knockoutPreds[uid];
+                if (STATE.users[uid]) { STATE.users[uid].total_puntos = 0; STATE.users[uid].exacts = 0; }
+                renderAdminUsers();
+                triggerToast('✅ Usuario reiniciado');
+            } catch (e) {
+                console.error('Error reiniciando usuario:', e);
+                triggerToast('❌ Error: ' + (e.message || 'No se pudo reiniciar'));
+            }
         }
 
         function saveOfficialSpecials() {
