@@ -75,7 +75,7 @@
         .score-box:focus { border-color: var(--gold); background: #172554; box-shadow: 0 0 0 4px rgba(247, 201, 72, 0.12); }
         .score-box:disabled { opacity: 0.4; background: #000; color: #64748b; border-color: #1e293b; }
 
-        /* TABS DE GRUPOS - AHORA CON FLEX-WRAP PARA QUE NUNCA SE ESCONDAN */
+        /* TABS DE GRUPOS - FLEX-WRAP */
         .group-nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; padding-bottom: 12px; margin-bottom: 12px; }
         .group-tab { padding: 8px 12px; background: var(--bg-card); border: 1px solid var(--border); color: var(--text-muted); border-radius: 20px; font-weight: 600; font-size: 0.8rem; cursor: pointer; white-space: nowrap; }
         .group-tab.active { background: var(--green); color: #06201C; border-color: var(--green); box-shadow: 0 8px 18px rgba(45, 212, 191, 0.16); font-weight: 900; }
@@ -103,9 +103,7 @@
         .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-20px); background: var(--green); color: #06201C; padding: 10px 20px; border-radius: 30px; font-weight: 700; font-size: 0.85rem; z-index: 1000; opacity: 0; transition: 0.3s; pointer-events: none; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
         .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-        /* ==========================================================================
-           BRACKET FASE FINAL GEOMÉTRICA
-           ========================================================================== */
+        /* BRACKET FASE FINAL GEOMÉTRICA */
         .bracket-panel {
             overflow-x: auto;
             overflow-y: visible;
@@ -495,7 +493,7 @@
         });
         const db = firebase.database();
 
-        // === DATOS ===
+        // === DATOS CORREGIDOS ===
         const GROUPS = {
             A: ['México', 'Sudáfrica', 'Corea del Sur', 'Chequia'],
             B: ['Canadá', 'Bosnia y Herzegovina', 'Catar', 'Suiza'],
@@ -556,7 +554,7 @@
             'THIRD_PLACE': 'tercero', 'FINAL': 'final'
         };
 
-        // CALENDARIO CORREGIDO: Arabia Saudita (M37) y República Democrática del Congo (M48)
+        // Correcciones hechas en M37 y M48 para que coincidan con GROUPS
         const ALL_MATCHES = [
             { id: 1, grupo: "A", local: "México", visitante: "Sudáfrica", kickoff: "2026-06-11T15:00:00-04:00", fechaStr: "Jue 11 Jun 15:00" },
             { id: 2, grupo: "A", local: "Corea del Sur", visitante: "Chequia", kickoff: "2026-06-11T22:00:00-04:00", fechaStr: "Jue 11 Jun 22:00" },
@@ -757,6 +755,7 @@
             if (id === 'screenRanking') renderRanking();
             if (id === 'screenLogin') populateExistingUsers();
             if (id === 'screenAdmin' && STATE.adminConnected) { adminLoadResults(); loadApiKeyToInput(); }
+            
             if (id === 'screenFaseFinal') renderFaseFinal();
 
             const ub = DOM.get('userBadge'); if (ub) ub.textContent = STATE.currentUser ? `👤 ${STATE.currentUser.nombre_apodo}` : '👤 Sin sesión';
@@ -1450,7 +1449,7 @@
                 const blob = new Blob(["\uFEFF" + csv], { type: 'text/csv;charset=utf-8;' });
                 const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = `Polla_Familiar_2026_Master_${new Date().toISOString().slice(0,10)}.csv`; link.click();
             },
-            adminLoadResults, generateOfficialBracket, saveOfficialSpecials, loadOfficialSpecials, toggleFaseFinal,
+            adminLoadResults, generateOfficialBracket, saveOfficialSpecials, loadOfficialSpecials,
             adminDeleteUser, adminResetUser, saveAdmMatchesCloud, saveOfficialKoFromInput, saveApiKey, syncFromAPI, toggleAutoSync,
             
             saveAndGoFaseFinal: function() {
