@@ -10,12 +10,10 @@
         :root {
             --bg-body: #101826;
             --bg-card: #172033;
-            --bg-card-soft: #1F2A3F;
             --bg-input: #0D1422;
             --gold: #F7C948;
             --green: #2DD4BF;
             --green-dark: #0F766E;
-            --coral: #FB7185;
             --sky: #60A5FA;
             --text-main: #F8FAFC;
             --text-muted: #A7B4C7;
@@ -75,10 +73,9 @@
         .score-box:focus { border-color: var(--gold); background: #172554; box-shadow: 0 0 0 4px rgba(247, 201, 72, 0.12); }
         .score-box:disabled { opacity: 0.4; background: #000; color: #64748b; border-color: #1e293b; }
 
-        /* TABS */
-        .group-nav { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 12px; margin-bottom: 12px; scrollbar-width: none; }
-        .group-nav::-webkit-scrollbar { display: none; }
-        .group-tab { padding: 8px 16px; background: var(--bg-card); border: 1px solid var(--border); color: var(--text-muted); border-radius: 20px; font-weight: 600; font-size: 0.85rem; cursor: pointer; white-space: nowrap; }
+        /* TABS DE GRUPOS - AHORA CON FLEX-WRAP PARA QUE NUNCA SE ESCONDAN */
+        .group-nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; padding-bottom: 12px; margin-bottom: 12px; }
+        .group-tab { padding: 8px 12px; background: var(--bg-card); border: 1px solid var(--border); color: var(--text-muted); border-radius: 20px; font-weight: 600; font-size: 0.8rem; cursor: pointer; white-space: nowrap; }
         .group-tab.active { background: var(--green); color: #06201C; border-color: var(--green); box-shadow: 0 8px 18px rgba(45, 212, 191, 0.16); font-weight: 900; }
 
         /* STANDINGS */
@@ -105,11 +102,11 @@
         .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
         /* ==========================================================================
-           BRACKET FASE FINAL: Matemáticamente Dinámico y Responsivo
+           BRACKET FASE FINAL GEOMÉTRICA
            ========================================================================== */
         .bracket-panel {
-            overflow-x: auto; 
-            overflow-y: visible; 
+            overflow-x: auto;
+            overflow-y: visible;
             background: rgba(13,20,34,0.72);
             border: 1px solid var(--border);
             border-radius: var(--radius);
@@ -118,71 +115,20 @@
             -webkit-overflow-scrolling: touch;
         }
 
-        .bracket {
-            display: flex;
-            min-width: 1200px; 
-        }
-
-        .round {
-            display: flex;
-            flex-direction: column;
-            flex: 1;
-            position: relative;
-        }
-
-        .round-title {
-            text-align: center; font-size: 0.75rem; color: var(--gold);
-            font-weight: 800; text-transform: uppercase; margin-bottom: 24px;
-            letter-spacing: 0.5px;
-        }
-
-        .match-slot {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            padding: 0 16px;
-            min-height: 86px; 
-        }
-
-        .match {
-            width: 100%;
-            background: linear-gradient(180deg, rgba(31,42,63,0.98), rgba(17,24,39,0.96));
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 8px;
-            position: relative;
-            z-index: 2;
-            box-shadow: 0 6px 16px rgba(0,0,0,0.2);
-            display: flex; flex-direction: column; gap: 6px;
-        }
+        .bracket { display: flex; min-width: 1200px; }
+        .round { display: flex; flex-direction: column; flex: 1; position: relative; }
+        .round-title { text-align: center; font-size: 0.75rem; color: var(--gold); font-weight: 800; text-transform: uppercase; margin-bottom: 24px; letter-spacing: 0.5px; }
         
+        .match-slot { flex: 1; display: flex; align-items: center; justify-content: center; position: relative; padding: 0 16px; min-height: 86px; }
+        
+        .match { width: 100%; background: linear-gradient(180deg, rgba(31,42,63,0.98), rgba(17,24,39,0.96)); border: 1px solid var(--border); border-radius: 8px; padding: 8px; position: relative; z-index: 2; box-shadow: 0 6px 16px rgba(0,0,0,0.2); display: flex; flex-direction: column; gap: 6px; }
         .match.bracket-champion { border-color: rgba(247,201,72,0.5); box-shadow: 0 0 20px rgba(247, 201, 72, 0.15); }
 
-        .round:not(:last-child) .match::after {
-            content: ""; position: absolute; right: -17px; top: 50%;
-            width: 16px; height: 2px; background: rgba(45,212,191,0.4);
-            z-index: 1;
-        }
+        .round:not(:last-child) .match::after { content: ""; position: absolute; right: -17px; top: 50%; width: 16px; height: 2px; background: rgba(45,212,191,0.4); z-index: 1; }
+        .round:not(:first-child) .match-slot::before { content: ""; position: absolute; left: 0; top: 25%; width: 16px; height: 50%; border: 2px solid rgba(45,212,191,0.4); border-right: none; border-radius: 4px 0 0 4px; box-sizing: border-box; z-index: 1; }
+        .round:not(:first-child) .match-slot::after { content: ""; position: absolute; left: 16px; top: 50%; width: 16px; height: 2px; background: rgba(45,212,191,0.4); z-index: 1; }
 
-        .round:not(:first-child) .match-slot::before {
-            content: ""; position: absolute; left: 0; top: 25%;
-            width: 16px; height: 50%; 
-            border: 2px solid rgba(45,212,191,0.4);
-            border-right: none; border-radius: 4px 0 0 4px;
-            box-sizing: border-box; z-index: 1;
-        }
-
-        .round:not(:first-child) .match-slot::after {
-            content: ""; position: absolute; left: 16px; top: 50%;
-            width: 16px; height: 2px; background: rgba(45,212,191,0.4);
-            z-index: 1;
-        }
-
-        .match-third-container {
-            position: absolute; bottom: 0; left: 16px; right: 16px; z-index: 5;
-        }
+        .match-third-container { position: absolute; bottom: 0; left: 16px; right: 16px; z-index: 5; }
 
         .ko-team-btn { display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; border-radius: 7px; min-height: 42px; background: var(--bg-input); color: var(--text-muted); border: 1px solid var(--border); font-weight: 800; cursor: pointer; transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease; width: 100%; text-align: left; }
         .ko-team-btn .team-left { display: flex; gap: 10px; align-items: center; }
@@ -205,10 +151,6 @@
         /* utilities */
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .grid-full { grid-column: span 2; }
-        .text-center { text-align: center; }
-        .mt-24 { margin-top: 24px; }
-        .flex-center { display: flex; flex-direction: column; justify-content: center; align-items: center; flex: 1; }
-        .small { font-size:0.85rem; color:var(--text-muted); }
         .admin-users { display:flex; flex-direction:column; gap:8px; max-height:260px; overflow:auto; padding-right:6px; }
         .admin-user { background:var(--bg-input); padding:10px; border-radius:8px; border:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; gap:8px; }
         .admin-user .meta { display:flex; flex-direction:column; gap:4px; }
@@ -216,7 +158,6 @@
         .tables-switch { display:flex; gap:6px; padding:4px; border:1px solid var(--border); background:rgba(255,255,255,0.035); border-radius:999px; margin-bottom:14px; }
         .tables-switch button { flex:1; border:0; border-radius:999px; padding:10px 12px; background:transparent; color:var(--text-muted); font-weight:900; cursor:pointer; }
         .tables-switch button.active { background:var(--green); color:#06201C; }
-        .bracket-help { display:flex; justify-content:space-between; gap:12px; align-items:center; color:var(--text-muted); font-size:0.82rem; margin-bottom:10px; }
     </style>
 </head>
 <body>
@@ -388,7 +329,6 @@
                 <div id="liveGroupStandings"></div>
             </div>
             <div id="tablesBracketBlock" style="display:none;">
-                <div class="bracket-help"><span>Desliza horizontalmente para ver todos los cruces.</span><span id="bracketCountText"></span></div>
                 <div class="bracket-panel"><div id="tablesBracketRoot" class="bracket" role="region" aria-label="Diagrama de fase final"></div></div>
             </div>
         </div>
@@ -430,7 +370,7 @@
         <div class="screen" id="screenFaseFinal" aria-live="polite" aria-label="Fase Final del Mundial">
           <h3 style="margin-bottom:8px; font-size:1.2rem;">🔥 Fase Final</h3>
           <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:12px;">
-            Selecciona el ganador de cada cruce. Los emparejamientos se actualizan automáticamente según tus tablas de grupos.
+            Selecciona el ganador de cada cruce.
           </p>
 
           <div class="bracket-panel">
@@ -449,9 +389,7 @@
                 <button class="btn secondary" style="padding:24px 0; display:flex; flex-direction:column; align-items:center; gap:8px;" onclick="APP.goToScreen('screenPredictions')"><span style="font-size:1.6rem;">⚽</span><span style="font-size:0.85rem;">Pronósticos</span></button>
                 <button class="btn secondary" style="padding:24px 0; display:flex; flex-direction:column; align-items:center; gap:8px;" onclick="APP.goToScreen('screenTables')"><span style="font-size:1.6rem;">📊</span><span style="font-size:0.85rem;">Tablas Grupos</span></button>
                 <button class="btn secondary" style="padding:24px 0; display:flex; flex-direction:column; align-items:center; gap:8px;" onclick="APP.goToScreen('screenRanking')"><span style="font-size:1.6rem;">🏆</span><span style="font-size:0.85rem;">Leaderboard</span></button>
-                
                 <button id="btnFaseFinalMenu" class="btn secondary" style="padding:24px 0; display:flex; flex-direction:column; align-items:center; gap:8px;" onclick="APP.goToScreen('screenFaseFinal')"><span style="font-size:1.6rem;">🔥</span><span style="font-size:0.85rem;">Fase Final</span></button>
-                
                 <button class="btn secondary" style="padding:24px 0; display:flex; flex-direction:column; align-items:center; gap:8px;" onclick="APP.goToScreen('screenSpecial')"><span style="font-size:1.6rem;">🌟</span><span style="font-size:0.85rem;">Comodines</span></button>
                 <button class="btn secondary grid-full" style="font-size:0.85rem;" onclick="APP.goToScreen('screenAdmin')">🔧 Panel de Administrador</button>
             </div>
@@ -468,11 +406,6 @@
                 <div style="display:flex; gap:10px; margin-bottom:16px;">
                     <button class="btn secondary" style="flex:1;" onclick="APP.adminSetStatus('open')">🔓 Abrir Quiniela</button>
                     <button class="btn secondary" style="flex:1; border-color:#EF4444; color:#EF4444;" onclick="APP.adminSetStatus('closed')">🔒 Forzar Cierre</button>
-                </div>
-
-                <div style="display:flex; gap:10px; margin-bottom:12px;">
-                    <button class="btn secondary" style="flex:1;" onclick="APP.toggleFaseFinal(true)">✅ Habilitar Fase Final</button>
-                    <button class="btn secondary" style="flex:1;" onclick="APP.toggleFaseFinal(false)">❌ Deshabilitar Fase Final</button>
                 </div>
 
                 <button class="btn gold" style="margin-bottom:20px;" onclick="APP.adminExportCSV()">📥 Exportar datos a Excel (CSV)</button>
@@ -582,8 +515,7 @@
             'Francia': '🇫🇷', 'Senegal': '🇸🇳', 'Irak': '🇮🇶', 'Noruega': '🇳🇴',
             'Argentina': '🇦🇷', 'Argelia': '🇩🇿', 'Austria': '🇦🇹', 'Jordania': '🇯🇴',
             'Portugal': '🇵🇹', 'República Democrática del Congo': '🇨🇩', 'Uzbekistán': '🇺🇿', 'Colombia': '🇨🇴',
-            'Inglaterra': '🏴󠁧󠁢󠁥󠁮󠁧󠁿', 'Croacia': '🇭🇷', 'Ghana': '🇬🇭', 'Panamá': '🇵🇦',
-            'Arabia Saudí': '🇸🇦', 'RD Congo': '🇨🇩'
+            'Inglaterra': '🏴󠁧󠁢󠁥󠁮󠁧󠁿', 'Croacia': '🇭🇷', 'Ghana': '🇬🇭', 'Panamá': '🇵🇦'
         };
 
         const ALL_TEAMS = Object.values(GROUPS).flat();
@@ -730,13 +662,12 @@
             { id: 104, round: 'final', local: 'Winner101', visitor: 'Winner102' }
         ];
 
-        /* ORDEN LÓGICO DEL MUNDIAL PARA RENDERIZAR */
         const BRACKET_LAYOUT = [
             { round: 'dieciseisavos', title: 'Dieciseisavos', matches: [74, 77, 73, 75, 83, 84, 81, 82, 76, 78, 79, 80, 86, 88, 85, 87] },
             { round: 'octavos', title: 'Octavos', matches: [89, 90, 93, 94, 91, 92, 95, 96] },
             { round: 'cuartos', title: 'Cuartos', matches: [97, 98, 99, 100] },
             { round: 'semis', title: 'Semifinales', matches: [101, 102] },
-            { round: 'final', title: 'Fase Final', matches: [104] } // El 3er puesto (103) se inyecta suelto abajo
+            { round: 'final', title: 'Fase Final', matches: [104] }
         ];
 
         const KO_POINTS = { dieciseisavos: 1, octavos: 2, cuartos: 3, semis: 4, final: 5, tercero: 2 };
@@ -745,8 +676,7 @@
             users: {}, predictions: {}, specials: {}, officialResults: {}, officialSpecials: {},
             knockoutPreds: {}, officialKnockout: {}, officialKnockoutMatches: {}, status: 'open',
             myId: localStorage.getItem('polla_myId'), currentUser: null, currentSelectedGroup: 'A',
-            currentTablesView: 'groups', adminConnected: sessionStorage.getItem('p26adm') === '1',
-            faseFinalEnabled: false
+            currentTablesView: 'groups', adminConnected: sessionStorage.getItem('p26adm') === '1'
         };
 
         let toastTimeout;
@@ -763,7 +693,6 @@
             STATE.officialKnockout = data.official_knockout || {};
             STATE.officialKnockoutMatches = data.official_knockout_matches || {};
             STATE.status = data.status || 'open';
-            STATE.faseFinalEnabled = !!data.fase_final_enabled;
 
             if (STATE.myId && STATE.users[STATE.myId]) {
                 STATE.currentUser = STATE.users[STATE.myId];
@@ -820,13 +749,11 @@
             if (id === 'screenLogin') populateExistingUsers();
             if (id === 'screenAdmin' && STATE.adminConnected) { adminLoadResults(); loadApiKeyToInput(); }
             
-            // FASE FINAL AHORA SIEMPRE ACCESIBLE EN EL FLUJO
             if (id === 'screenFaseFinal') renderFaseFinal();
 
             const ub = DOM.get('userBadge'); if (ub) ub.textContent = STATE.currentUser ? `👤 ${STATE.currentUser.nombre_apodo}` : '👤 Sin sesión';
             const cw = DOM.get('closureWarning'); if (cw && id === 'screenWelcome') cw.textContent = STATE.status === 'closed' ? '🔒 LA POLLA MUNDIALISTA ESTÁ TOTALMENTE CERRADA' : '';
 
-            // Asegurar que navs y botones estén correctos
             const btnFF = DOM.get('btnFaseFinalMenu'); if (btnFF) btnFF.style.display = 'inline-flex';
             const navPred = DOM.get('navItemPredictions'); if (navPred) navPred.style.display = id === 'screenPredictions' ? 'flex' : 'none';
             const navFF = DOM.get('navItemFaseFinal'); if (navFF) navFF.style.display = (id === 'screenFaseFinal') ? 'flex' : 'none';
@@ -1513,37 +1440,26 @@
                     db.ref('official_results').remove(); db.ref('official_specials').remove(); db.ref('official_knockout').remove(); db.ref('official_knockout_matches').remove(); triggerToast('Reiniciado');
                 }
             },
-adminExportCSV: function() {
+            // FUNCIÓN ACTUALIZADA: CSV CON FASE FINAL (32 COLUMNAS NUEVAS)
+            adminExportCSV: function() {
                 let csv = 'Usuario,Puntos,Exactos,Comodine_Revelacion,Comodine_Decepcion,Ecuador_Etapa,Campeon_Mundial,Goleador_Mundial,';
-                
-                // Cabeceras de los 72 partidos de grupos
                 for(let i=1;i<=72;i++) csv += `P${i}_Local,P${i}_Visitante,`;
-                
-                // NUEVO: Cabeceras de los 32 cruces de Fase Final (Partidos 73 al 104)
                 for(let i=73;i<=104;i++) csv += `FaseFinal_M${i},`;
-                
                 csv += '\n';
                 Object.values(STATE.users).forEach(u => {
-                    const p = STATE.predictions[u.id] || {}; 
-                    const s = STATE.specials[u.id] || {};
-                    const ko = STATE.knockoutPreds[u.id] || {}; // <-- Recuperar predicciones de Fase Final
-
+                    const p = STATE.predictions[u.id] || {}; const s = STATE.specials[u.id] || {};
+                    const ko = STATE.knockoutPreds[u.id] || {}; 
                     csv += `"${u.nombre_apodo}",${u.total_puntos || 0},${u.exacts || 0},"${s.seleccion_revelacion || ''}","${s.seleccion_decepcion || ''}","${s.posicion_ecuador || ''}","${s.campeon_mundial || ''}","${s.goleador_mundial || ''}",`;
-                    
-                    // Llenar datos de Grupos
                     for(let i=1;i<=72;i++) csv += `${p[i] !== undefined && p[i].gl !== undefined && p[i].gl !== null ? p[i].gl : ''},${p[i] !== undefined && p[i].gv !== undefined && p[i].gv !== null ? p[i].gv : ''},`;
-                    
-                    // NUEVO: Llenar datos de Fase Final
                     for(let i=73;i<=104;i++) csv += `"${ko[i] || ''}",`;
-                    
                     csv += '\n';
                 });
-                
                 const blob = new Blob(["\uFEFF" + csv], { type: 'text/csv;charset=utf-8;' });
-                const link = document.createElement('a'); link.href = URL.createObjectURL(blob); 
-                link.download = `Polla_Familiar_2026_Master_${new Date().toISOString().slice(0,10)}.csv`; link.click();
+                const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = `Polla_Familiar_2026_Master_${new Date().toISOString().slice(0,10)}.csv`; link.click();
             },
-            // Función nueva de navegación desde Especiales a Fase Final
+            adminLoadResults, generateOfficialBracket, saveOfficialSpecials, loadOfficialSpecials, toggleFaseFinal,
+            adminDeleteUser, adminResetUser, saveAdmMatchesCloud, saveOfficialKoFromInput, saveOfficialKnockoutBatch, saveApiKey, syncFromAPI, toggleAutoSync,
+            
             saveAndGoFaseFinal: function() {
                 const fields = [
                     { id: 'selRevelacion', key: 'seleccion_revelacion' }, { id: 'selDecepcion', key: 'seleccion_decepcion' },
