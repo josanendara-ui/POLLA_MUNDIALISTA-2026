@@ -1513,22 +1513,36 @@
                     db.ref('official_results').remove(); db.ref('official_specials').remove(); db.ref('official_knockout').remove(); db.ref('official_knockout_matches').remove(); triggerToast('Reiniciado');
                 }
             },
-            adminExportCSV: function() {
+adminExportCSV: function() {
                 let csv = 'Usuario,Puntos,Exactos,Comodine_Revelacion,Comodine_Decepcion,Ecuador_Etapa,Campeon_Mundial,Goleador_Mundial,';
+                
+                // Cabeceras de los 72 partidos de grupos
                 for(let i=1;i<=72;i++) csv += `P${i}_Local,P${i}_Visitante,`;
+                
+                // NUEVO: Cabeceras de los 32 cruces de Fase Final (Partidos 73 al 104)
+                for(let i=73;i<=104;i++) csv += `FaseFinal_M${i},`;
+                
                 csv += '\n';
                 Object.values(STATE.users).forEach(u => {
-                    const p = STATE.predictions[u.id] || {}; const s = STATE.specials[u.id] || {};
+                    const p = STATE.predictions[u.id] || {}; 
+                    const s = STATE.specials[u.id] || {};
+                    const ko = STATE.knockoutPreds[u.id] || {}; // <-- Recuperar predicciones de Fase Final
+
                     csv += `"${u.nombre_apodo}",${u.total_puntos || 0},${u.exacts || 0},"${s.seleccion_revelacion || ''}","${s.seleccion_decepcion || ''}","${s.posicion_ecuador || ''}","${s.campeon_mundial || ''}","${s.goleador_mundial || ''}",`;
+                    
+                    // Llenar datos de Grupos
                     for(let i=1;i<=72;i++) csv += `${p[i] !== undefined && p[i].gl !== undefined && p[i].gl !== null ? p[i].gl : ''},${p[i] !== undefined && p[i].gv !== undefined && p[i].gv !== null ? p[i].gv : ''},`;
+                    
+                    // NUEVO: Llenar datos de Fase Final
+                    for(let i=73;i<=104;i++) csv += `"${ko[i] || ''}",`;
+                    
                     csv += '\n';
                 });
+                
                 const blob = new Blob(["\uFEFF" + csv], { type: 'text/csv;charset=utf-8;' });
-                const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = `Polla_Familiar_2026_Master_${new Date().toISOString().slice(0,10)}.csv`; link.click();
+                const link = document.createElement('a'); link.href = URL.createObjectURL(blob); 
+                link.download = `Polla_Familiar_2026_Master_${new Date().toISOString().slice(0,10)}.csv`; link.click();
             },
-            adminLoadResults, generateOfficialBracket, saveOfficialSpecials, loadOfficialSpecials, toggleFaseFinal,
-            adminDeleteUser, adminResetUser, saveAdmMatchesCloud, saveOfficialKoFromInput, saveOfficialKnockoutBatch, saveApiKey, syncFromAPI, toggleAutoSync,
-            
             // Función nueva de navegación desde Especiales a Fase Final
             saveAndGoFaseFinal: function() {
                 const fields = [
