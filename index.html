@@ -75,9 +75,10 @@
         .score-box:focus { border-color: var(--gold); background: #172554; box-shadow: 0 0 0 4px rgba(247, 201, 72, 0.12); }
         .score-box:disabled { opacity: 0.4; background: #000; color: #64748b; border-color: #1e293b; }
 
-        /* TABS DE GRUPOS - FLEX-WRAP */
-        .group-nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; padding-bottom: 12px; margin-bottom: 12px; }
-        .group-tab { padding: 8px 12px; background: var(--bg-card); border: 1px solid var(--border); color: var(--text-muted); border-radius: 20px; font-weight: 600; font-size: 0.8rem; cursor: pointer; white-space: nowrap; }
+        /* TABS */
+        .group-nav { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 12px; margin-bottom: 12px; scrollbar-width: none; }
+        .group-nav::-webkit-scrollbar { display: none; }
+        .group-tab { padding: 8px 16px; background: var(--bg-card); border: 1px solid var(--border); color: var(--text-muted); border-radius: 20px; font-weight: 600; font-size: 0.85rem; cursor: pointer; white-space: nowrap; }
         .group-tab.active { background: var(--green); color: #06201C; border-color: var(--green); box-shadow: 0 8px 18px rgba(45, 212, 191, 0.16); font-weight: 900; }
 
         /* STANDINGS */
@@ -103,10 +104,12 @@
         .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-20px); background: var(--green); color: #06201C; padding: 10px 20px; border-radius: 30px; font-weight: 700; font-size: 0.85rem; z-index: 1000; opacity: 0; transition: 0.3s; pointer-events: none; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
         .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-        /* BRACKET FASE FINAL GEOMÉTRICA */
+        /* ==========================================================================
+           BRACKET FASE FINAL: Matemáticamente Dinámico y Responsivo
+           ========================================================================== */
         .bracket-panel {
-            overflow-x: auto;
-            overflow-y: visible;
+            overflow-x: auto; 
+            overflow-y: visible; 
             background: rgba(13,20,34,0.72);
             border: 1px solid var(--border);
             border-radius: var(--radius);
@@ -115,20 +118,71 @@
             -webkit-overflow-scrolling: touch;
         }
 
-        .bracket { display: flex; min-width: 1200px; }
-        .round { display: flex; flex-direction: column; flex: 1; position: relative; }
-        .round-title { text-align: center; font-size: 0.75rem; color: var(--gold); font-weight: 800; text-transform: uppercase; margin-bottom: 24px; letter-spacing: 0.5px; }
+        .bracket {
+            display: flex;
+            min-width: 1200px; 
+        }
+
+        .round {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            position: relative;
+        }
+
+        .round-title {
+            text-align: center; font-size: 0.75rem; color: var(--gold);
+            font-weight: 800; text-transform: uppercase; margin-bottom: 24px;
+            letter-spacing: 0.5px;
+        }
+
+        .match-slot {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding: 0 16px;
+            min-height: 86px; 
+        }
+
+        .match {
+            width: 100%;
+            background: linear-gradient(180deg, rgba(31,42,63,0.98), rgba(17,24,39,0.96));
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 8px;
+            position: relative;
+            z-index: 2;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+            display: flex; flex-direction: column; gap: 6px;
+        }
         
-        .match-slot { flex: 1; display: flex; align-items: center; justify-content: center; position: relative; padding: 0 16px; min-height: 86px; }
-        
-        .match { width: 100%; background: linear-gradient(180deg, rgba(31,42,63,0.98), rgba(17,24,39,0.96)); border: 1px solid var(--border); border-radius: 8px; padding: 8px; position: relative; z-index: 2; box-shadow: 0 6px 16px rgba(0,0,0,0.2); display: flex; flex-direction: column; gap: 6px; }
         .match.bracket-champion { border-color: rgba(247,201,72,0.5); box-shadow: 0 0 20px rgba(247, 201, 72, 0.15); }
 
-        .round:not(:last-child) .match::after { content: ""; position: absolute; right: -17px; top: 50%; width: 16px; height: 2px; background: rgba(45,212,191,0.4); z-index: 1; }
-        .round:not(:first-child) .match-slot::before { content: ""; position: absolute; left: 0; top: 25%; width: 16px; height: 50%; border: 2px solid rgba(45,212,191,0.4); border-right: none; border-radius: 4px 0 0 4px; box-sizing: border-box; z-index: 1; }
-        .round:not(:first-child) .match-slot::after { content: ""; position: absolute; left: 16px; top: 50%; width: 16px; height: 2px; background: rgba(45,212,191,0.4); z-index: 1; }
+        .round:not(:last-child) .match::after {
+            content: ""; position: absolute; right: -17px; top: 50%;
+            width: 16px; height: 2px; background: rgba(45,212,191,0.4);
+            z-index: 1;
+        }
 
-        .match-third-container { position: absolute; bottom: 0; left: 16px; right: 16px; z-index: 5; }
+        .round:not(:first-child) .match-slot::before {
+            content: ""; position: absolute; left: 0; top: 25%;
+            width: 16px; height: 50%; 
+            border: 2px solid rgba(45,212,191,0.4);
+            border-right: none; border-radius: 4px 0 0 4px;
+            box-sizing: border-box; z-index: 1;
+        }
+
+        .round:not(:first-child) .match-slot::after {
+            content: ""; position: absolute; left: 16px; top: 50%;
+            width: 16px; height: 2px; background: rgba(45,212,191,0.4);
+            z-index: 1;
+        }
+
+        .match-third-container {
+            position: absolute; bottom: 0; left: 16px; right: 16px; z-index: 5;
+        }
 
         .ko-team-btn { display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; border-radius: 7px; min-height: 42px; background: var(--bg-input); color: var(--text-muted); border: 1px solid var(--border); font-weight: 800; cursor: pointer; transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease; width: 100%; text-align: left; }
         .ko-team-btn .team-left { display: flex; gap: 10px; align-items: center; }
@@ -395,7 +449,9 @@
                 <button class="btn secondary" style="padding:24px 0; display:flex; flex-direction:column; align-items:center; gap:8px;" onclick="APP.goToScreen('screenPredictions')"><span style="font-size:1.6rem;">⚽</span><span style="font-size:0.85rem;">Pronósticos</span></button>
                 <button class="btn secondary" style="padding:24px 0; display:flex; flex-direction:column; align-items:center; gap:8px;" onclick="APP.goToScreen('screenTables')"><span style="font-size:1.6rem;">📊</span><span style="font-size:0.85rem;">Tablas Grupos</span></button>
                 <button class="btn secondary" style="padding:24px 0; display:flex; flex-direction:column; align-items:center; gap:8px;" onclick="APP.goToScreen('screenRanking')"><span style="font-size:1.6rem;">🏆</span><span style="font-size:0.85rem;">Leaderboard</span></button>
+                
                 <button id="btnFaseFinalMenu" class="btn secondary" style="padding:24px 0; display:flex; flex-direction:column; align-items:center; gap:8px;" onclick="APP.goToScreen('screenFaseFinal')"><span style="font-size:1.6rem;">🔥</span><span style="font-size:0.85rem;">Fase Final</span></button>
+                
                 <button class="btn secondary" style="padding:24px 0; display:flex; flex-direction:column; align-items:center; gap:8px;" onclick="APP.goToScreen('screenSpecial')"><span style="font-size:1.6rem;">🌟</span><span style="font-size:0.85rem;">Comodines</span></button>
                 <button class="btn secondary grid-full" style="font-size:0.85rem;" onclick="APP.goToScreen('screenAdmin')">🔧 Panel de Administrador</button>
             </div>
@@ -412,6 +468,11 @@
                 <div style="display:flex; gap:10px; margin-bottom:16px;">
                     <button class="btn secondary" style="flex:1;" onclick="APP.adminSetStatus('open')">🔓 Abrir Quiniela</button>
                     <button class="btn secondary" style="flex:1; border-color:#EF4444; color:#EF4444;" onclick="APP.adminSetStatus('closed')">🔒 Forzar Cierre</button>
+                </div>
+
+                <div style="display:flex; gap:10px; margin-bottom:12px;">
+                    <button class="btn secondary" style="flex:1;" onclick="APP.toggleFaseFinal(true)">✅ Habilitar Fase Final</button>
+                    <button class="btn secondary" style="flex:1;" onclick="APP.toggleFaseFinal(false)">❌ Deshabilitar Fase Final</button>
                 </div>
 
                 <button class="btn gold" style="margin-bottom:20px;" onclick="APP.adminExportCSV()">📥 Exportar datos a Excel (CSV)</button>
@@ -493,7 +554,7 @@
         });
         const db = firebase.database();
 
-        // === DATOS CORREGIDOS ===
+        // === DATOS ===
         const GROUPS = {
             A: ['México', 'Sudáfrica', 'Corea del Sur', 'Chequia'],
             B: ['Canadá', 'Bosnia y Herzegovina', 'Catar', 'Suiza'],
@@ -521,7 +582,8 @@
             'Francia': '🇫🇷', 'Senegal': '🇸🇳', 'Irak': '🇮🇶', 'Noruega': '🇳🇴',
             'Argentina': '🇦🇷', 'Argelia': '🇩🇿', 'Austria': '🇦🇹', 'Jordania': '🇯🇴',
             'Portugal': '🇵🇹', 'República Democrática del Congo': '🇨🇩', 'Uzbekistán': '🇺🇿', 'Colombia': '🇨🇴',
-            'Inglaterra': '🏴󠁧󠁢󠁥󠁮󠁧󠁿', 'Croacia': '🇭🇷', 'Ghana': '🇬🇭', 'Panamá': '🇵🇦'
+            'Inglaterra': '🏴󠁧󠁢󠁥󠁮󠁧󠁿', 'Croacia': '🇭🇷', 'Ghana': '🇬🇭', 'Panamá': '🇵🇦',
+            'Arabia Saudí': '🇸🇦', 'RD Congo': '🇨🇩'
         };
 
         const ALL_TEAMS = Object.values(GROUPS).flat();
@@ -554,7 +616,6 @@
             'THIRD_PLACE': 'tercero', 'FINAL': 'final'
         };
 
-        // Correcciones hechas en M37 y M48 para que coincidan con GROUPS
         const ALL_MATCHES = [
             { id: 1, grupo: "A", local: "México", visitante: "Sudáfrica", kickoff: "2026-06-11T15:00:00-04:00", fechaStr: "Jue 11 Jun 15:00" },
             { id: 2, grupo: "A", local: "Corea del Sur", visitante: "Chequia", kickoff: "2026-06-11T22:00:00-04:00", fechaStr: "Jue 11 Jun 22:00" },
@@ -592,7 +653,7 @@
             { id: 34, grupo: "E", local: "Alemania", visitante: "Costa de Marfil", kickoff: "2026-06-20T16:00:00-04:00", fechaStr: "Sáb 20 Jun 16:00" },
             { id: 35, grupo: "E", local: "Ecuador", visitante: "Curazao", kickoff: "2026-06-20T22:00:00-04:00", fechaStr: "Sáb 20 Jun 22:00" },
             { id: 36, grupo: "F", local: "Túnez", visitante: "Japón", kickoff: "2026-06-21T00:00:00-04:00", fechaStr: "Sáb 20 Jun 00:00*" },
-            { id: 37, grupo: "H", local: "España", visitante: "Arabia Saudita", kickoff: "2026-06-21T12:00:00-04:00", fechaStr: "Dom 21 Jun 12:00" },
+            { id: 37, grupo: "H", local: "España", visitante: "Arabia Saudí", kickoff: "2026-06-21T12:00:00-04:00", fechaStr: "Dom 21 Jun 12:00" },
             { id: 38, grupo: "G", local: "Bélgica", visitante: "Irán", kickoff: "2026-06-21T15:00:00-04:00", fechaStr: "Dom 21 Jun 15:00" },
             { id: 39, grupo: "H", local: "Uruguay", visitante: "Cabo Verde", kickoff: "2026-06-21T18:00:00-04:00", fechaStr: "Dom 21 Jun 18:00" },
             { id: 40, grupo: "G", local: "Nueva Zelanda", visitante: "Egipto", kickoff: "2026-06-21T21:00:00-04:00", fechaStr: "Dom 21 Jun 21:00" },
@@ -603,7 +664,7 @@
             { id: 45, grupo: "K", local: "Portugal", visitante: "Uzbekistán", kickoff: "2026-06-23T13:00:00-04:00", fechaStr: "Mar 23 Jun 13:00" },
             { id: 46, grupo: "L", local: "Inglaterra", visitante: "Ghana", kickoff: "2026-06-23T16:00:00-04:00", fechaStr: "Mar 23 Jun 16:00" },
             { id: 47, grupo: "L", local: "Panamá", visitante: "Croacia", kickoff: "2026-06-23T19:00:00-04:00", fechaStr: "Mar 23 Jun 19:00" },
-            { id: 48, grupo: "K", local: "Colombia", visitante: "República Democrática del Congo", kickoff: "2026-06-23T22:00:00-04:00", fechaStr: "Mar 23 Jun 22:00" },
+            { id: 48, grupo: "K", local: "Colombia", visitante: "RD Congo", kickoff: "2026-06-23T22:00:00-04:00", fechaStr: "Mar 23 Jun 22:00" },
             { id: 49, grupo: "B", local: "Suiza", visitante: "Canadá", kickoff: "2026-06-24T15:00:00-04:00", fechaStr: "Mié 24 Jun 15:00" },
             { id: 50, grupo: "B", local: "Bosnia y Herzegovina", visitante: "Catar", kickoff: "2026-06-24T15:00:00-04:00", fechaStr: "Mié 24 Jun 15:00" },
             { id: 51, grupo: "C", local: "Escocia", visitante: "Brasil", kickoff: "2026-06-24T18:00:00-04:00", fechaStr: "Mié 24 Jun 18:00" },
@@ -669,12 +730,13 @@
             { id: 104, round: 'final', local: 'Winner101', visitor: 'Winner102' }
         ];
 
+        /* ORDEN LÓGICO DEL MUNDIAL PARA RENDERIZAR */
         const BRACKET_LAYOUT = [
             { round: 'dieciseisavos', title: 'Dieciseisavos', matches: [74, 77, 73, 75, 83, 84, 81, 82, 76, 78, 79, 80, 86, 88, 85, 87] },
             { round: 'octavos', title: 'Octavos', matches: [89, 90, 93, 94, 91, 92, 95, 96] },
             { round: 'cuartos', title: 'Cuartos', matches: [97, 98, 99, 100] },
             { round: 'semis', title: 'Semifinales', matches: [101, 102] },
-            { round: 'final', title: 'Fase Final', matches: [104] }
+            { round: 'final', title: 'Fase Final', matches: [104] } // El 3er puesto (103) se inyecta suelto abajo
         ];
 
         const KO_POINTS = { dieciseisavos: 1, octavos: 2, cuartos: 3, semis: 4, final: 5, tercero: 2 };
@@ -683,7 +745,8 @@
             users: {}, predictions: {}, specials: {}, officialResults: {}, officialSpecials: {},
             knockoutPreds: {}, officialKnockout: {}, officialKnockoutMatches: {}, status: 'open',
             myId: localStorage.getItem('polla_myId'), currentUser: null, currentSelectedGroup: 'A',
-            currentTablesView: 'groups', adminConnected: sessionStorage.getItem('p26adm') === '1'
+            currentTablesView: 'groups', adminConnected: sessionStorage.getItem('p26adm') === '1',
+            faseFinalEnabled: false
         };
 
         let toastTimeout;
@@ -700,6 +763,7 @@
             STATE.officialKnockout = data.official_knockout || {};
             STATE.officialKnockoutMatches = data.official_knockout_matches || {};
             STATE.status = data.status || 'open';
+            STATE.faseFinalEnabled = !!data.fase_final_enabled;
 
             if (STATE.myId && STATE.users[STATE.myId]) {
                 STATE.currentUser = STATE.users[STATE.myId];
@@ -756,11 +820,13 @@
             if (id === 'screenLogin') populateExistingUsers();
             if (id === 'screenAdmin' && STATE.adminConnected) { adminLoadResults(); loadApiKeyToInput(); }
             
+            // FASE FINAL AHORA SIEMPRE ACCESIBLE EN EL FLUJO
             if (id === 'screenFaseFinal') renderFaseFinal();
 
             const ub = DOM.get('userBadge'); if (ub) ub.textContent = STATE.currentUser ? `👤 ${STATE.currentUser.nombre_apodo}` : '👤 Sin sesión';
             const cw = DOM.get('closureWarning'); if (cw && id === 'screenWelcome') cw.textContent = STATE.status === 'closed' ? '🔒 LA POLLA MUNDIALISTA ESTÁ TOTALMENTE CERRADA' : '';
 
+            // Asegurar que navs y botones estén correctos
             const btnFF = DOM.get('btnFaseFinalMenu'); if (btnFF) btnFF.style.display = 'inline-flex';
             const navPred = DOM.get('navItemPredictions'); if (navPred) navPred.style.display = id === 'screenPredictions' ? 'flex' : 'none';
             const navFF = DOM.get('navItemFaseFinal'); if (navFF) navFF.style.display = (id === 'screenFaseFinal') ? 'flex' : 'none';
@@ -1140,6 +1206,7 @@
                 if (!STATE.knockoutPreds[STATE.myId]) STATE.knockoutPreds[STATE.myId] = {};
                 STATE.knockoutPreds[STATE.myId][mid] = team;
 
+                // Validación y Limpieza
                 const userResults = {}; const userPreds = STATE.predictions[STATE.myId] || {};
                 ALL_MATCHES.forEach(m => {
                     const p = userPreds[m.id]; if (p && p.gl !== '' && p.gv !== '' && !isNaN(p.gl) && !isNaN(p.gv)) userResults[m.id] = { gl: parseInt(p.gl), gv: parseInt(p.gv) };
@@ -1326,6 +1393,22 @@
             }
         }
 
+        function toggleFaseFinal(enable) {
+            db.ref('fase_final_enabled').set(!!enable).then(() => { triggerToast(enable ? 'Fase Final habilitada' : 'Fase Final deshabilitada'); });
+        }
+
+        function saveOfficialKnockoutBatch(map) {
+            db.ref('official_knockout').update(map).then(() => triggerToast('Resultados fase final guardados')).catch(err => console.error(err));
+        }
+
+        async function loadOfficialSpecials() {
+            const snap = await db.ref('official_specials').get(); const data = snap.val() || {};
+            if (data) { STATE.officialSpecials = data; populateAdminSpecialsOptions(); triggerToast('Especiales cargados'); }
+        }
+
+        let autoSyncInterval = null;
+        function setSyncStatus(msg, color) { const el = document.getElementById('syncStatus'); if (el) { el.textContent = msg; el.style.color = color || 'var(--text-muted)'; } }
+
         function saveApiKey() {
             const val = document.getElementById('fdApiKey')?.value.trim(); if (!val) { triggerToast('⚠️ Ingresa una API Key'); return; }
             localStorage.setItem('fd_api_key', val); triggerToast('✅ API Key guardada'); setSyncStatus('Key guardada. Listo para sincronizar.', 'var(--green)');
@@ -1337,9 +1420,6 @@
         }
 
         function toSpanish(name) { return API_TO_SPANISH[name] || name; }
-
-        let autoSyncInterval = null;
-        function setSyncStatus(msg, color) { const el = document.getElementById('syncStatus'); if (el) { el.textContent = msg; el.style.color = color || 'var(--text-muted)'; } }
 
         async function syncFromAPI() {
             const apiKey = localStorage.getItem('fd_api_key'); if (!apiKey) { triggerToast('⚠️ Guarda tu API Key primero'); return; }
@@ -1436,22 +1516,20 @@
             adminExportCSV: function() {
                 let csv = 'Usuario,Puntos,Exactos,Comodine_Revelacion,Comodine_Decepcion,Ecuador_Etapa,Campeon_Mundial,Goleador_Mundial,';
                 for(let i=1;i<=72;i++) csv += `P${i}_Local,P${i}_Visitante,`;
-                for(let i=73;i<=104;i++) csv += `FaseFinal_M${i},`;
                 csv += '\n';
                 Object.values(STATE.users).forEach(u => {
                     const p = STATE.predictions[u.id] || {}; const s = STATE.specials[u.id] || {};
-                    const ko = STATE.knockoutPreds[u.id] || {}; 
                     csv += `"${u.nombre_apodo}",${u.total_puntos || 0},${u.exacts || 0},"${s.seleccion_revelacion || ''}","${s.seleccion_decepcion || ''}","${s.posicion_ecuador || ''}","${s.campeon_mundial || ''}","${s.goleador_mundial || ''}",`;
                     for(let i=1;i<=72;i++) csv += `${p[i] !== undefined && p[i].gl !== undefined && p[i].gl !== null ? p[i].gl : ''},${p[i] !== undefined && p[i].gv !== undefined && p[i].gv !== null ? p[i].gv : ''},`;
-                    for(let i=73;i<=104;i++) csv += `"${ko[i] || ''}",`;
                     csv += '\n';
                 });
                 const blob = new Blob(["\uFEFF" + csv], { type: 'text/csv;charset=utf-8;' });
                 const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = `Polla_Familiar_2026_Master_${new Date().toISOString().slice(0,10)}.csv`; link.click();
             },
-            adminLoadResults, generateOfficialBracket, saveOfficialSpecials, loadOfficialSpecials,
-            adminDeleteUser, adminResetUser, saveAdmMatchesCloud, saveOfficialKoFromInput, saveApiKey, syncFromAPI, toggleAutoSync,
+            adminLoadResults, generateOfficialBracket, saveOfficialSpecials, loadOfficialSpecials, toggleFaseFinal,
+            adminDeleteUser, adminResetUser, saveAdmMatchesCloud, saveOfficialKoFromInput, saveOfficialKnockoutBatch, saveApiKey, syncFromAPI, toggleAutoSync,
             
+            // Función nueva de navegación desde Especiales a Fase Final
             saveAndGoFaseFinal: function() {
                 const fields = [
                     { id: 'selRevelacion', key: 'seleccion_revelacion' }, { id: 'selDecepcion', key: 'seleccion_decepcion' },
