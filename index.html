@@ -428,6 +428,18 @@
                         🔒 Comodines Cerrados
                     </button>
                 </div>
+                <div style="display:flex; gap:10px; margin-bottom:16px;">
+                    <button id="btnAdminSpecialsOpen" class="btn secondary" style="flex:1;" onclick="APP.setSpecialsStatus(true)">🌟 Comodines Abiertos</button>
+                    <button id="btnAdminSpecialsClosed" class="btn secondary" style="flex:1; border-color:#EF4444; color:#EF4444;" onclick="APP.setSpecialsStatus(false)">🔒 Comodines Cerrados</button>
+                </div>
+
+                <!-- NUEVO CÓDIGO: Botones para activar/desactivar registros -->
+                <h4 style="font-size:0.95rem; color:var(--text-muted); margin-bottom:8px; text-transform:uppercase; font-weight:800;">Estado de Registros</h4>
+                <div style="display:flex; gap:10px; margin-bottom:20px;">
+                    <button id="btnAdminRegistrosAbiertos" class="btn secondary" style="flex:1;" onclick="APP.toggleRegistros(false)">✅ Registros Abiertos</button>
+                    <button id="btnAdminRegistrosCerrados" class="btn secondary" style="flex:1; border-color:#EF4444; color:#EF4444;" onclick="APP.toggleRegistros(true)">🔒 Registros Cerrados</button>
+                </div>
+                <!-- FIN DEL NUEVO CÓDIGO -->
                 <button class="btn gold" style="margin-bottom:20px;" onclick="APP.adminExportCSV()">📥 Exportar datos a Excel (CSV)</button>
                 <button class="btn danger" style="width:100%; margin-bottom: 20px;" onclick="APP.adminResetMundial()">♻️ Reiniciar Resultados Oficiales</button>
                 
@@ -696,6 +708,15 @@
                 btnPredVis.style.color = STATE.predictionsVisible ? '#06201C' : 'var(--text-muted)';
                 btnPredHid.style.background = !STATE.predictionsVisible ? 'var(--green)' : 'transparent';
                 btnPredHid.style.color = !STATE.predictionsVisible ? '#06201C' : 'var(--text-muted)';
+            }
+            const btnRegAbiertos = DOM.get('btnAdminRegistrosAbiertos');
+            const btnRegCerrados = DOM.get('btnAdminRegistrosCerrados');
+            if (btnRegAbiertos && btnRegCerrados) {
+                btnRegAbiertos.style.background = !STATE.registrosLock ? 'var(--green)' : 'transparent';
+                btnRegAbiertos.style.color = !STATE.registrosLock ? '#06201C' : 'var(--text-muted)';
+                
+                btnRegCerrados.style.background = STATE.registrosLock ? '#EF4444' : 'transparent';
+                btnRegCerrados.style.color = STATE.registrosLock ? '#fff' : '#EF4444';
             }
         }
 
@@ -1622,6 +1643,19 @@
         // UNIFICACIÓN CORRECTA DEL OBJETO GLOBAL WINDOW.APP
         window.APP = {
             goToScreen, registerUser, loginExistingUser, logout, saveScoreCloud, setTableGroupActive, saveKo, saveAllKoDrafts, setTablesView, setTableSource, showRankingRulesModal, cerrarDesglose: cerrarModalDesglose, adminLoadResults, generateOfficialBracket, saveOfficialSpecials, loadOfficialSpecials, toggleFaseFinalVisibility, togglePredictionsVisibility, adminDeleteUser, adminResetUser, saveAdmMatchesCloud, saveOfficialKoFromInput, saveOfficialKnockoutBatch,
+            
+            // NUEVA FUNCIÓN: Activar/Desactivar registros
+            toggleRegistros: function(cerrar) {
+                db.ref('registros_lock').set(!!cerrar).then(() => {
+                    STATE.registrosLock = !!cerrar;
+                    triggerToast(cerrar ? '🔒 Registros cerrados' : '✅ Registros abiertos');
+                    updateAdminButtonsUI();
+                    refreshUIAfterData();
+                }).catch(err => {
+                    console.error(err);
+                    triggerToast('❌ Error al cambiar estado');
+                });
+            },
             saveSpecial: function(field, val) {
                 const mySpec = STATE.specials[STATE.myId] || {};
                 const comodinesGlobalCerrados = STATE.settings && STATE.settings.specialsOpen === false;
