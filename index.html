@@ -985,7 +985,10 @@
         }
 
         function registerUser() {
-            if (STATE.registrosLock) { alert('Los registros están cerrados.'); return; }
+            function registerUser() {
+    try {
+        // Corrección: El registro ahora depende únicamente del estado de registrosLock controlado por el administrador
+            if (STATE.registrosLock) {alert('Los registros están cerrados en este momento.'); return; }
             if (isQuinielaClosed() && !STATE.adminConnected) { alert('La Polla Mundialista está cerrada.'); return; }
             const nick = DOM.get('inputNickname').value.trim(); if (!nick) { alert('Ingresa un apodo familiar.'); return; }
             if (Object.values(STATE.users).some(u => u.nombre_apodo.toLowerCase() === nick.toLowerCase())) { alert('Este nombre ya existe.'); return; }
