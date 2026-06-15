@@ -985,21 +985,51 @@
         }
 
         function registerUser() {
+            try {
+                // 1. Controlado exclusivamente por el administrador desde el panel
+                if (STATE.registrosLock) { 
+                    alert('Los registros están cerrados en este momento.'); 
+                    return; 
+                }
+                
+                // 2. Validación del Nickname
+                const nick = DOM.get('inputNickname').value.trim(); 
+                if (!nick) { 
+                    alert('Ingresa un apodo familiar.'); 
+                    return; 
+                }
+                
+                // 3. Evitar duplicados
+                if (Object.values(STATE.users).some(u => u.nombre_apodo.toLowerCase() === nick.toLowerCase())) { 
+                    alert('Este nombre ya existe.'); 
+                    return; 
+                }
+                
+                // 4. Creación del usuario en Firebase
+                const newId = 'u_' + Date.now();
+                const userObj = { 
+                    id: newId, 
+                    nombre_apodo: nick, 
+                    total_puntos: 0, 
+                    exacts: 0, 
+                    date_registered: new Date().toISOString() 
+                };
+                
+                db.ref('users/' + newId).set(userObj).then(() => {
+                    localStorage.setItem('polla_myId', newId); 
+                    STATE.myId = newId; 
+                    STATE.currentUser = userObj;
+                    goToScreen('screenInstructions');
+                }).catch(err => { 
+                    console.error(err); 
+                    alert('Error al registrar.'); 
+                });
         
-        try {
-        // Corrección: El registro ahora depende únicamente del estado de registrosLock controlado por el administrador
-            if (STATE.registrosLock) {alert('Los registros están cerrados en este momento.'); return; }
-            if (isQuinielaClosed() && !STATE.adminConnected) { alert('La Polla Mundialista está cerrada.'); return; }
-            const nick = DOM.get('inputNickname').value.trim(); if (!nick) { alert('Ingresa un apodo familiar.'); return; }
-            if (Object.values(STATE.users).some(u => u.nombre_apodo.toLowerCase() === nick.toLowerCase())) { alert('Este nombre ya existe.'); return; }
-            const newId = 'u_' + Date.now();
-            const userObj = { id: newId, nombre_apodo: nick, total_puntos: 0, exacts: 0, date_registered: new Date().toISOString() };
-            db.ref('users/' + newId).set(userObj).then(() => {
-                localStorage.setItem('polla_myId', newId); STATE.myId = newId; STATE.currentUser = userObj;
-                goToScreen('screenInstructions');
-            }).catch(err => { console.error(err); alert('Error al registrar.'); });
+            } catch (error) {
+                console.error("Error en registerUser:", error);
+            }
         }
-        }
+        
         function populateExistingUsers() {
             const s = DOM.get('selectExistingUser'); if (!s) return;
             s.innerHTML = '<option value="">Busca tu nombre familiar...</option>';
