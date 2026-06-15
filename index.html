@@ -985,8 +985,8 @@
         }
 
         function registerUser() {
-            function registerUser() {
-    try {
+        
+        try {
         // Corrección: El registro ahora depende únicamente del estado de registrosLock controlado por el administrador
             if (STATE.registrosLock) {alert('Los registros están cerrados en este momento.'); return; }
             if (isQuinielaClosed() && !STATE.adminConnected) { alert('La Polla Mundialista está cerrada.'); return; }
@@ -999,7 +999,7 @@
                 goToScreen('screenInstructions');
             }).catch(err => { console.error(err); alert('Error al registrar.'); });
         }
-
+        }
         function populateExistingUsers() {
             const s = DOM.get('selectExistingUser'); if (!s) return;
             s.innerHTML = '<option value="">Busca tu nombre familiar...</option>';
