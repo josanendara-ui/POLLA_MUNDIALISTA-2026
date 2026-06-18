@@ -25,11 +25,11 @@
             --shadow: 0 16px 40px rgba(3, 7, 18, 0.32);
         }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
-        
+
         body { 
             background: radial-gradient(circle at top left, rgba(45, 212, 191, 0.16), transparent 34%), radial-gradient(circle at 85% 0%, rgba(247, 201, 72, 0.12), transparent 28%), var(--bg-body); 
             color: var(--text-main); 
-            min-height: 100dvh; /* Adaptación para móviles modernos */
+            min-height: 100dvh; 
             display: flex; 
             justify-content: center; 
             -webkit-tap-highlight-color: transparent; 
@@ -42,7 +42,7 @@
             box-shadow: 0 0 0 1px rgba(255,255,255,0.04), 0 28px 80px rgba(0,0,0,0.34); 
             display: flex; 
             flex-direction: column; 
-            height: 100dvh; /* Corrección de 100vh a 100dvh para evitar recortes en celulares */
+            height: 100dvh; 
             position: relative; 
         }
         
@@ -50,7 +50,7 @@
         .header h1 { font-size: 1rem; color: var(--text-main); font-weight: 800; cursor: pointer; line-height: 1.2; }
         .user-tag { background: rgba(45, 212, 191, 0.12); border-color: rgba(45, 212, 191, 0.3); padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; color: var(--green); border: 1px solid var(--border); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 190px; }
         
-        .screen { display: none; flex-direction: column; padding: 16px; flex: 1; overflow-y: auto; padding-bottom: 90px; }
+        .screen { display: none; flex-direction: column; padding: 16px; flex: 1 1 0; height: 0; overflow-y: auto; padding-bottom: 90px; -webkit-overflow-scrolling: touch; }
         .screen.active { display: flex; animation: fade .2s ease-in-out; }
         
         @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
@@ -340,14 +340,15 @@
             </div>
         </div>
         
-        <div class="screen" id="screenRanking"  style="padding-bottom:calc(80px + env(safe-area-inset-bottom, 0px) + 80px);">
-            
+       <div class="screen" id="screenRanking" style="padding-bottom: 120px;">
             <h3 style="margin-bottom:16px; font-size:1.2rem; text-align:center;">Clasificación General</h3>
             <p style="font-size:0.78rem; color:var(--text-muted); text-align:center; margin-bottom:12px; margin-top:-8px;">Toca cualquier jugador para ver su desglose de puntos 👆</p>
-            <div class="card" style="padding:0; overflow:hidden; border-color:var(--border);">
+            
+            <div class="card" style="padding:0; border-color:var(--border); flex: 1; min-height: 0; overflow-y: auto;">
                 <div id="rankingContent"></div>
             </div>
-            <button class="btn-rules" onclick="APP.showRankingRulesModal()">📜 ¿Cómo se ganan los puntos?</button>
+            
+            <button class="btn-rules" style="margin-top:16px; flex-shrink:0;" onclick="APP.showRankingRulesModal()">📜 ¿Cómo se ganan los puntos?</button>
         </div>
 
         <div class="screen" id="screenSpecial">
@@ -429,17 +430,9 @@
                     </button>
                 </div>
                 <div style="display:flex; gap:10px; margin-bottom:16px;">
-                    <button id="btnAdminSpecialsOpen" class="btn secondary" style="flex:1;" onclick="APP.setSpecialsStatus(true)">🌟 Comodines Abiertos</button>
-                    <button id="btnAdminSpecialsClosed" class="btn secondary" style="flex:1; border-color:#EF4444; color:#EF4444;" onclick="APP.setSpecialsStatus(false)">🔒 Comodines Cerrados</button>
+                    <button id="btnAdminRegOpen" class="btn secondary" style="flex:1;" onclick="APP.toggleRegistrosStatus(false)">🔓 Registros Abiertos</button>
+                    <button id="btnAdminRegClosed" class="btn secondary" style="flex:1;" onclick="APP.toggleRegistrosStatus(true)">🔒 Registros Cerrados</button>
                 </div>
-
-                <!-- NUEVO CÓDIGO: Botones para activar/desactivar registros -->
-                <h4 style="font-size:0.95rem; color:var(--text-muted); margin-bottom:8px; text-transform:uppercase; font-weight:800;">Estado de Registros</h4>
-                <div style="display:flex; gap:10px; margin-bottom:20px;">
-                    <button id="btnAdminRegistrosAbiertos" class="btn secondary" style="flex:1;" onclick="APP.toggleRegistros(false)">✅ Registros Abiertos</button>
-                    <button id="btnAdminRegistrosCerrados" class="btn secondary" style="flex:1; border-color:#EF4444; color:#EF4444;" onclick="APP.toggleRegistros(true)">🔒 Registros Cerrados</button>
-                </div>
-                <!-- FIN DEL NUEVO CÓDIGO -->
                 <button class="btn gold" style="margin-bottom:20px;" onclick="APP.adminExportCSV()">📥 Exportar datos a Excel (CSV)</button>
                 <button class="btn danger" style="width:100%; margin-bottom: 20px;" onclick="APP.adminResetMundial()">♻️ Reiniciar Resultados Oficiales</button>
                 
@@ -511,7 +504,7 @@
     (function() {
         'use strict';
         
-// Inicialización segura de Firebase (NUEVA CONFIGURACIÓN OFICIAL)
+        // Inicialización segura de Firebase (TU CONFIGURACIÓN OFICIAL DEL INDEX 20)
         if (!firebase.apps.length) {
             firebase.initializeApp({
                 apiKey: "AIzaSyBfNHaQUBTRydtClhbaEAYqotZuWq8vmzI",
@@ -674,12 +667,88 @@
             tableSource: 'simulated'
         };
         
-        try { STATE.myId = localStorage.getItem('polla_myId'); } catch(e) {} // Protección contra navegación privada
+        try { STATE.myId = localStorage.getItem('polla_myId'); } catch(e) {}
         
         let toastTimeout;
         const DOM = { get: id => document.getElementById(id), q: sel => document.querySelector(sel), qAll: sel => document.querySelectorAll(sel) };
 
-        // ========== ACTUALIZACIÓN VISUAL DE BOTONES ADMIN ==========
+        function normalizeScorePair(local, visitante) {
+            if (local === undefined || visitante === undefined || local === null || visitante === null || local === '' || visitante === '') return null;
+            const gl = parseInt(local, 10);
+            const gv = parseInt(visitante, 10);
+            if (!isValidScore(gl) || !isValidScore(gv)) return null;
+            return { gl, gv };
+        }
+
+        function isValidScore(value) {
+            return Number.isInteger(value) && value >= 0;
+        }
+
+        function isPlaceholderTeam(teamName) {
+            return ['Ganador', 'Mejor', 'Perdedor', 'Por definir'].some(p => String(teamName || '').startsWith(p));
+        }
+
+        function getSpecialsLockState(mySpec = STATE.myId && STATE.specials[STATE.myId] ? STATE.specials[STATE.myId] : {}) {
+            const globalLocked = STATE.settings && STATE.settings.specialsOpen === false;
+            const userLocked = mySpec.is_locked === true;
+            const userAlreadyFilled = !!(
+                mySpec.seleccion_revelacion &&
+                mySpec.seleccion_decepcion &&
+                mySpec.posicion_ecuador &&
+                mySpec.campeon_mundial &&
+                mySpec.goleador_mundial
+            );
+            return {
+                globalLocked,
+                userLocked,
+                userAlreadyFilled,
+                lockSpecials: globalLocked || userLocked,
+                shouldDisable: (globalLocked || userLocked || userAlreadyFilled) && !STATE.adminConnected
+            };
+        }
+
+        function escapeHtml(value) {
+            return String(value ?? '').replace(/[&<>"']/g, ch => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+            }[ch]));
+        }
+
+        function escapeCsv(value) {
+            let cell = String(value ?? '').replace(/\r?\n|\r/g, ' ');
+            if (/^[=+\-@]/.test(cell)) cell = "'" + cell;
+            return `"${cell.replace(/"/g, '""')}"`;
+        }
+
+        function valuesEqual(a, b) {
+            return JSON.stringify(a ?? null) === JSON.stringify(b ?? null);
+        }
+
+        function setIfChanged(path, currentValue, nextValue) {
+            if (valuesEqual(currentValue, nextValue)) return Promise.resolve(false);
+            return db.ref(path).set(nextValue).then(() => true);
+        }
+
+        function updateIfChanged(updates) {
+            const changed = {};
+            Object.keys(updates).forEach(path => {
+                const parts = path.split('/');
+                let current = STATE;
+                for (let i = 0; i < parts.length; i++) {
+                    const key = parts[i];
+                    const mapped = key === 'official_results' ? 'officialResults'
+                        : key === 'official_specials' ? 'officialSpecials'
+                        : key === 'official_knockout' ? 'officialKnockout'
+                        : key === 'official_knockout_matches' ? 'officialKnockoutMatches'
+                        : key === 'knockout_preds' ? 'knockoutPreds'
+                        : key;
+                    current = current && current[mapped];
+                }
+                if (!valuesEqual(current, updates[path])) changed[path] = updates[path];
+            });
+            if (Object.keys(changed).length === 0) return Promise.resolve(false);
+            return db.ref('/').update(changed).then(() => true);
+        }
+
         function updateAdminButtonsUI() {
             if (!STATE.adminConnected) return;
             const btnOpen = DOM.get('btnAdminStatusOpen');
@@ -709,18 +778,18 @@
                 btnPredHid.style.background = !STATE.predictionsVisible ? 'var(--green)' : 'transparent';
                 btnPredHid.style.color = !STATE.predictionsVisible ? '#06201C' : 'var(--text-muted)';
             }
-            const btnRegAbiertos = DOM.get('btnAdminRegistrosAbiertos');
-            const btnRegCerrados = DOM.get('btnAdminRegistrosCerrados');
-            if (btnRegAbiertos && btnRegCerrados) {
-                btnRegAbiertos.style.background = !STATE.registrosLock ? 'var(--green)' : 'transparent';
-                btnRegAbiertos.style.color = !STATE.registrosLock ? '#06201C' : 'var(--text-muted)';
-                
-                btnRegCerrados.style.background = STATE.registrosLock ? '#EF4444' : 'transparent';
-                btnRegCerrados.style.color = STATE.registrosLock ? '#fff' : '#EF4444';
+            const btnRegOpen = DOM.get('btnAdminRegOpen');
+            const btnRegClosed = DOM.get('btnAdminRegClosed');
+            if (btnRegOpen && btnRegClosed) {
+                btnRegOpen.style.background = !STATE.registrosLock ? 'var(--green)' : 'transparent';
+                btnRegOpen.style.color = !STATE.registrosLock ? '#06201C' : 'var(--text-muted)';
+                btnRegClosed.style.background = STATE.registrosLock ? '#EF4444' : 'transparent';
+                btnRegClosed.style.color = STATE.registrosLock ? '#fff' : 'var(--text-muted)';
+                if (STATE.registrosLock) { btnRegClosed.style.borderColor = '#EF4444'; } 
+                else { btnRegClosed.style.borderColor = 'var(--border)'; }
             }
         }
 
-        // Se eliminó la duplicación de la función isQuinielaClosed
         function isQuinielaClosed() {
             return STATE.settings.predictionsLocked || STATE.status === 'closed';
         }
@@ -747,14 +816,12 @@
             STATE.settings.specialsOpen = data.settings?.specialsOpen !== false;
             if (STATE.myId && STATE.users[STATE.myId]) STATE.currentUser = STATE.users[STATE.myId];
 
-            // Diferir cálculo pesado para no bloquear la UI
             setTimeout(() => {
                 calculatePointsEngine();
                 updateProgress();
-                // Escribir puntos calculados en lote a Firebase
                 const updates = {};
                 Object.keys(STATE.users).forEach(uid => {
-                    if (STATE.users[uid].total_puntos !== undefined) {
+                    if (STATE.users[uid].total_puntos !== undefined && (data.users?.[uid]?.total_puntos !== STATE.users[uid].total_puntos || data.users?.[uid]?.exacts !== STATE.users[uid].exacts)) {
                         updates[`users/${uid}/total_puntos`] = STATE.users[uid].total_puntos;
                         updates[`users/${uid}/exacts`] = STATE.users[uid].exacts;
                     }
@@ -780,18 +847,13 @@
         }
 
        function updateUIForLockState() {
-            const closed = isQuinielaClosed(); // Para la fase final y grupos
-            
-            // --- LÓGICA DE COMODINES CORREGIDA ---
+            const closed = isQuinielaClosed(); 
             const mySpec = STATE.myId && STATE.specials[STATE.myId] ? STATE.specials[STATE.myId] : {};
             
-            // 1. ¿El admin cerró los comodines desde el panel?
-            const comodinesGlobalCerrados = STATE.settings && STATE.settings.specialsOpen === false;
-            // 2. ¿El usuario ya selló sus comodines con el botón?
-            const comodinesSellaosUsuario = mySpec.is_locked === true;
-            
-            // Se bloquean si pasa cualquiera de las dos cosas
-            const lockSpecials = comodinesGlobalCerrados || comodinesSellaosUsuario;
+            const specialsLock = getSpecialsLockState(mySpec);
+            const comodinesGlobalCerrados = specialsLock.globalLocked;
+            const comodinesSellaosUsuario = specialsLock.userLocked;
+            const lockSpecials = specialsLock.lockSpecials;
 
             const bannerFaseFinal = DOM.get('closureBannerFaseFinal');
             if (bannerFaseFinal) bannerFaseFinal.style.display = closed ? 'block' : 'none';
@@ -812,7 +874,6 @@
             const bannerPreds = DOM.get('closureBannerPredictions');
             if (bannerPreds) bannerPreds.style.display = 'none';
 
-            // Aplica el bloqueo a los inputs y al botón
             document.querySelectorAll('#screenSpecial select, #screenSpecial input').forEach(el => {
                 el.disabled = lockSpecials && !STATE.adminConnected;
             });
@@ -822,11 +883,10 @@
                 btnGuardarSpecial.disabled = lockSpecials && !STATE.adminConnected;
             }
 
-           // Aplica el bloqueo a la Fase Final (global + por fecha individual)
             document.querySelectorAll('#screenFaseFinal .ko-team-btn').forEach(btn => {
                 const matchId = parseInt(btn.dataset.matchId, 10);
                 const matchClosedIndividually = isMatchClosed(matchId);
-                const isPlaceholder = ['Ganador', 'Mejor', 'Perdedor', 'Por definir'].some(p => btn.dataset.team?.startsWith(p));
+                const isPlaceholder = isPlaceholderTeam(btn.dataset.team);
                 
                 if (closed || matchClosedIndividually || isPlaceholder) {
                     btn.disabled = true;
@@ -842,7 +902,7 @@
             const userPreds = STATE.predictions[STATE.myId] || {}; let count = 0;
             ALL_MATCHES.forEach(m => {
                 const p = userPreds[m.id];
-                if (p && p.gl !== '' && p.gv !== '' && p.gl !== undefined && p.gv !== undefined && p.gl !== null && p.gv !== null && !isNaN(p.gl) && !isNaN(p.gv)) count++;
+                if (p && normalizeScorePair(p.gl, p.gv)) count++;
             });
             const pct = Math.round((count / 72) * 100);
             const pText = DOM.get('progressText'); const pBar = DOM.get('progressBar');
@@ -853,18 +913,17 @@
         const _desgloseCache = {};
         const REGLAS_POLLA = { PUNTOS_EXACTO: 3, PUNTOS_TENDENCIA: 1, PUNTOS_NADA: 0 };
 
-        function evaluarPuntosPartido(pred, real) {
-            if (!real || real.goles_local === undefined || real.goles_visitante === undefined || real.goles_local === null || real.goles_visitante === null || real.goles_local === '' || real.goles_visitante === '') {
+        function evaluarPuntosPartido(pronosticoLocal, pronosticoVisitante, resultadoLocal, resultadoVisitante) {
+            const real = normalizeScorePair(resultadoLocal, resultadoVisitante);
+            if (!real) {
                 return { puntos: REGLAS_POLLA.PUNTOS_NADA, motivo: 'Sin resultado oficial', tipo: 'pendiente' };
             }
-            if (!pred || pred.goles_local === undefined || pred.goles_visitante === undefined || pred.goles_local === null || pred.goles_visitante === null || pred.goles_local === '' || pred.goles_visitante === '') {
+            const pred = normalizeScorePair(pronosticoLocal, pronosticoVisitante);
+            if (!pred) {
                 return { puntos: REGLAS_POLLA.PUNTOS_NADA, motivo: 'No pronosticado', tipo: 'no_pronosticado' };
             }
-            const pL = parseInt(pred.goles_local, 10); const pV = parseInt(pred.goles_visitante, 10);
-            const rL = parseInt(real.goles_local, 10); const rV = parseInt(real.goles_visitante, 10);
-            if (isNaN(pL) || isNaN(pV) || isNaN(rL) || isNaN(rV)) return { puntos: REGLAS_POLLA.PUNTOS_NADA, motivo: 'Dato inválido', tipo: 'pendiente' };
-            if (pL === rL && pV === rV) return { puntos: REGLAS_POLLA.PUNTOS_EXACTO, motivo: `Marcador exacto (+${REGLAS_POLLA.PUNTOS_EXACTO} pts)`, tipo: 'exacto' };
-            if (Math.sign(pL - pV) === Math.sign(rL - rV)) return { puntos: REGLAS_POLLA.PUNTOS_TENDENCIA, motivo: `Ganador/empate correcto (+${REGLAS_POLLA.PUNTOS_TENDENCIA} pt)`, tipo: 'tendencia' };
+            if (pred.gl === real.gl && pred.gv === real.gv) return { puntos: REGLAS_POLLA.PUNTOS_EXACTO, motivo: `Marcador exacto (+${REGLAS_POLLA.PUNTOS_EXACTO} pts)`, tipo: 'exacto' };
+            if (Math.sign(pred.gl - pred.gv) === Math.sign(real.gl - real.gv)) return { puntos: REGLAS_POLLA.PUNTOS_TENDENCIA, motivo: `Ganador/empate correcto (+${REGLAS_POLLA.PUNTOS_TENDENCIA} pt)`, tipo: 'tendencia' };
             return { puntos: REGLAS_POLLA.PUNTOS_NADA, motivo: 'Pronóstico incorrecto (0 pts)', tipo: 'incorrecto' };
         }
 
@@ -877,9 +936,11 @@
                 ALL_MATCHES.forEach(partido => {
                     const resultadoOficial = STATE.officialResults[partido.id];
                     const prediccionRaw = prediccionesUsuario[partido.id];
-                    const predAdapted = (prediccionRaw && prediccionRaw.gl !== undefined) ? { goles_local: prediccionRaw.gl, goles_visitante: prediccionRaw.gv } : null;
-                    const realAdapted = (resultadoOficial && resultadoOficial.gl !== undefined) ? { goles_local: resultadoOficial.gl, goles_visitante: resultadoOficial.gv } : null;
-                    const evaluacion = evaluarPuntosPartido(predAdapted, realAdapted);
+                    const predPair = prediccionRaw ? normalizeScorePair(prediccionRaw.gl, prediccionRaw.gv) : null;
+                    const realPair = resultadoOficial ? normalizeScorePair(resultadoOficial.gl, resultadoOficial.gv) : null;
+                    const predAdapted = predPair ? { goles_local: predPair.gl, goles_visitante: predPair.gv } : null;
+                    const realAdapted = realPair ? { goles_local: realPair.gl, goles_visitante: realPair.gv } : null;
+                    const evaluacion = evaluarPuntosPartido(prediccionRaw?.gl, prediccionRaw?.gv, resultadoOficial?.gl, resultadoOficial?.gv);
                     if (evaluacion.tipo === 'exacto') exactosContador++;
                     if (evaluacion.tipo !== 'pendiente' || predAdapted !== null) {
                         desgloseHistorial.push({ partidoId: partido.id, infoPartido: partido, prediccion: predAdapted, resultadoReal: realAdapted, evaluacion: evaluacion });
@@ -918,12 +979,12 @@
                     const div = document.createElement('div'); div.className = 'desglose-item'; div.style.borderLeft = `4px solid ${colorBorde}`;
                     div.innerHTML = `
                         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:4px;">
-                            <span class="desglose-match-name">${FLAGS[part.local]||'🏳️'} ${part.local} vs ${part.visitante} ${FLAGS[part.visitante]||'🏳️'} · Gr.${part.grupo}</span>
-                            <span class="desglose-motivo" style="color:${colorBorde};">${eval_.motivo}</span>
+                            <span class="desglose-match-name">${FLAGS[part.local]||'🏳️'} ${escapeHtml(part.local)} vs ${escapeHtml(part.visitante)} ${FLAGS[part.visitante]||'🏳️'} · Gr.${escapeHtml(part.grupo)}</span>
+                            <span class="desglose-motivo" style="color:${colorBorde};">${escapeHtml(eval_.motivo)}</span>
                         </div>
                         <div class="desglose-scores">
-                            <div><span class="desglose-score-label">Tu pronóstico: </span><span class="desglose-score-val" style="color:var(--text-main);">${predStr}</span></div>
-                            <div><span class="desglose-score-label">Resultado real: </span><span class="desglose-score-val" style="color:${real ? 'var(--green)' : 'var(--text-muted)'};">${realStr}</span></div>
+                            <div><span class="desglose-score-label">Tu pronóstico: </span><span class="desglose-score-val" style="color:var(--text-main);">${escapeHtml(predStr)}</span></div>
+                            <div><span class="desglose-score-label">Resultado real: </span><span class="desglose-score-val" style="color:${real ? 'var(--green)' : 'var(--text-muted)'};">${escapeHtml(realStr)}</span></div>
                         </div>`;
                     cuerpo.appendChild(div);
                 });
@@ -966,74 +1027,60 @@
         }
 
         function applyVisibility() {
-            const faseEnabled = STATE.faseFinalEnabled; const predVisible = STATE.predictionsVisible;
+            const faseEnabled = STATE.faseFinalEnabled; 
+            const predVisible = STATE.predictionsVisible;
+            
             const btnFF = DOM.get('btnFaseFinalMenu'); if (btnFF) btnFF.style.display = faseEnabled ? 'flex' : 'none';
             const navFF = DOM.get('navItemFaseFinal'); if (navFF) navFF.style.display = faseEnabled ? 'flex' : 'none';
             const navPred = DOM.get('navItemPredictions'); if (navPred) navPred.style.display = predVisible ? 'flex' : 'none';
             const btnPredMenu = DOM.get('btnPredMenu'); if (btnPredMenu) btnPredMenu.style.display = predVisible ? 'flex' : 'none';
+            
+            const tabGroups = DOM.get('tabGroupsView');
             const tabBracket = DOM.get('tabBracketView');
-            if (tabBracket) {
-                if (!faseEnabled && STATE.currentTablesView === 'bracket') {
-                    STATE.currentTablesView = 'groups';
-                    DOM.get('tabGroupsView')?.classList.add('active'); tabBracket.classList.remove('active');
-                    const gb = DOM.get('tablesGroupsBlock'); const bb = DOM.get('tablesBracketBlock');
-                    if (gb) gb.style.display = 'block'; if (bb) bb.style.display = 'none';
-                }
+            const tablesSwitch = document.querySelector('.tables-switch');
+            
+            if (tabBracket) tabBracket.style.display = faseEnabled ? '' : 'none';
+            if (tabGroups) tabGroups.style.display = predVisible ? '' : 'none';
+            
+            if (tablesSwitch) {
+                tablesSwitch.style.display = (faseEnabled && predVisible) ? 'flex' : 'none';
             }
+
+            if (!faseEnabled && STATE.currentTablesView === 'bracket') {
+                STATE.currentTablesView = 'groups';
+                if (tabGroups) tabGroups.classList.add('active'); 
+                if (tabBracket) tabBracket.classList.remove('active');
+            }
+            if (!predVisible && STATE.currentTablesView === 'groups' && faseEnabled) {
+                STATE.currentTablesView = 'bracket';
+                if (tabBracket) tabBracket.classList.add('active'); 
+                if (tabGroups) tabGroups.classList.remove('active');
+            }
+            
+            const gb = DOM.get('tablesGroupsBlock'); const bb = DOM.get('tablesBracketBlock');
+            if (gb) gb.style.display = STATE.currentTablesView === 'groups' && predVisible ? 'block' : 'none';
+            if (bb) bb.style.display = STATE.currentTablesView === 'bracket' && faseEnabled ? 'block' : 'none';
+
             const btnGoFF = DOM.get('btnGuardarIrFF');
             if (btnGoFF) btnGoFF.textContent = faseEnabled ? '💾 Guardar e ir a Fase Final' : '💾 Guardar y volver al Menú';
         }
 
         function registerUser() {
-            try {
-                // 1. Controlado exclusivamente por el administrador desde el panel
-                if (STATE.registrosLock) { 
-                    alert('Los registros están cerrados en este momento.'); 
-                    return; 
-                }
-                
-                // 2. Validación del Nickname
-                const nick = DOM.get('inputNickname').value.trim(); 
-                if (!nick) { 
-                    alert('Ingresa un apodo familiar.'); 
-                    return; 
-                }
-                
-                // 3. Evitar duplicados
-                if (Object.values(STATE.users).some(u => u.nombre_apodo.toLowerCase() === nick.toLowerCase())) { 
-                    alert('Este nombre ya existe.'); 
-                    return; 
-                }
-                
-                // 4. Creación del usuario en Firebase
-                const newId = 'u_' + Date.now();
-                const userObj = { 
-                    id: newId, 
-                    nombre_apodo: nick, 
-                    total_puntos: 0, 
-                    exacts: 0, 
-                    date_registered: new Date().toISOString() 
-                };
-                
-                db.ref('users/' + newId).set(userObj).then(() => {
-                    localStorage.setItem('polla_myId', newId); 
-                    STATE.myId = newId; 
-                    STATE.currentUser = userObj;
-                    goToScreen('screenInstructions');
-                }).catch(err => { 
-                    console.error(err); 
-                    alert('Error al registrar.'); 
-                });
-        
-            } catch (error) {
-                console.error("Error en registerUser:", error);
-            }
+            if (STATE.registrosLock) { alert('Los registros están cerrados.'); return; }
+            if (isQuinielaClosed() && !STATE.adminConnected) { alert('La Polla Mundialista está cerrada.'); return; }
+            const nick = DOM.get('inputNickname').value.trim(); if (!nick) { alert('Ingresa un apodo familiar.'); return; }
+            if (Object.values(STATE.users).some(u => u.nombre_apodo.toLowerCase() === nick.toLowerCase())) { alert('Este nombre ya existe.'); return; }
+            const newId = 'u_' + Date.now();
+            const userObj = { id: newId, nombre_apodo: nick, total_puntos: 0, exacts: 0, date_registered: new Date().toISOString() };
+            db.ref('users/' + newId).set(userObj).then(() => {
+                localStorage.setItem('polla_myId', newId); STATE.myId = newId; STATE.currentUser = userObj;
+                goToScreen('screenInstructions');
+            }).catch(err => { console.error(err); alert('Error al registrar.'); });
         }
-        
+
         function populateExistingUsers() {
             const s = DOM.get('selectExistingUser'); if (!s) return;
-            s.innerHTML = '<option value="">Busca tu nombre familiar...</option>';
-            Object.values(STATE.users).forEach(u => s.innerHTML += `<option value="${u.id}">${u.nombre_apodo}</option>`);
+            s.innerHTML = '<option value="">Busca tu nombre familiar...</option>' + Object.values(STATE.users).map(u => `<option value="${escapeHtml(u.id)}">${escapeHtml(u.nombre_apodo)}</option>`).join('');
         }
 
         function loginExistingUser() {
@@ -1050,25 +1097,25 @@
             const screen = DOM.get('screenPredictions'); const scrollBefore = screen ? screen.scrollTop : 0;
             const focused = document.activeElement;
             if (focused && focused.classList.contains('score-box') && container.contains(focused)) { updateProgress(); return; }
-            let html = ''; const myPreds = STATE.predictions[STATE.myId] || {};
-            ALL_MATCHES.forEach(m => {
+            const myPreds = STATE.predictions[STATE.myId] || {};
+            const html = ALL_MATCHES.map(m => {
                 const p = myPreds[m.id] || { gl: '', gv: '' };
                 const matchClosed = isMatchClosed(m.id); const dis = matchClosed ? 'disabled' : '';
                 const tag = matchClosed ? '<span class="match-status locked">🔒 Cerrado</span>' : '<span class="match-status open">🟢 Abierto</span>';
-                html += `
+                return `
                 <div class="match-row">
-                    <div class="match-date"><span>📅 ${m.fechaStr} (Grupo ${m.grupo})</span> ${tag}</div>
+                    <div class="match-date"><span>📅 ${escapeHtml(m.fechaStr)} (Grupo ${escapeHtml(m.grupo)})</span> ${tag}</div>
                     <div class="match-teams">
-                        <div class="team"><span class="flag">${FLAGS[m.local] || '🏳️'}</span> <span>${m.local}</span></div>
+                        <div class="team"><span class="flag">${FLAGS[m.local] || '🏳️'}</span> <span>${escapeHtml(m.local)}</span></div>
                         <div class="score-inputs">
                             <input type="number" inputmode="numeric" pattern="[0-9]*" class="score-box" data-mid="${m.id}" value="${p.gl !== undefined ? p.gl : ''}" oninput="APP.saveScoreCloud(${m.id},'gl',this.value)" ${dis}>
                             <span class="divider">-</span>
                             <input type="number" inputmode="numeric" pattern="[0-9]*" class="score-box" data-mid="${m.id}" value="${p.gv !== undefined ? p.gv : ''}" oninput="APP.saveScoreCloud(${m.id},'gv',this.value)" ${dis}>
                         </div>
-                        <div class="team right"><span>${m.visitante}</span> <span class="flag">${FLAGS[m.visitante] || '🏳️'}</span></div>
+                        <div class="team right"><span>${escapeHtml(m.visitante)}</span> <span class="flag">${FLAGS[m.visitante] || '🏳️'}</span></div>
                     </div>
                 </div>`;
-            });
+            }).join('');
             container.innerHTML = html;
             if (screen) requestAnimationFrame(() => { screen.scrollTop = scrollBefore; });
         }
@@ -1077,6 +1124,8 @@
             if (isMatchClosed(mid)) { triggerToast('🔒 La quiniela está cerrada'); return; }
             if (val.length > 2) val = val.slice(0, 2);
             const v = val === '' ? '' : parseInt(val); if (v < 0) return;
+            const current = STATE.predictions[STATE.myId]?.[mid]?.[side];
+            if (valuesEqual(current, v)) { updateProgress(); return; }
             db.ref(`predictions/${STATE.myId}/${mid}/${side}`).set(v).then(() => {
                 if (!STATE.predictions[STATE.myId]) STATE.predictions[STATE.myId] = {};
                 if (!STATE.predictions[STATE.myId][mid]) STATE.predictions[STATE.myId][mid] = {};
@@ -1111,8 +1160,9 @@
             teams.forEach(t => matrix[t] = { name: t, flag: FLAGS[t] || '🏳️', pj:0, pg:0, pe:0, pp:0, gf:0, gc:0, dg:0, pts:0 });
             ALL_MATCHES.filter(m => m.grupo === grupo).forEach(m => {
                 const p = source[m.id];
-                if (p && p.gl !== '' && p.gv !== '' && p.gl !== undefined && p.gv !== undefined && !isNaN(p.gl) && !isNaN(p.gv)) {
-                    const gl = parseInt(p.gl); const gv = parseInt(p.gv);
+                const pair = p ? normalizeScorePair(p.gl, p.gv) : null;
+                if (pair) {
+                    const gl = pair.gl; const gv = pair.gv;
                     const tl = matrix[m.local]; const tv = matrix[m.visitante];
                     if (!tl || !tv) return;
                     tl.pj++; tv.pj++; tl.gf += gl; tl.gc += gv; tv.gf += gv; tv.gc += gl;
@@ -1126,7 +1176,7 @@
             sorted.forEach((t, index) => {
                 let rowClass = index === 0 || index === 1 ? 'row-qualified' : (index === 2 ? 'row-best-third' : '');
                 html += `<tr class="${rowClass}">
-                    <td class="st-team"><span class="flag">${t.flag}</span> <span>${t.name}</span></td>
+                    <td class="st-team"><span class="flag">${t.flag}</span> <span>${escapeHtml(t.name)}</span></td>
                     <td style="color:var(--gold); font-weight:bold; font-size:0.9rem;">${t.pts}</td>
                     <td>${t.pj}</td><td>${t.pg}</td><td>${t.pe}</td><td>${t.pp}</td>
                     <td>${t.gf}</td><td>${t.gc}</td>
@@ -1146,10 +1196,10 @@
                 const esMiFila = usuario.id === STATE.myId;
                 let posIcon = usuario.posicion === 1 ? '🥇' : usuario.posicion === 2 ? '🥈' : usuario.posicion === 3 ? '🥉' : `<span style="font-size:0.9rem; color:var(--text-muted);">#${usuario.posicion}</span>`;
                 const nombreSafe = usuario.nombre.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
-                html += `<div class="ranking-row${esMiFila ? ' mi-fila' : ''}" onclick="APP.mostrarDesglose('${usuario.id}', '${nombreSafe}')" role="button" tabindex="0" aria-label="Ver desglose de ${usuario.nombre}">
+                html += `<div class="ranking-row${esMiFila ? ' mi-fila' : ''}" onclick="APP.mostrarDesglose('${usuario.id}', '${nombreSafe}')" role="button" tabindex="0" aria-label="Ver desglose de ${escapeHtml(usuario.nombre)}">
                     <div style="display:flex; align-items:center; gap:10px;">
                         <span style="font-size:1.1rem; width:32px; text-align:center;">${posIcon}</span>
-                        <span style="color:${esMiFila ? 'var(--green)' : 'var(--text-main)'}; font-weight:${esMiFila ? '800' : '600'};">${usuario.nombre}${esMiFila ? ' ⭐' : ''}</span>
+                        <span style="color:${esMiFila ? 'var(--green)' : 'var(--text-main)'}; font-weight:${esMiFila ? '800' : '600'};">${escapeHtml(usuario.nombre)}${esMiFila ? ' ⭐' : ''}</span>
                     </div>
                     <div style="display:flex; align-items:center; gap:10px;">
                         <span style="font-size:0.78rem; color:var(--text-muted); background:var(--bg-card-soft); padding:2px 7px; border-radius:4px;" title="Marcadores exactos">🎯 ${usuario.exactos}</span>
@@ -1196,12 +1246,9 @@
                 let pts = 0; let exacts = 0; const uPreds = STATE.predictions[uid] || {}; const uSpec = STATE.specials[uid] || {};
                 ALL_MATCHES.forEach(m => {
                     const off = STATE.officialResults[m.id]; const pr = uPreds[m.id];
-                    if (off && pr && off.gl !== undefined && off.gv !== undefined && pr.gl !== undefined && pr.gv !== undefined) {
-                        const ogl = parseInt(off.gl), ogv = parseInt(off.gv); const pgl = parseInt(pr.gl), pgv = parseInt(pr.gv);
-                        if (!isNaN(ogl) && !isNaN(ogv) && !isNaN(pgl) && !isNaN(pgv)) {
-                            if (ogl === pgl && ogv === pgv) { pts += 3; exacts++; } else if (Math.sign(ogl - ogv) === Math.sign(pgl - pgv)) pts += 1;
-                        }
-                    }
+                    const evaluacion = evaluarPuntosPartido(pr?.gl, pr?.gv, off?.gl, off?.gv);
+                    pts += evaluacion.puntos;
+                    if (evaluacion.tipo === 'exacto') exacts++;
                 });
                 const oSp = STATE.officialSpecials || {};
                 if (oSp.revelacion && uSpec.seleccion_revelacion === oSp.revelacion) pts += 5;
@@ -1226,8 +1273,8 @@
             const realGrouped = computeStandingsFromResults(STATE.officialResults);
             const userResults = {};
             ALL_MATCHES.forEach(m => {
-                const p = userPreds[m.id];
-                if (p && p.gl !== '' && p.gv !== '' && p.gl !== undefined && p.gv !== undefined && !isNaN(p.gl) && !isNaN(p.gv)) { userResults[m.id] = { gl: parseInt(p.gl), gv: parseInt(p.gv) }; }
+                const p = userPreds[m.id]; const pair = p ? normalizeScorePair(p.gl, p.gv) : null;
+                if (pair) { userResults[m.id] = pair; }
             });
             const userGrouped = computeStandingsFromResults(userResults);
             const gruposCompletos = Object.keys(GROUPS).every(g => { const arr = realGrouped[g] || []; return arr.length === 4 && arr.every(t => t.pj === 3); });
@@ -1256,8 +1303,9 @@
             Object.keys(GROUPS).forEach(g => { GROUPS[g].forEach(t => { standings[t] = { team: t, group: g, pj:0, pts:0, gf:0, gc:0, dg:0, pg:0, pe:0, pp:0 }; }); });
             ALL_MATCHES.forEach(m => {
                 const res = resultsMap[m.id];
-                if (res && res.gl !== undefined && res.gv !== undefined && res.gl !== null && res.gv !== null && !isNaN(res.gl) && !isNaN(res.gv)) {
-                    const gl = parseInt(res.gl), gv = parseInt(res.gv); const tl = standings[m.local], tv = standings[m.visitante];
+                const pair = res ? normalizeScorePair(res.gl, res.gv) : null;
+                if (pair) {
+                    const gl = pair.gl, gv = pair.gv; const tl = standings[m.local], tv = standings[m.visitante];
                     if (!tl || !tv) return;
                     tl.pj++; tv.pj++; tl.gf += gl; tl.gc += gv; tv.gf += gv; tv.gc += gl;
                     if (gl > gv) { tl.pg++; tl.pts += 3; tv.pp++; } else if (gl < gv) { tv.pg++; tv.pts += 3; tl.pp++; } else { tl.pe++; tv.pe++; tl.pts++; tv.pts++; }
@@ -1297,7 +1345,7 @@
             const grouped = computeStandingsFromResults(STATE.officialResults); const best3 = computeBestThirds(grouped);
             const matches = buildKnockoutFromStandings(grouped, best3); const mapping = {};
             matches.forEach(m => mapping[m.id] = { local: m.local, visitor: m.visitor, round: m.round });
-            db.ref('official_knockout_matches').set(mapping).then(() => { triggerToast('✅ Bracket oficial generado'); }).catch(err => console.error(err));
+            setIfChanged('official_knockout_matches', STATE.officialKnockoutMatches, mapping).then(changed => { if (changed) triggerToast('✅ Bracket oficial generado'); }).catch(err => console.error(err));
         }
 
         function getUserGeneratedKnockoutMatches() {
@@ -1307,11 +1355,27 @@
                 const userPreds = STATE.predictions[STATE.myId] || {};
                 ALL_MATCHES.forEach(m => {
                     const p = userPreds[m.id];
-                    if (p && p.gl !== '' && p.gv !== '' && !isNaN(p.gl) && !isNaN(p.gv)) userResults[m.id] = { gl: parseInt(p.gl), gv: parseInt(p.gv) };
+                    const pair = p ? normalizeScorePair(p.gl, p.gv) : null; if (pair) userResults[m.id] = pair;
                 });
             }
             const grouped = computeStandingsFromResults(userResults); const best3 = computeBestThirds(grouped);
             return { grouped, best3, matches: buildKnockoutFromStandings(grouped, best3) };
+        }
+       
+        function getOfficialKnockoutBase() {
+            const grouped = computeStandingsFromResults(STATE.officialResults || {}); 
+            const best3 = computeBestThirds(grouped);
+            const matches = buildKnockoutFromStandings(grouped, best3);
+            
+            if (STATE.officialKnockoutMatches && Object.keys(STATE.officialKnockoutMatches).length > 0) {
+                matches.forEach(m => {
+                    if (STATE.officialKnockoutMatches[m.id]) {
+                        m.local = STATE.officialKnockoutMatches[m.id].local;
+                        m.visitor = STATE.officialKnockoutMatches[m.id].visitor;
+                    }
+                });
+            }
+            return { grouped, best3, matches };
         }
 
         function resolveBracketTokenGeneral(token, matches, myKo, grouped, best3Queue) {
@@ -1356,8 +1420,8 @@
                         const thirdCard = document.createElement('div'); thirdCard.className = 'match'; thirdCard.dataset.matchId = 103;
                         thirdCard.innerHTML = `<div style="font-size:0.65rem; color:var(--sky); font-weight:900; text-align:center; margin-bottom:4px; letter-spacing:1px;">🥉 TERCER PUESTO</div><div class="match-meta"><span>Partido 103</span></div>`;
                         const lName = resolvedNames[103].local; const vName = resolvedNames[103].visitor; const closed = isQuinielaClosed();
-                        const lDis = !interactive || lName.startsWith('Ganador') || lName.startsWith('Mejor') || lName.startsWith('Perdedor') || lName.startsWith('Por definir') || ((closed || isMatchClosed(m.id)) && !STATE.adminConnected);
-                        const vDis = !interactive || vName.startsWith('Ganador') || vName.startsWith('Mejor') || vName.startsWith('Perdedor') || vName.startsWith('Por definir') || ((closed || isMatchClosed(m.id)) && !STATE.adminConnected);
+                        const lDis = !interactive || isPlaceholderTeam(lName) || ((closed || isMatchClosed(m.id)) && !STATE.adminConnected);
+                        const vDis = !interactive || isPlaceholderTeam(vName) || ((closed || isMatchClosed(m.id)) && !STATE.adminConnected);
                         thirdCard.appendChild(createKoButton(103, lName, myKo[103] === lName, lDis)); thirdCard.appendChild(createKoButton(103, vName, myKo[103] === vName, vDis));
                         thirdContainer.appendChild(thirdCard); col.appendChild(thirdContainer);
                     }
@@ -1375,8 +1439,8 @@
             }
             const meta = document.createElement('div'); meta.className = 'match-meta'; meta.innerHTML = `<span>Partido ${m.id}</span>`; card.appendChild(meta);
             const lName = resolvedNames.local; const vName = resolvedNames.visitor; const closed = isQuinielaClosed();
-            const lDis = !interactive || lName.startsWith('Ganador') || lName.startsWith('Mejor') || lName.startsWith('Perdedor') || lName.startsWith('Por definir') || (closed && !STATE.adminConnected);
-            const vDis = !interactive || vName.startsWith('Ganador') || vName.startsWith('Mejor') || vName.startsWith('Perdedor') || vName.startsWith('Por definir') || (closed && !STATE.adminConnected);
+            const lDis = !interactive || isPlaceholderTeam(lName) || (closed && !STATE.adminConnected);
+            const vDis = !interactive || isPlaceholderTeam(vName) || (closed && !STATE.adminConnected);
             card.appendChild(createKoButton(m.id, lName, myKo[m.id] === lName, lDis));
             card.appendChild(createKoButton(m.id, vName, myKo[m.id] === vName, vDis));
             slot.appendChild(card); return slot;
@@ -1384,19 +1448,20 @@
 
         function renderFaseFinal() {
             const root = DOM.get('bracketRoot'); if (!root) return;
-            const userResults = {}; const userPreds = STATE.predictions[STATE.myId] || {}; let filledCount = 0;
-            ALL_MATCHES.forEach(m => { const p = userPreds[m.id]; if (p && p.gl !== '' && p.gv !== '' && !isNaN(p.gl) && !isNaN(p.gv)) { userResults[m.id] = { gl: parseInt(p.gl), gv: parseInt(p.gv) }; filledCount++; } });
-            if (filledCount === 0) {
+            
+            const data = getOfficialKnockoutBase();
+            
+            if (Object.keys(STATE.officialResults || {}).length === 0 && !STATE.adminConnected) {
                 root.innerHTML = `<div style="text-align:center; padding:32px 16px; color:var(--text-muted); width:100%; grid-column:1/-1;">
-                    <div style="font-size:3rem; margin-bottom:12px;">⚽</div>
-                    <p style="font-weight:700; color:var(--text-main); margin-bottom:8px;">El bracket aún no tiene equipos</p>
-                    <p style="font-size:0.85rem;">Completa los pronósticos de la <strong style="color:var(--gold);">Fase de Grupos</strong> primero.</p>
-                    <button class="btn secondary" style="margin-top:16px; max-width:220px; margin-left:auto; margin-right:auto;" onclick="APP.goToScreen('screenPredictions')">Ir a Pronósticos ⚽</button>
+                    <div style="font-size:3rem; margin-bottom:12px;">⏳</div>
+                    <p style="font-weight:700; color:var(--text-main); margin-bottom:8px;">Llave en espera</p>
+                    <p style="font-size:0.85rem;">La Fase Final se habilitará cuando el administrador registre los primeros resultados oficiales de los grupos.</p>
                 </div>`;
                 root.onclick = null; return;
             }
-            const data = getUserGeneratedKnockoutMatches();
+            
             renderBracketInto(root, data.matches, data.grouped, data.best3, STATE.knockoutPreds[STATE.myId] || {}, true);
+            
             root.onclick = function(e) { const btn = e.target.closest('.ko-team-btn'); if (!btn || btn.disabled) return; APP.saveKo(parseInt(btn.dataset.matchId, 10), btn.dataset.team); };
             root.onkeydown = function(e) {
                 if (e.key !== 'Enter' && e.key !== ' ') return;
@@ -1410,7 +1475,7 @@
             btn.className = 'ko-team-btn' + (selected ? ' selected' : '') + (disabled ? ' disabled' : '');
             if (disabled) btn.disabled = true;
             btn.dataset.matchId = matchId; btn.dataset.team = teamName;
-            const isPlaceholder = teamName.startsWith('Ganador') || teamName.startsWith('Perdedor') || teamName.startsWith('Por definir') || teamName.startsWith('Mejor');
+            const isPlaceholder = isPlaceholderTeam(teamName);
             const flagIcon = isPlaceholder ? '🏴‍☠️' : (FLAGS[teamName] || '🏳️');
             btn.innerHTML = `<span class="team-left"><span class="flag">${flagIcon}</span><span class="team-name">${teamName}</span></span><span class="ko-icon">✅</span>`;
             return btn;
@@ -1420,23 +1485,31 @@
             if (isQuinielaClosed()) { triggerToast('🔒 La quiniela está cerrada'); return; }
             if (!STATE.myId) { triggerToast('Inicia sesión'); return; }
             try {
+                const previousKo = { ...(STATE.knockoutPreds[STATE.myId] || {}) };
                 if (!STATE.knockoutPreds[STATE.myId]) STATE.knockoutPreds[STATE.myId] = {};
                 STATE.knockoutPreds[STATE.myId][mid] = team;
-                const data = getUserGeneratedKnockoutMatches(); const myKo = STATE.knockoutPreds[STATE.myId];
+                
+                const data = getOfficialKnockoutBase(); 
+                const myKo = STATE.knockoutPreds[STATE.myId];
                 const resolvedNames = {}; const best3NumQueue = [...data.best3];
+                
                 const sortedMatches = [...data.matches].sort((a,b) => a.id - b.id);
                 sortedMatches.forEach(m => { resolvedNames[m.id] = { local: resolveBracketTokenGeneral(m.local, data.matches, myKo, data.grouped, best3NumQueue), visitor: resolveBracketTokenGeneral(m.visitor, data.matches, myKo, data.grouped, best3NumQueue) }; });
+                
                 const orderOfMatches = KNOCKOUT_DEFS.map(d => d.id).sort((a,b) => a - b);
                 orderOfMatches.forEach(id => {
                     const currentPick = myKo[id]; if (!currentPick) return;
                     if (currentPick !== resolvedNames[id].local && currentPick !== resolvedNames[id].visitor) delete myKo[id];
                 });
-                await db.ref(`knockout_preds/${STATE.myId}`).set(myKo); STATE.knockoutPreds[STATE.myId] = myKo;
+                
+                if (!valuesEqual(previousKo, myKo)) await db.ref(`knockout_preds/${STATE.myId}`).set(myKo);
+                STATE.knockoutPreds[STATE.myId] = myKo;
                 renderFaseFinal();
+                
                 if (mid === 104) showChampionCelebration(team); else triggerToast('✅ Guardado');
             } catch (e) { console.error(e); triggerToast('❌ Error'); }
         }
-
+        
         function showChampionCelebration(team) {
             const flag = FLAGS[team] || '🏆';
             for (let i = 0; i < 40; i++) {
@@ -1462,9 +1535,9 @@
             const toSave = {};
             root.querySelectorAll('.ko-team-btn.selected').forEach(b => {
                 const mid = b.dataset.matchId; const team = b.dataset.team;
-                if (mid && team && !team.startsWith('Ganador') && !team.startsWith('Perdedor')) toSave[mid] = team;
+                if (mid && team && !isPlaceholderTeam(team)) toSave[mid] = team;
             });
-            const promises = Object.keys(toSave).map(mid => db.ref(`knockout_preds/${STATE.myId}/${mid}`).set(toSave[mid]));
+            const promises = Object.keys(toSave).filter(mid => !valuesEqual(STATE.knockoutPreds[STATE.myId]?.[mid], toSave[mid])).map(mid => db.ref(`knockout_preds/${STATE.myId}/${mid}`).set(toSave[mid]));
             Promise.all(promises).then(() => {
                 STATE.knockoutPreds[STATE.myId] = STATE.knockoutPreds[STATE.myId] || {}; Object.assign(STATE.knockoutPreds[STATE.myId], toSave);
                 triggerToast('✅ Selecciones guardadas'); renderFaseFinal();
@@ -1476,15 +1549,15 @@
             ALL_MATCHES.forEach(m => {
                 const r = STATE.officialResults[m.id] || { gl: '', gv: '' };
                 html += `<div class="match-row" style="background:var(--bg-input); margin-bottom:8px;">
-                    <div class="match-date">📅 Encuentro N°${m.id} — ${m.fechaStr} (Grupo ${m.grupo})</div>
+                    <div class="match-date">📅 Encuentro N°${m.id} — ${escapeHtml(m.fechaStr)} (Grupo ${escapeHtml(m.grupo)})</div>
                     <div class="match-teams">
-                        <div class="team" style="font-size:0.85rem;">${m.local}</div>
+                        <div class="team" style="font-size:0.85rem;">${escapeHtml(m.local)}</div>
                         <div class="score-inputs">
                             <input type="number" inputmode="numeric" class="score-box adm-gl" data-mid="${m.id}" value="${r.gl !== undefined && r.gl !== null ? r.gl : ''}">
                             <span class="divider">-</span>
                             <input type="number" inputmode="numeric" class="score-box adm-gv" data-mid="${m.id}" value="${r.gv !== undefined && r.gv !== null ? r.gv : ''}">
                         </div>
-                        <div class="team right" style="font-size:0.85rem;">${m.visitante}</div>
+                        <div class="team right" style="font-size:0.85rem;">${escapeHtml(m.visitante)}</div>
                     </div>
                 </div>`;
             });
@@ -1516,17 +1589,25 @@
             const matrix = {};
             DOM.qAll('.adm-gl').forEach(el => { if(!matrix[el.dataset.mid]) matrix[el.dataset.mid]={}; matrix[el.dataset.mid].gl = el.value === '' ? null : parseInt(el.value); });
             DOM.qAll('.adm-gv').forEach(el => { if(!matrix[el.dataset.mid]) matrix[el.dataset.mid]={}; matrix[el.dataset.mid].gv = el.value === '' ? null : parseInt(el.value); });
-            db.ref('official_results').set(matrix).then(() => {
+            setIfChanged('official_results', STATE.officialResults, matrix).then(() => {
+                const previousScores = {};
+                Object.keys(STATE.users).forEach(uid => { previousScores[uid] = { total_puntos: STATE.users[uid].total_puntos, exacts: STATE.users[uid].exacts }; });
                 STATE.officialResults = matrix; calculatePointsEngine();
-                const updates = {}; Object.keys(STATE.users).forEach(uid => { updates[`users/${uid}/total_puntos`] = STATE.users[uid].total_puntos; updates[`users/${uid}/exacts`] = STATE.users[uid].exacts; });
-                db.ref('/').update(updates).then(() => { alert('Resultados actualizados.'); generateOfficialBracketAndSave(); triggerToast('Resultados guardados'); });
+                const updates = {}; Object.keys(STATE.users).forEach(uid => {
+                    if (STATE.users[uid].total_puntos !== undefined && (!previousScores[uid] || previousScores[uid].total_puntos !== STATE.users[uid].total_puntos || previousScores[uid].exacts !== STATE.users[uid].exacts)) {
+                        updates[`users/${uid}/total_puntos`] = STATE.users[uid].total_puntos;
+                        updates[`users/${uid}/exacts`] = STATE.users[uid].exacts;
+                    }
+                });
+                const scoreWrite = Object.keys(updates).length ? db.ref('/').update(updates) : Promise.resolve();
+                scoreWrite.then(() => { alert('Resultados actualizados.'); generateOfficialBracketAndSave(); triggerToast('Resultados guardados'); });
             }).catch(err => { console.error(err); alert('Error al guardar'); });
         }
 
         function saveOfficialKoFromInput(matchId) {
             const sel = document.querySelector(`.ko-official-select[data-id="${matchId}"]`); if (!sel) return;
             const winner = sel.value; if (!winner) { alert('Selecciona un ganador'); return; }
-            db.ref(`official_knockout/${matchId}`).set(winner).then(() => { triggerToast('Ganador oficial guardado'); }).catch(err => { console.error(err); });
+            setIfChanged(`official_knockout/${matchId}`, STATE.officialKnockout[matchId], winner).then(changed => { if (changed) triggerToast('Ganador oficial guardado'); }).catch(err => { console.error(err); });
         }
 
         function generateOfficialBracket() { generateOfficialBracketAndSave(); }
@@ -1567,7 +1648,7 @@
             const revel = DOM.get('officialRevelacion').value; const decep = DOM.get('officialDecepcion').value;
             const campeon = DOM.get('officialCampeon').value; const goleador = DOM.get('officialGoleador').value.trim(); const ecu = DOM.get('officialEcuador').value;
             const payload = { revelacion: revel || null, decepcion: decep || null, campeon: campeon || null, goleador: goleador || null, ecuador: ecu || null };
-            db.ref('official_specials').set(payload).then(() => triggerToast('Especiales oficiales guardados')).catch(err => console.error(err));
+            setIfChanged('official_specials', STATE.officialSpecials, payload).then(changed => { if (changed) triggerToast('Especiales oficiales guardados'); }).catch(err => console.error(err));
         }
 
         function populateSpecials() {
@@ -1588,27 +1669,12 @@
             if (elGol) elGol.value = mySpec.goleador_mundial || '';
             if (elEcu) elEcu.value = mySpec.posicion_ecuador || '';
 
-            // 1. Condición global del administrador
-            const globalLocked = STATE.settings && STATE.settings.specialsOpen === false;
-            
-            // 2. NUEVA LÓGICA: Bloqueo por usuario (si ya tiene datos guardados en la nube)
-            // Evaluamos si el objeto 'mySpec' ya contiene las propiedades llenas.
-            const userAlreadyFilled = !!(
-                mySpec.seleccion_revelacion && 
-                mySpec.seleccion_decepcion && 
-                mySpec.posicion_ecuador && 
-                mySpec.campeon_mundial && 
-                mySpec.goleador_mundial
-            );
-
-            // Determinamos si se debe congelar la pantalla. El administrador siempre mantiene acceso de edición.
-            const shouldDisable = (globalLocked || userAlreadyFilled) && !STATE.adminConnected;
+            const { globalLocked, userAlreadyFilled, shouldDisable } = getSpecialsLockState(mySpec);
             
             [elRev, elDec, elCam, elGol, elEcu].forEach(el => {
                 if(el) el.disabled = shouldDisable;
             });
             
-            // Alternar el banner visual de advertencia
             const banner = DOM.get('closureBannerSpecial');
             if(banner){
                 if (shouldDisable) {
@@ -1619,7 +1685,6 @@
                 }
             }
 
-            // Opcional: Ocultar o desactivar el botón de guardar si ya está lleno
             const btnGuardar = DOM.get('btnGuardarIrFF');
             if (btnGuardar && !STATE.adminConnected) {
                 btnGuardar.disabled = shouldDisable;
@@ -1627,7 +1692,6 @@
                     btnGuardar.textContent = 'Fase de Comodines Completada ✓';
                     btnGuardar.style.background = 'rgba(255,255,255,0.05)';
                     btnGuardar.style.color = 'var(--text-muted)';
-                    // Nos aseguramos que al menos puedan avanzar dándole clic al botón alternativo o saliendo al menú.
                     btnGuardar.onclick = () => goToScreen('screenMenu');
                 } else {
                     btnGuardar.textContent = STATE.faseFinalEnabled ? '💾 Guardar e ir a Fase Final' : '💾 Guardar y volver al Menú';
@@ -1653,62 +1717,55 @@
         }
 
         function toggleFaseFinalVisibility(enable) {
+            const previous = STATE.faseFinalEnabled;
             STATE.faseFinalEnabled = !!enable; applyVisibility();
             const activeId = document.querySelector('.screen.active')?.id;
             if (!enable && activeId === 'screenFaseFinal') goToScreen('screenMenu');
-            db.ref('fase_final_enabled').set(!!enable).then(() => { triggerToast(enable ? 'Fase Final visible' : 'Fase Final oculta'); updateAdminButtonsUI(); });
+            setIfChanged('fase_final_enabled', previous, !!enable).then(changed => { if (changed) triggerToast(enable ? 'Fase Final visible' : 'Fase Final oculta'); updateAdminButtonsUI(); });
         }
 
         function togglePredictionsVisibility(visible) {
+            const previous = STATE.predictionsVisible;
             STATE.predictionsVisible = !!visible; applyVisibility();
             const activeId = document.querySelector('.screen.active')?.id;
             if (!visible && activeId === 'screenPredictions') goToScreen('screenMenu');
-            db.ref('predictions_visible').set(!!visible).then(() => { triggerToast(visible ? 'Pronósticos visibles' : 'Pronósticos ocultos'); updateAdminButtonsUI(); });
+            setIfChanged('predictions_visible', previous, !!visible).then(changed => { if (changed) triggerToast(visible ? 'Pronósticos visibles' : 'Pronósticos ocultos'); updateAdminButtonsUI(); });
         }
 
-        function saveOfficialKnockoutBatch(map) { db.ref('official_knockout').update(map).then(() => triggerToast('Resultados fase final guardados')).catch(err => console.error(err)); }
+        function saveOfficialKnockoutBatch(map) {
+            const updates = {};
+            Object.keys(map || {}).forEach(mid => { if (!valuesEqual(STATE.officialKnockout[mid], map[mid])) updates[mid] = map[mid]; });
+            if (Object.keys(updates).length === 0) return;
+            db.ref('official_knockout').update(updates).then(() => triggerToast('Resultados fase final guardados')).catch(err => console.error(err));
+        }
 
         async function loadOfficialSpecials() {
             const snap = await db.ref('official_specials').get(); const data = snap.val() || {};
             if (data) { STATE.officialSpecials = data; populateAdminSpecialsOptions(); triggerToast('Especiales cargados'); }
         }
-
-        // UNIFICACIÓN CORRECTA DEL OBJETO GLOBAL WINDOW.APP
+        function toggleRegistrosStatus(isLocked) {
+            const previous = STATE.registrosLock;
+            STATE.registrosLock = !!isLocked;
+            refreshUIAfterData();
+            setIfChanged('registros_lock', previous, !!isLocked).then(changed => {
+                if (!changed) return;
+                triggerToast(isLocked ? 'Registros de usuarios cerrados' : 'Registros de usuarios abiertos');
+                updateAdminButtonsUI();
+            });
+        }
+        
         window.APP = {
-            goToScreen, registerUser, loginExistingUser, logout, saveScoreCloud, setTableGroupActive, saveKo, saveAllKoDrafts, setTablesView, setTableSource, showRankingRulesModal, cerrarDesglose: cerrarModalDesglose, adminLoadResults, generateOfficialBracket, saveOfficialSpecials, loadOfficialSpecials, toggleFaseFinalVisibility, togglePredictionsVisibility, adminDeleteUser, adminResetUser, saveAdmMatchesCloud, saveOfficialKoFromInput, saveOfficialKnockoutBatch,
-            
-            // NUEVA FUNCIÓN: Activar/Desactivar registros
-            toggleRegistros: function(cerrar) {
-                db.ref('registros_lock').set(!!cerrar).then(() => {
-                    STATE.registrosLock = !!cerrar;
-                    triggerToast(cerrar ? '🔒 Registros cerrados' : '✅ Registros abiertos');
-                    updateAdminButtonsUI();
-                    refreshUIAfterData();
-                }).catch(err => {
-                    console.error(err);
-                    triggerToast('❌ Error al cambiar estado');
-                });
-            },
+            goToScreen, registerUser, loginExistingUser, logout, saveScoreCloud, setTableGroupActive, saveKo, saveAllKoDrafts, setTablesView, setTableSource, showRankingRulesModal, cerrarDesglose: cerrarModalDesglose, adminLoadResults, generateOfficialBracket, saveOfficialSpecials, loadOfficialSpecials, toggleFaseFinalVisibility, togglePredictionsVisibility, adminDeleteUser, adminResetUser, saveAdmMatchesCloud, saveOfficialKoFromInput, saveOfficialKnockoutBatch,toggleRegistrosStatus,
             saveSpecial: function(field, val) {
                 const mySpec = STATE.specials[STATE.myId] || {};
-                const comodinesGlobalCerrados = STATE.settings && STATE.settings.specialsOpen === false;
+                const { globalLocked: comodinesGlobalCerrados, userAlreadyFilled } = getSpecialsLockState(mySpec);
                 
-                // Verificar si el usuario ya tiene TODOS los campos llenos (misma lógica que populateSpecials)
-               const userAlreadyFilled = !!(
-                    mySpec.seleccion_revelacion && 
-                    mySpec.seleccion_decepcion && 
-                    mySpec.posicion_ecuador && 
-                    mySpec.campeon_mundial && 
-                    mySpec.goleador_mundial
-                );
-                
-                // Bloquear si: admin cerró globalmente, o el usuario selló, o el usuario ya llenó todo
                 if ((comodinesGlobalCerrados || mySpec.is_locked || userAlreadyFilled) && !STATE.adminConnected) { 
                     triggerToast('🔒 Tus comodines ya están sellados'); 
                     populateSpecials();
                     return; 
                 }
-                
+                if (valuesEqual(mySpec[field], val)) return;
                 db.ref(`specials/${STATE.myId}/${field}`).set(val)
                   .then(() => {
                       if (!STATE.specials[STATE.myId]) STATE.specials[STATE.myId] = {};
@@ -1717,9 +1774,6 @@
                   })
                   .catch(err => { console.error(err); triggerToast('❌ Error'); });
             },
-            
-            // Esta definición estaba duplicada y ha sido eliminada.
-            // La primera definición de saveAndGoFaseFinal (más arriba) es la correcta.
             
             mostrarDesglose: function(uid, nombre) {
                 const desglose = _desgloseCache[uid];
@@ -1741,23 +1795,14 @@
             },
 
            setSpecialsStatus: function(isOpen) {
-
+                const previous = STATE.settings.specialsOpen;
                 STATE.settings.specialsOpen = isOpen;
-            
-                db.ref('settings/specialsOpen')
-                  .set(isOpen)
-                  .then(() => {
-            
-                    triggerToast(
-                        isOpen
-                        ? '🌟 Comodines abiertos'
-                        : '🔒 Comodines cerrados'
-                    );
-            
+                setIfChanged('settings/specialsOpen', previous, isOpen)
+                  .then(changed => {
+                    if (!changed) return;
+                    triggerToast(isOpen ? '🌟 Comodines abiertos' : '🔒 Comodines cerrados');
                     updateUIForLockState();
-            
                   });
-            
             },
             
             adminExportCSV: function() {
@@ -1766,8 +1811,8 @@
                 csv += '\n';
                 Object.values(STATE.users).forEach(u => {
                     const p = STATE.predictions[u.id] || {}; const s = STATE.specials[u.id] || {};
-                    csv += `"${u.nombre_apodo}",${u.total_puntos || 0},${u.exacts || 0},"${s.seleccion_revelacion || ''}","${s.seleccion_decepcion || ''}","${s.posicion_ecuador || ''}","${s.campeon_mundial || ''}","${s.goleador_mundial || ''}",`;
-                    for(let i=1;i<=72;i++) csv += `${p[i] !== undefined && p[i].gl !== undefined && p[i].gl !== null ? p[i].gl : ''},${p[i] !== undefined && p[i].gv !== undefined && p[i].gv !== null ? p[i].gv : ''},`;
+                    csv += [u.nombre_apodo, u.total_puntos || 0, u.exacts || 0, s.seleccion_revelacion || '', s.seleccion_decepcion || '', s.posicion_ecuador || '', s.campeon_mundial || '', s.goleador_mundial || ''].map(escapeCsv).join(',') + ',';
+                    for(let i=1;i<=72;i++) csv += `${escapeCsv(p[i] !== undefined && p[i].gl !== undefined && p[i].gl !== null ? p[i].gl : '')},${escapeCsv(p[i] !== undefined && p[i].gv !== undefined && p[i].gv !== null ? p[i].gv : '')},`;
                     csv += '\n';
                 });
                 const blob = new Blob(["\uFEFF" + csv], { type: 'text/csv;charset=utf-8;' });
@@ -1782,7 +1827,9 @@
                 ];
                 const promises = fields.map(f => {
                     const el = DOM.get(f.id); if (!el || !el.value.trim()) return Promise.resolve();
-                    return db.ref(`specials/${STATE.myId}/${f.key}`).set(el.value.trim());
+                    const nextValue = el.value.trim();
+                    if (valuesEqual(STATE.specials[STATE.myId]?.[f.key], nextValue)) return Promise.resolve();
+                    return db.ref(`specials/${STATE.myId}/${f.key}`).set(nextValue);
                 });
                 Promise.all(promises).then(() => { triggerToast('Comodines guardados'); goToScreen('screenMenu'); }).catch(err => { console.error(err); triggerToast('❌ Error'); });
             }
@@ -1799,14 +1846,14 @@
             }
             tick(); setInterval(tick, 1000);
         }
-        // Actualizar visualmente los candados cada minuto
+        
         setInterval(() => {
             const activeScreen = document.querySelector('.screen.active');
             if (activeScreen && activeScreen.id === 'screenPredictions' && !STATE.adminConnected) {
                 renderPredictions();
             }
         }, 60000);
-        // Habilitamos la cuenta regresiva que tenías comentada
+        
         startCountdown();
 
         function refreshUIAfterData() {
