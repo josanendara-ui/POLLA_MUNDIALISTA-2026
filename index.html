@@ -191,38 +191,6 @@
             background: linear-gradient(to top, #172033 80%, rgba(23,32,51,0.92)); border-top: 2px solid var(--gold); padding: 10px 20px;
             box-shadow: 0 -8px 24px rgba(0,0,0,0.45); z-index: 29; justify-content: space-between; align-items: center; font-weight: bold;
         }
-
-        /* ===== NUEVAS TABS FASE GRUPOS/16AVOS/FASE FINAL ===== */
-        .phase-tabs { display:flex; gap:6px; padding:4px; border:1px solid var(--border); background:rgba(255,255,255,0.035); border-radius:999px; margin-bottom:14px; }
-        .phase-tabs button { flex:1; border:0; border-radius:999px; padding:10px 6px; background:transparent; color:var(--text-muted); font-weight:900; cursor:pointer; font-size:0.75rem; white-space:nowrap; }
-        .phase-tabs button.active { background:var(--sky); color:#071728; }
-
-        .ko-card-list { display:flex; flex-direction:column; gap:10px; margin-bottom:16px; }
-        .ko-card { background:linear-gradient(180deg,rgba(31,42,63,0.98),rgba(17,24,39,0.96)); border:1px solid var(--border); border-radius:10px; padding:14px 16px; display:flex; align-items:center; justify-content:space-between; gap:8px; box-shadow:var(--shadow); }
-        .ko-card-left { display:flex; flex-direction:column; gap:4px; }
-        .ko-card-code { font-size:0.75rem; font-weight:900; color:var(--gold); text-transform:uppercase; letter-spacing:0.5px; }
-        .ko-card-teams { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
-        .ko-card-team { display:flex; align-items:center; gap:6px; font-size:0.88rem; font-weight:700; color:var(--text-main); }
-        .ko-card-vs { font-size:0.75rem; color:var(--text-muted); font-weight:900; }
-        .ko-card-date { font-size:0.7rem; color:var(--text-muted); }
-        .ko-card-right { font-size:0.75rem; color:var(--text-muted); font-weight:700; white-space:nowrap; border:1px solid var(--border); border-radius:6px; padding:4px 8px; background:rgba(0,0,0,0.2); }
-
-        .ff-vertical { display:flex; flex-direction:column; gap:20px; }
-        .ff-round-block { display:flex; flex-direction:column; gap:8px; }
-        .ff-round-title { font-size:0.7rem; color:var(--gold); font-weight:900; text-transform:uppercase; letter-spacing:1px; margin-bottom:2px; }
-        .ff-match-card { background:linear-gradient(180deg,rgba(31,42,63,0.98),rgba(17,24,39,0.96)); border:1px solid var(--border); border-radius:10px; padding:12px 14px; display:flex; align-items:center; gap:12px; box-shadow:var(--shadow); }
-        .ff-match-card.final-card { border-color:rgba(247,201,72,0.5); box-shadow:0 0 18px rgba(247,201,72,0.15); }
-        .ff-match-card.tercer-card { border-color:rgba(96,165,250,0.4); }
-        .ff-match-number { font-size:0.65rem; color:var(--text-muted); font-weight:900; background:rgba(0,0,0,0.3); border-radius:6px; padding:3px 6px; white-space:nowrap; min-width:36px; text-align:center; }
-        .ff-match-teams { flex:1; display:flex; flex-direction:column; gap:4px; }
-        .ff-team-row { display:flex; align-items:center; gap:6px; font-size:0.85rem; font-weight:700; color:var(--text-main); }
-        .ff-flag { font-size:1.1rem; }
-
-        .best3-table { width:100%; border-collapse:collapse; font-size:0.8rem; }
-        .best3-table th { background:rgba(0,0,0,0.2); color:var(--text-muted); padding:8px 6px; font-size:0.7rem; text-transform:uppercase; text-align:center; }
-        .best3-table td { padding:8px 6px; text-align:center; border-bottom:1px solid var(--border); }
-        .best3-table tr.best3-qualify { background:rgba(251,191,36,0.12); }
-    
     </style>
 </head>
 <body>
@@ -353,27 +321,26 @@
 
         <div class="screen" id="screenTables">
             <h3 style="margin-bottom:8px; font-size:1.15rem;">Tablas del Mundial</h3>
-            <p class="small" style="margin-bottom:12px;">Revisa clasificación, cruces y bracket visual.</p>
-            <div class="table-source-switch" role="tablist">
-                <button id="tabSourceSimulated" class="active" type="button" onclick="APP.setTableSource('simulated')">📊 Simulada</button>
-                <button id="tabSourceReal" type="button" onclick="APP.setTableSource('real')">🏆 Real</button>
+            <p class="small" style="margin-bottom:12px;">Revisa la clasificación de grupos y la llave final.</p>
+            <div class="table-source-switch" role="tablist" aria-label="Fuente de datos de la tabla">
+                <button id="tabSourceSimulated" class="active" type="button" onclick="APP.setTableSource('simulated')">📊 Tabla Simulada</button>
+                <button id="tabSourceReal" type="button" onclick="APP.setTableSource('real')">🏆 Tabla Real</button>
             </div>
-            <!-- 3 tabs estilo app -->
-            <div class="phase-tabs" role="tablist">
-                <button id="tabGroupsView" class="active" type="button" onclick="APP.setTablesView('groups')">Fase de grupos</button>
-                <button id="tabR16View" type="button" onclick="APP.setTablesView('r16')">16avos</button>
-                <button id="tabBracketView" type="button" onclick="APP.setTablesView('bracket')">Fase Final</button>
+            <div class="tables-switch" role="tablist" aria-label="Vista de tablas">
+                <button id="tabGroupsView" class="active" type="button" onclick="APP.setTablesView('groups')">Grupos</button>
+                <button id="tabBestThirdsView" type="button" onclick="APP.setTablesView('thirds')">3er puesto</button>
+                <button id="tabBracketView" type="button" onclick="APP.setTablesView('bracket')">Fase final</button>
             </div>
             <div id="tablesGroupsBlock">
                 <div class="group-nav" id="groupTabsContainer"></div>
                 <div id="liveGroupStandings"></div>
-                <div id="bestThirdsBlock"></div>
             </div>
-            <div id="tablesR16Block" style="display:none;">
-                <div class="ko-card-list" id="r16CardList"></div>
+            <div id="tablesBestThirdsBlock" style="display:none;">
+                <div id="bestThirdsStandings"></div>
             </div>
             <div id="tablesBracketBlock" style="display:none;">
-                <div class="ff-vertical" id="ffVerticalRoot"></div>
+                <div class="bracket-help"><span>Desliza horizontalmente para ver todos los cruces.</span><span id="bracketCountText"></span></div>
+                <div class="bracket-panel"><div id="tablesBracketRoot" class="bracket" role="region" aria-label="Diagrama de fase final"></div></div>
             </div>
         </div>
         
@@ -1072,24 +1039,36 @@
             const navPred = DOM.get('navItemPredictions'); if (navPred) navPred.style.display = predVisible ? 'flex' : 'none';
             const btnPredMenu = DOM.get('btnPredMenu'); if (btnPredMenu) btnPredMenu.style.display = predVisible ? 'flex' : 'none';
             
+            const tabGroups = DOM.get('tabGroupsView');
+            const tabBestThirds = DOM.get('tabBestThirdsView');
             const tabBracket = DOM.get('tabBracketView');
-            const tabR16 = DOM.get('tabR16View');
+            const tablesSwitch = document.querySelector('.tables-switch');
+            
             if (tabBracket) tabBracket.style.display = faseEnabled ? '' : 'none';
-            if (tabR16) tabR16.style.display = faseEnabled ? '' : 'none';
+            if (tabGroups) tabGroups.style.display = predVisible ? '' : 'none';
+            if (tabBestThirds) tabBestThirds.style.display = predVisible ? '' : 'none';
+            
+            if (tablesSwitch) {
+                tablesSwitch.style.display = (faseEnabled || predVisible) ? 'flex' : 'none';
+            }
 
-            if (!faseEnabled && (STATE.currentTablesView === 'bracket' || STATE.currentTablesView === 'r16')) {
+            if (!faseEnabled && STATE.currentTablesView === 'bracket') {
                 STATE.currentTablesView = 'groups';
+                if (tabGroups) tabGroups.classList.add('active'); 
+                if (tabBestThirds) tabBestThirds.classList.remove('active');
+                if (tabBracket) tabBracket.classList.remove('active');
             }
-            if (!predVisible && STATE.currentTablesView === 'groups' && faseEnabled) {
+            if (!predVisible && (STATE.currentTablesView === 'groups' || STATE.currentTablesView === 'thirds') && faseEnabled) {
                 STATE.currentTablesView = 'bracket';
+                if (tabBracket) tabBracket.classList.add('active'); 
+                if (tabGroups) tabGroups.classList.remove('active');
+                if (tabBestThirds) tabBestThirds.classList.remove('active');
             }
-
-            const gb = DOM.get('tablesGroupsBlock');
-            const r16b = DOM.get('tablesR16Block');
-            const bb = DOM.get('tablesBracketBlock');
-            if (gb) gb.style.display = STATE.currentTablesView === 'groups' ? 'block' : 'none';
-            if (r16b) r16b.style.display = STATE.currentTablesView === 'r16' ? 'block' : 'none';
-            if (bb) bb.style.display = STATE.currentTablesView === 'bracket' ? 'block' : 'none';
+            
+            const gb = DOM.get('tablesGroupsBlock'); const tb = DOM.get('tablesBestThirdsBlock'); const bb = DOM.get('tablesBracketBlock');
+            if (gb) gb.style.display = STATE.currentTablesView === 'groups' && predVisible ? 'block' : 'none';
+            if (tb) tb.style.display = STATE.currentTablesView === 'thirds' && predVisible ? 'block' : 'none';
+            if (bb) bb.style.display = STATE.currentTablesView === 'bracket' && faseEnabled ? 'block' : 'none';
 
             const btnGoFF = DOM.get('btnGuardarIrFF');
             if (btnGoFF) btnGoFF.textContent = faseEnabled ? '💾 Guardar e ir a Fase Final' : '💾 Guardar y volver al Menú';
@@ -1164,116 +1143,29 @@
             }).catch(err => { console.error(err); triggerToast('❌ Error'); });
         }
 
-      function renderTables() {
-            const view = STATE.currentTablesView || 'groups';
-            DOM.get('tabGroupsView')?.classList.toggle('active', view === 'groups');
-            DOM.get('tabR16View')?.classList.toggle('active', view === 'r16');
-            DOM.get('tabBracketView')?.classList.toggle('active', view === 'bracket');
+        function renderTables() {
+            const isBracket = STATE.currentTablesView === 'bracket';
+            const isThirds = STATE.currentTablesView === 'thirds';
+            DOM.get('tabGroupsView')?.classList.toggle('active', !isBracket && !isThirds);
+            DOM.get('tabBestThirdsView')?.classList.toggle('active', isThirds);
+            DOM.get('tabBracketView')?.classList.toggle('active', isBracket);
+            const groupsBlock = DOM.get('tablesGroupsBlock'); const thirdsBlock = DOM.get('tablesBestThirdsBlock'); const bracketBlock = DOM.get('tablesBracketBlock');
+            if (groupsBlock) groupsBlock.style.display = (!isBracket && !isThirds) ? 'block' : 'none';
+            if (thirdsBlock) thirdsBlock.style.display = isThirds ? 'block' : 'none';
+            if (bracketBlock) bracketBlock.style.display = isBracket ? 'block' : 'none';
             DOM.get('tabSourceSimulated')?.classList.toggle('active', STATE.tableSource === 'simulated');
             DOM.get('tabSourceReal')?.classList.toggle('active', STATE.tableSource === 'real');
-            const groupsBlock = DOM.get('tablesGroupsBlock');
-            const r16Block = DOM.get('tablesR16Block');
-            const bracketBlock = DOM.get('tablesBracketBlock');
-            if (groupsBlock) groupsBlock.style.display = view === 'groups' ? 'block' : 'none';
-            if (r16Block) r16Block.style.display = view === 'r16' ? 'block' : 'none';
-            if (bracketBlock) bracketBlock.style.display = view === 'bracket' ? 'block' : 'none';
+            const container = DOM.get('groupTabsContainer');
+            if (container) container.innerHTML = Object.keys(GROUPS).map(g => `<button class="group-tab ${STATE.currentSelectedGroup === g ? 'active' : ''}" onclick="APP.setTableGroupActive('${g}')">Grupo ${g}</button>`).join('');
             let sourceData = STATE.tableSource === 'real' ? (STATE.officialResults || {}) : (STATE.predictions[STATE.myId] || {});
-            if (view === 'groups') {
-                const container = DOM.get('groupTabsContainer');
-                if (container) container.innerHTML = Object.keys(GROUPS).map(g => `<button class="group-tab ${STATE.currentSelectedGroup === g ? 'active' : ''}" onclick="APP.setTableGroupActive('${g}')">Grupo ${g}</button>`).join('');
-                const standings = DOM.get('liveGroupStandings');
-                if (standings) standings.innerHTML = buildGroupStandings(STATE.currentSelectedGroup, sourceData);
-                renderBestThirds(sourceData);
-            }
-            if (view === 'r16') renderR16Cards();
-            if (view === 'bracket') renderFFVertical();
-        }
-
-        function renderBestThirds(sourceData) {
-            const block = DOM.get('bestThirdsBlock'); if (!block) return;
-            const grouped = computeStandingsFromResults(sourceData);
-            const thirds = [];
-            Object.keys(GROUPS).forEach(g => { const arr = grouped[g] || []; if (arr[2]) thirds.push({ team: arr[2].team, flag: FLAGS[arr[2].team]||'🏳️', pts: arr[2].pts, dg: arr[2].dg, gf: arr[2].gf, grupo: g }); });
-            thirds.sort((a,b) => b.pts - a.pts || b.dg - a.dg || b.gf - a.gf);
-            if (thirds.length === 0) { block.innerHTML = ''; return; }
-            let html = `<div style="background:var(--bg-card); border-radius:var(--radius); border:1px solid var(--border); overflow:hidden; margin-bottom:16px;">
-                <div style="background:rgba(251,191,36,0.1); border-bottom:1px solid var(--border); padding:10px 14px;">
-                    <span style="font-size:0.75rem; font-weight:900; color:var(--gold); text-transform:uppercase; letter-spacing:0.5px;">🥉 Mejores Terceros</span>
-                </div>
-                <table class="best3-table"><tr><th style="text-align:left; padding-left:14px;">Equipo</th><th>Gr.</th><th>PTS</th><th>GF</th><th>DG</th></tr>`;
-            thirds.forEach((t, i) => {
-                const cls = i < 8 ? 'best3-qualify' : '';
-                html += `<tr class="${cls}"><td style="text-align:left; padding-left:14px;"><span style="margin-right:6px;">${t.flag}</span>${t.team}</td><td>${t.grupo}</td><td style="color:var(--gold);font-weight:bold;">${t.pts}</td><td>${t.gf}</td><td style="color:${t.dg>=0?'var(--green)':'#EF4444'}">${t.dg>=0?'+'+t.dg:t.dg}</td></tr>`;
-            });
-            block.innerHTML = html + '</table></div>';
-        }
-
-        function renderR16Cards() {
-            const list = DOM.get('r16CardList'); if (!list) return;
-            const data = getUserGeneratedKnockoutMatches();
-            const best3Q = [...data.best3];
-            const myKo = STATE.knockoutPreds[STATE.myId] || {};
-            const r16 = KNOCKOUT_DEFS.filter(m => m.round === 'dieciseisavos').sort((a,b) => new Date(a.kickoff) - new Date(b.kickoff));
-            let html = '';
-            r16.forEach(m => {
-                const lName = resolveBracketTokenGeneral(m.local, data.matches, myKo, data.grouped, best3Q);
-                const vName = resolveBracketTokenGeneral(m.visitor, data.matches, myKo, data.grouped, best3Q);
-                const lFlag = FLAGS[lName]||'🏳️'; const vFlag = FLAGS[vName]||'🏳️';
-                html += `<div class="ko-card">
-                    <div class="ko-card-left">
-                        <div class="ko-card-code">${m.local} vs ${m.visitor}</div>
-                        <div class="ko-card-teams">
-                            <div class="ko-card-team"><span class="ff-flag">${lFlag}</span>${lName}</div>
-                            <div class="ko-card-vs">vs</div>
-                            <div class="ko-card-team"><span class="ff-flag">${vFlag}</span>${vName}</div>
-                        </div>
-                        <div class="ko-card-date">📅 ${m.fechaStr}</div>
-                    </div>
-                    <div class="ko-card-right">M${m.id}</div>
-                </div>`;
-            });
-            list.innerHTML = html || '<p style="color:var(--text-muted);text-align:center;padding:24px;">Completa pronósticos de grupos para ver los cruces.</p>';
-        }
-
-        function renderFFVertical() {
-            const root = DOM.get('ffVerticalRoot'); if (!root) return;
-            const data = getUserGeneratedKnockoutMatches();
-            const myKo = STATE.knockoutPreds[STATE.myId] || {};
-            const best3Q = [...data.best3];
-            const roundDefs = [
-                { label:'Octavos de Final', ids:[73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88] },
-                { label:'Cuartos de Final', ids:[89,90,91,92,93,94,95,96] },
-                { label:'Semifinales', ids:[97,98,99,100] },
-                { label:'🏆 Gran Final', ids:[104], isFinal:true },
-                { label:'🥉 Tercer Puesto', ids:[103], isTercero:true }
-            ];
-            let html = '';
-            roundDefs.forEach(rd => {
-                const matchesInRound = rd.ids.map(id => KNOCKOUT_DEFS.find(x => x.id === id)).filter(Boolean);
-                if (matchesInRound.length === 0) return;
-                html += `<div class="ff-round-block"><div class="ff-round-title">${rd.label}</div>`;
-                matchesInRound.forEach(m => {
-                    const lName = resolveBracketTokenGeneral(m.local, data.matches, myKo, data.grouped, [...best3Q]);
-                    const vName = resolveBracketTokenGeneral(m.visitor, data.matches, myKo, data.grouped, [...best3Q]);
-                    const lFlag = FLAGS[lName]||'🏳️'; const vFlag = FLAGS[vName]||'🏳️';
-                    const extraClass = rd.isFinal ? 'final-card' : rd.isTercero ? 'tercer-card' : '';
-                    const dateStr = m.fechaStr ? m.fechaStr.split(' ').slice(1,3).join(' ') : '';
-                    html += `<div class="ff-match-card ${extraClass}">
-                        <div class="ff-match-number">M${m.id}<br><span style="color:var(--text-muted);font-weight:400;font-size:0.6rem;">${dateStr}</span></div>
-                        <div class="ff-match-teams">
-                            <div class="ff-team-row"><span class="ff-flag">${lFlag}</span>${lName}</div>
-                            <div style="font-size:0.7rem;color:var(--text-muted);padding:1px 0;">vs</div>
-                            <div class="ff-team-row"><span class="ff-flag">${vFlag}</span>${vName}</div>
-                        </div>
-                    </div>`;
-                });
-                html += `</div>`;
-            });
-            root.innerHTML = html || '<p style="color:var(--text-muted);text-align:center;padding:24px;">La Fase Final se mostrará cuando el admin habilite los resultados.</p>';
+            const standings = DOM.get('liveGroupStandings');
+            if (standings) standings.innerHTML = buildGroupStandings(STATE.currentSelectedGroup, sourceData);
+            if (isThirds) renderBestThirdsTable(STATE.tableSource);
+            if (isBracket) renderTablesBracket();
         }
 
         function setTableGroupActive(g) { STATE.currentSelectedGroup = g; STATE.currentTablesView = 'groups'; renderTables(); }
-        function setTablesView(view) { STATE.currentTablesView = view; renderTables(); }
+        function setTablesView(view) { STATE.currentTablesView = view === 'bracket' ? 'bracket' : (view === 'thirds' ? 'thirds' : 'groups'); renderTables(); }
         function setTableSource(source) { STATE.tableSource = source; renderTables(); }
 
         function buildGroupStandings(grupo, source) {
@@ -1305,6 +1197,79 @@
                 </tr>`;
             });
             return html + '</table></div>';
+        }
+
+        function getSourceResultsForTables(source = 'simulated') {
+            if (source === 'real') return STATE.officialResults || {};
+            const userPreds = STATE.predictions[STATE.myId] || {};
+            const userResults = {};
+            ALL_MATCHES.forEach(m => {
+                const p = userPreds[m.id];
+                const pair = p ? normalizeScorePair(p.gl, p.gv) : null;
+                if (pair) userResults[m.id] = pair;
+            });
+            return userResults;
+        }
+
+        function sortBestThirdRows(thirds) {
+            return thirds.sort((a, b) =>
+                b.pts - a.pts ||
+                b.dg - a.dg ||
+                b.gf - a.gf ||
+                a.gc - b.gc ||
+                a.team.localeCompare(b.team)
+            );
+        }
+
+        function getBestThirdsStandings(source = 'simulated') {
+            const resultsMap = typeof source === 'string' ? getSourceResultsForTables(source) : (source || {});
+            const grouped = computeStandingsFromResults(resultsMap);
+            const thirds = Object.keys(GROUPS).map(group => {
+                const team = grouped[group] && grouped[group][2];
+                if (!team) return null;
+                return {
+                    group,
+                    team: team.team,
+                    flag: FLAGS[team.team] || '🏳️',
+                    pj: team.pj,
+                    pg: team.pg,
+                    pe: team.pe,
+                    pp: team.pp,
+                    gf: team.gf,
+                    gc: team.gc,
+                    dg: team.dg,
+                    pts: team.pts
+                };
+            }).filter(Boolean);
+            sortBestThirdRows(thirds);
+            return thirds.map((item, index) => ({ ...item, rank: index + 1, qualifies: index < 8 }));
+        }
+
+        function renderBestThirdsTable(source = 'simulated') {
+            const root = DOM.get('bestThirdsStandings'); if (!root) return;
+            const thirds = getBestThirdsStandings(source);
+            if (thirds.length === 0) {
+                root.innerHTML = `<p style="text-align:center; padding:24px; color:var(--text-muted);">Aún no hay datos para calcular mejores terceros.</p>`;
+                return;
+            }
+            const rows = thirds.map(t => {
+                const rowClass = t.qualifies ? 'row-qualified' : '';
+                const dg = t.dg > 0 ? '+' + t.dg : t.dg;
+                return `<tr class="${rowClass}">
+                    <td style="font-weight:800; color:${t.qualifies ? 'var(--gold)' : 'var(--text-muted)'};">#${t.rank}</td>
+                    <td class="st-team"><span class="flag">${t.flag}</span> <span>${escapeHtml(t.team)}</span></td>
+                    <td>${escapeHtml(t.group)}</td>
+                    <td>${t.pj}</td><td>${t.pg}</td><td>${t.pe}</td><td>${t.pp}</td>
+                    <td>${t.gf}</td><td>${t.gc}</td>
+                    <td style="color:${t.dg>0?'var(--green)':t.dg<0?'#EF4444':'inherit'}">${dg}</td>
+                    <td style="color:var(--gold); font-weight:bold; font-size:0.9rem;">${t.pts}</td>
+                </tr>`;
+            }).join('');
+            root.innerHTML = `<div class="standings-container"><table class="standings">
+                <tr><th>Pos</th><th style="text-align:left;">Equipo</th><th>Grupo</th><th>PJ</th><th>PG</th><th>PE</th><th>PP</th><th>GF</th><th>GC</th><th>DG</th><th>PTS</th></tr>
+                ${rows}
+            </table></div>
+            <p class="small" style="margin-top:10px;">🟣 Siguiente ronda</p>`;
         }
 
         function renderRanking() {
@@ -1441,9 +1406,11 @@
         }
 
         function computeBestThirds(groupedStandings) {
-            const thirds = []; Object.keys(groupedStandings).forEach(g => { const arr = groupedStandings[g]; if (arr && arr[2]) thirds.push({ group: g, team: arr[2] }); });
-            thirds.sort((a,b) => b.team.pts - a.team.pts || b.team.dg - a.team.dg || b.team.gf - a.team.gf);
-            return thirds.map(x => x.team.team);
+            const thirds = []; Object.keys(groupedStandings).forEach(g => {
+                const arr = groupedStandings[g];
+                if (arr && arr[2]) thirds.push({ team: arr[2].team, pts: arr[2].pts, dg: arr[2].dg, gf: arr[2].gf, gc: arr[2].gc });
+            });
+            return sortBestThirdRows(thirds).map(x => x.team);
         }
 
         function buildKnockoutFromStandings(grouped, bestThirds) {
@@ -1463,7 +1430,7 @@
         }
 
         function generateOfficialBracketAndSave() {
-            const grouped = computeStandingsFromResults(STATE.officialResults); const best3 = computeBestThirds(grouped);
+            const grouped = computeStandingsFromResults(STATE.officialResults); const best3 = getBestThirdsStandings('real').map(x => x.team);
             const matches = buildKnockoutFromStandings(grouped, best3); const mapping = {};
             matches.forEach(m => mapping[m.id] = { local: m.local, visitor: m.visitor, round: m.round });
             setIfChanged('official_knockout_matches', STATE.officialKnockoutMatches, mapping).then(changed => { if (changed) triggerToast('✅ Bracket oficial generado'); }).catch(err => console.error(err));
@@ -1479,13 +1446,13 @@
                     const pair = p ? normalizeScorePair(p.gl, p.gv) : null; if (pair) userResults[m.id] = pair;
                 });
             }
-            const grouped = computeStandingsFromResults(userResults); const best3 = computeBestThirds(grouped);
+            const grouped = computeStandingsFromResults(userResults); const best3 = getBestThirdsStandings(STATE.tableSource).map(x => x.team);
             return { grouped, best3, matches: buildKnockoutFromStandings(grouped, best3) };
         }
        
         function getOfficialKnockoutBase() {
             const grouped = computeStandingsFromResults(STATE.officialResults || {}); 
-            const best3 = computeBestThirds(grouped);
+            const best3 = getBestThirdsStandings('real').map(x => x.team);
             const matches = buildKnockoutFromStandings(grouped, best3);
             
             if (STATE.officialKnockoutMatches && Object.keys(STATE.officialKnockoutMatches).length > 0) {
