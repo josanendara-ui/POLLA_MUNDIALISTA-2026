@@ -79,6 +79,8 @@
         .match-date { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; margin-bottom: 10px; text-align: left; letter-spacing: 0.5px; display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 6px; }
         .match-status.locked { color: #EF4444; }
         .match-status.open { color: var(--green); }
+        .match-status.live { color: var(--gold); }
+        .match-status.finished { color: var(--sky); }
         .match-teams { display: flex; align-items: center; justify-content: space-between; }
         .team { display: flex; align-items: center; gap: 8px; flex: 1; font-size: 0.95rem; font-weight: 600; color: var(--text-main); min-width: 0; }
         .team span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -228,6 +230,14 @@
         .home-leader-name { font-size: 0.84rem; font-weight: 800; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .home-leader-points { color: var(--gold); font-size: 0.8rem; font-weight: 900; white-space: nowrap; }
         .home-points-button { margin: 0 0 4px; }
+        .prediction-filter-switch { display: grid; grid-template-columns: repeat(3,1fr); gap: 5px; padding: 4px; margin-bottom: 10px; background: rgba(255,255,255,0.035); border: 1px solid var(--border); border-radius: 10px; }
+        .prediction-filter-switch button { border: 0; background: transparent; color: var(--text-muted); border-radius: 7px; min-height: 42px; padding: 8px 5px; font-size: 0.78rem; font-weight: 900; cursor: pointer; white-space: nowrap; }
+        .prediction-filter-switch button.active { background: var(--green); color: #06201C; box-shadow: 0 6px 16px rgba(45,212,191,0.15); }
+        .prediction-filter-count { display: inline-flex; align-items: center; justify-content: center; min-width: 20px; height: 20px; margin-left: 3px; padding: 0 5px; border-radius: 999px; background: rgba(0,0,0,0.2); font-size: 0.68rem; }
+        .prediction-groups { margin-bottom: 4px; }
+        .prediction-empty { text-align: center; padding: 34px 18px; color: var(--text-muted); background: rgba(31,42,63,0.55); border: 1px dashed var(--border); border-radius: var(--radius); margin-bottom: 12px; }
+        .match-review { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; margin-top: 10px; padding-top: 9px; border-top: 1px solid rgba(255,255,255,0.06); color: var(--text-muted); font-size: 0.75rem; }
+        .match-review strong { color: var(--text-main); }
         @media (min-width: 560px) {
             #screenWelcome, #screenProfile { padding-left: 24px; padding-right: 24px; }
             .home-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
@@ -330,6 +340,12 @@
                 <div class="progress-bar-bg"><div class="progress-bar-fill" id="progressBar"></div></div>
             </div>
             <div id="closureBannerPredictions" class="closure-banner" style="display:none;">🔒Los comodines están cerrados</div>
+            <div class="prediction-filter-switch" role="tablist" aria-label="Filtrar partidos">
+                <button id="predictionFilterOpen" class="active" type="button" onclick="APP.setPredictionFilter('open')">Abiertos <span id="predictionCountOpen" class="prediction-filter-count">0</span></button>
+                <button id="predictionFilterToday" type="button" onclick="APP.setPredictionFilter('today')">Hoy <span id="predictionCountToday" class="prediction-filter-count">0</span></button>
+                <button id="predictionFilterClosed" type="button" onclick="APP.setPredictionFilter('closed')">Cerrados <span id="predictionCountClosed" class="prediction-filter-count">0</span></button>
+            </div>
+            <div id="predictionGroupTabs" class="group-nav prediction-groups"></div>
             <div id="matchesContainer"></div>
             <button class="btn gold" onclick="APP.goToScreen('screenSpecial')" style="margin-top:8px;">Siguiente: Comodines Especiales 🌟</button>
         </div>
@@ -681,6 +697,7 @@
             users: {}, predictions: {}, specials: {}, officialResults: {}, officialSpecials: {},
             knockoutPreds: {}, officialKnockout: {}, officialKnockoutMatches: {}, status: 'open',
             myId: null, currentUser: null, currentSelectedGroup: 'A',
+            currentPredictionFilter: 'open', currentPredictionGroup: 'all',
             currentTablesView: 'groups', adminConnected: sessionStorage.getItem('p26adm') === '1',
             faseFinalEnabled: false, predictionsVisible: true, gruposLock: false, registrosLock: false,
             settings: { predictionsLocked: false },
@@ -1267,6 +1284,41 @@
 
         function logout() { localStorage.removeItem('polla_myId'); STATE.myId = null; STATE.currentUser = null; goToScreen('screenWelcome'); }
 
+        function getMatchDisplayStatus(match, now = new Date()) {
+            const kickoff = new Date(match.kickoff);
+            const lockAt = new Date(kickoff.getTime() - 15 * 60000);
+            const official = STATE.officialResults[match.id];
+            const officialPair = official ? normalizeScorePair(official.gl, official.gv) : null;
+            if (officialPair) return { state: 'finished', label: 'Finalizado', officialPair, kickoff, lockAt };
+            if (now >= kickoff) return { state: 'live', label: 'En juego', officialPair: null, kickoff, lockAt };
+            if (now >= lockAt) return { state: 'locked', label: 'Cerrado', officialPair: null, kickoff, lockAt };
+            return { state: 'open', label: 'Abierto', officialPair: null, kickoff, lockAt };
+        }
+
+        function isMatchToday(match, now = new Date()) {
+            const formatter = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Guayaquil', year: 'numeric', month: '2-digit', day: '2-digit' });
+            return formatter.format(new Date(match.kickoff)) === formatter.format(now);
+        }
+
+        function getPredictionMatchesByFilter(filter = STATE.currentPredictionFilter, now = new Date()) {
+            return ALL_MATCHES.filter(match => {
+                const status = getMatchDisplayStatus(match, now);
+                if (filter === 'today') return isMatchToday(match, now);
+                if (filter === 'closed') return status.state !== 'open';
+                return status.state === 'open';
+            });
+        }
+
+        function setPredictionFilter(filter) {
+            STATE.currentPredictionFilter = ['open', 'today', 'closed'].includes(filter) ? filter : 'open';
+            renderPredictions();
+        }
+
+        function setPredictionGroup(group) {
+            STATE.currentPredictionGroup = group === 'all' || GROUPS[group] ? group : 'all';
+            renderPredictions();
+        }
+
         function renderPredictions() {
             if (!STATE.currentUser) return;
             const container = DOM.get('matchesContainer'); if (!container) return;
@@ -1274,22 +1326,58 @@
             const focused = document.activeElement;
             if (focused && focused.classList.contains('score-box') && container.contains(focused)) { updateProgress(); return; }
             const myPreds = STATE.predictions[STATE.myId] || {};
-            const html = ALL_MATCHES.map(m => {
+            const now = new Date();
+            const openMatches = getPredictionMatchesByFilter('open', now);
+            const todayMatches = getPredictionMatchesByFilter('today', now);
+            const closedMatches = getPredictionMatchesByFilter('closed', now);
+            DOM.get('predictionCountOpen').textContent = openMatches.length;
+            DOM.get('predictionCountToday').textContent = todayMatches.length;
+            DOM.get('predictionCountClosed').textContent = closedMatches.length;
+            DOM.get('predictionFilterOpen')?.classList.toggle('active', STATE.currentPredictionFilter === 'open');
+            DOM.get('predictionFilterToday')?.classList.toggle('active', STATE.currentPredictionFilter === 'today');
+            DOM.get('predictionFilterClosed')?.classList.toggle('active', STATE.currentPredictionFilter === 'closed');
+
+            const groupTabs = DOM.get('predictionGroupTabs');
+            if (groupTabs) {
+                groupTabs.style.display = STATE.currentPredictionFilter === 'today' ? 'none' : 'flex';
+                groupTabs.innerHTML = ['all', ...Object.keys(GROUPS)].map(group => {
+                    const label = group === 'all' ? 'Todos' : `Grupo ${group}`;
+                    return `<button type="button" class="group-tab ${STATE.currentPredictionGroup === group ? 'active' : ''}" onclick="APP.setPredictionGroup('${group}')">${label}</button>`;
+                }).join('');
+            }
+
+            let visibleMatches = STATE.currentPredictionFilter === 'today' ? todayMatches : (STATE.currentPredictionFilter === 'closed' ? closedMatches : openMatches);
+            if (STATE.currentPredictionFilter !== 'today' && STATE.currentPredictionGroup !== 'all') visibleMatches = visibleMatches.filter(match => match.grupo === STATE.currentPredictionGroup);
+            visibleMatches.sort((a, b) => new Date(a.kickoff) - new Date(b.kickoff));
+            if (visibleMatches.length === 0) {
+                const emptyText = STATE.currentPredictionFilter === 'today' ? 'No hay partidos programados para hoy.' : STATE.currentPredictionFilter === 'closed' ? 'No hay partidos cerrados en este grupo.' : 'No hay partidos abiertos en este grupo.';
+                container.innerHTML = `<div class="prediction-empty">${emptyText}</div>`;
+                if (screen) requestAnimationFrame(() => { screen.scrollTop = Math.min(scrollBefore, screen.scrollHeight); });
+                return;
+            }
+
+            const html = visibleMatches.map(m => {
                 const p = myPreds[m.id] || { gl: '', gv: '' };
-                const matchClosed = isMatchClosed(m.id); const dis = matchClosed ? 'disabled' : '';
-                const tag = matchClosed ? '<span class="match-status locked">🔒 Cerrado</span>' : '<span class="match-status open">🟢 Abierto</span>';
+                const status = getMatchDisplayStatus(m, now);
+                const matchClosed = status.state !== 'open'; const dis = matchClosed && !STATE.adminConnected ? 'disabled' : '';
+                const statusIcon = status.state === 'open' ? '🟢' : status.state === 'live' ? '🟡' : status.state === 'finished' ? '🏁' : '🔒';
+                const statusClass = status.state === 'locked' ? 'locked' : status.state;
+                const timing = status.state === 'open' ? ` · cierra en ${formatHomeRemaining(status.lockAt - now)}` : '';
+                const tag = `<span class="match-status ${statusClass}">${statusIcon} ${status.label}${timing}</span>`;
+                const predPair = normalizeScorePair(p.gl, p.gv);
+                const review = matchClosed ? `<div class="match-review"><span>Tu pronóstico: <strong>${predPair ? `${predPair.gl} - ${predPair.gv}` : 'Sin pronóstico'}</strong></span>${status.officialPair ? `<span>Resultado: <strong>${status.officialPair.gl} - ${status.officialPair.gv}</strong></span>` : ''}</div>` : '';
                 return `
                 <div class="match-row">
                     <div class="match-date"><span>📅 ${escapeHtml(m.fechaStr)} (Grupo ${escapeHtml(m.grupo)})</span> ${tag}</div>
                     <div class="match-teams">
                         <div class="team"><span class="flag">${FLAGS[m.local] || '🏳️'}</span> <span>${escapeHtml(m.local)}</span></div>
                         <div class="score-inputs">
-                            <input type="number" inputmode="numeric" pattern="[0-9]*" class="score-box" data-mid="${m.id}" value="${p.gl !== undefined ? p.gl : ''}" oninput="APP.saveScoreCloud(${m.id},'gl',this.value)" ${dis}>
+                            <input type="number" inputmode="numeric" pattern="[0-9]*" class="score-box" data-mid="${m.id}" value="${escapeHtml(p.gl !== undefined ? p.gl : '')}" oninput="APP.saveScoreCloud(${m.id},'gl',this.value)" ${dis}>
                             <span class="divider">-</span>
-                            <input type="number" inputmode="numeric" pattern="[0-9]*" class="score-box" data-mid="${m.id}" value="${p.gv !== undefined ? p.gv : ''}" oninput="APP.saveScoreCloud(${m.id},'gv',this.value)" ${dis}>
+                            <input type="number" inputmode="numeric" pattern="[0-9]*" class="score-box" data-mid="${m.id}" value="${escapeHtml(p.gv !== undefined ? p.gv : '')}" oninput="APP.saveScoreCloud(${m.id},'gv',this.value)" ${dis}>
                         </div>
                         <div class="team right"><span>${escapeHtml(m.visitante)}</span> <span class="flag">${FLAGS[m.visitante] || '🏳️'}</span></div>
-                    </div>
+                    </div>${review}
                 </div>`;
             }).join('');
             container.innerHTML = html;
@@ -2003,7 +2091,7 @@
         }
         
         window.APP = {
-            goToScreen, registerUser, loginExistingUser, logout, saveScoreCloud, setTableGroupActive, saveKo, saveAllKoDrafts, setTablesView, setTableSource, showRankingRulesModal, showHomePointsModal, homePronosticar, cerrarDesglose: cerrarModalDesglose, adminLoadResults, generateOfficialBracket, saveOfficialSpecials, loadOfficialSpecials, toggleFaseFinalVisibility, togglePredictionsVisibility, adminDeleteUser, adminResetUser, saveAdmMatchesCloud, saveOfficialKoFromInput, saveOfficialKnockoutBatch,toggleRegistrosStatus,
+            goToScreen, registerUser, loginExistingUser, logout, saveScoreCloud, setPredictionFilter, setPredictionGroup, setTableGroupActive, saveKo, saveAllKoDrafts, setTablesView, setTableSource, showRankingRulesModal, showHomePointsModal, homePronosticar, cerrarDesglose: cerrarModalDesglose, adminLoadResults, generateOfficialBracket, saveOfficialSpecials, loadOfficialSpecials, toggleFaseFinalVisibility, togglePredictionsVisibility, adminDeleteUser, adminResetUser, saveAdmMatchesCloud, saveOfficialKoFromInput, saveOfficialKnockoutBatch,toggleRegistrosStatus,
             saveSpecial: function(field, val) {
                 const mySpec = STATE.specials[STATE.myId] || {};
                 const { globalLocked: comodinesGlobalCerrados, userAlreadyFilled } = getSpecialsLockState(mySpec);
