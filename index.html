@@ -191,6 +191,48 @@
             background: linear-gradient(to top, #172033 80%, rgba(23,32,51,0.92)); border-top: 2px solid var(--gold); padding: 10px 20px;
             box-shadow: 0 -8px 24px rgba(0,0,0,0.45); z-index: 29; justify-content: space-between; align-items: center; font-weight: bold;
         }
+
+        /* ========== HOME ========== */
+        #screenWelcome { gap: 14px; padding-top: 20px; }
+        .home-hero { text-align: center; padding: 10px 12px 2px; }
+        .home-trophy { font-size: 4rem; line-height: 1; margin-bottom: 10px; filter: drop-shadow(0 8px 18px rgba(247,201,72,0.32)); animation: welcomeFloat 3s ease-in-out infinite; }
+        .home-title { font-size: 1.65rem; font-weight: 900; color: var(--gold); margin-bottom: 7px; }
+        .home-subtitle { color: var(--text-muted); font-size: 0.92rem; line-height: 1.45; max-width: 390px; margin: 0 auto; }
+        .home-card { background: linear-gradient(180deg, rgba(31,42,63,0.96), rgba(23,32,51,0.96)); border: 1px solid var(--border); border-radius: var(--radius); padding: 15px; box-shadow: 0 10px 28px rgba(3,7,18,0.24); }
+        .home-status { display: flex; gap: 11px; align-items: flex-start; border-left: 3px solid var(--green); }
+        .home-status-icon { font-size: 1.15rem; line-height: 1.25; }
+        .home-status strong { color: var(--green); display: block; margin-bottom: 3px; }
+        .home-status p { color: var(--text-muted); font-size: 0.8rem; line-height: 1.4; }
+        .home-actions { display: grid; gap: 9px; }
+        .home-actions .btn { margin: 0; min-height: 49px; }
+        .home-section-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 13px; }
+        .home-section-title { font-size: 0.94rem; font-weight: 900; color: var(--text-main); }
+        .home-link { border: 0; background: transparent; color: var(--green); font-size: 0.78rem; font-weight: 800; cursor: pointer; padding: 5px 0; }
+        .home-match { display: grid; grid-template-columns: minmax(0,1fr) auto minmax(0,1fr); align-items: center; gap: 10px; margin-bottom: 12px; }
+        .home-team { display: flex; flex-direction: column; align-items: center; gap: 5px; min-width: 0; text-align: center; }
+        .home-team .flag { font-size: 1.7rem; }
+        .home-team-name { width: 100%; font-size: 0.82rem; font-weight: 800; overflow-wrap: anywhere; }
+        .home-versus { color: var(--text-muted); font-size: 0.72rem; font-weight: 900; }
+        .home-match-meta { text-align: center; color: var(--text-muted); font-size: 0.76rem; line-height: 1.45; margin-bottom: 12px; }
+        .home-match-meta strong { color: var(--gold); }
+        .home-profile-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 14px; }
+        .home-profile-name { font-size: 1.05rem; font-weight: 900; overflow-wrap: anywhere; }
+        .home-rank-pill { flex: 0 0 auto; color: var(--gold); border: 1px solid rgba(247,201,72,0.32); background: rgba(247,201,72,0.08); border-radius: 999px; padding: 6px 9px; font-size: 0.75rem; font-weight: 900; }
+        .home-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 13px; }
+        .home-stat { background: rgba(13,20,34,0.7); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 10px 6px; text-align: center; min-width: 0; }
+        .home-stat-value { color: var(--text-main); font-weight: 900; font-size: 1rem; overflow-wrap: anywhere; }
+        .home-stat-label { color: var(--text-muted); font-size: 0.65rem; margin-top: 3px; }
+        .home-leaders { display: grid; gap: 7px; }
+        .home-leader { display: grid; grid-template-columns: 28px minmax(0,1fr) auto; align-items: center; gap: 8px; padding: 9px 10px; background: rgba(13,20,34,0.6); border-radius: 8px; }
+        .home-leader-medal { font-size: 1.1rem; }
+        .home-leader-name { font-size: 0.84rem; font-weight: 800; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .home-leader-points { color: var(--gold); font-size: 0.8rem; font-weight: 900; white-space: nowrap; }
+        .home-points-button { margin: 0 0 4px; }
+        @media (min-width: 560px) {
+            #screenWelcome { padding-left: 24px; padding-right: 24px; }
+            .home-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+            .home-layout > .home-card { margin: 0; }
+        }
     </style>
 </head>
 <body>
@@ -201,61 +243,32 @@
         </div>
         <div id="toast" class="toast">Sincronizado con la Nube</div>
         
-        <div class="screen active" id="screenWelcome" style="padding-bottom:24px;">
-            <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center;">
-                <div style="font-size:4.8rem; margin-bottom:8px; filter:drop-shadow(0 8px 20px rgba(251,191,36,0.45)); animation:welcomeFloat 3s ease-in-out infinite;">🏆</div>
-                <h2 style="font-size:1.65rem; font-weight:900; margin-bottom:4px; background:linear-gradient(135deg,#ffd84d,#FBBF24,#c99a00); -webkit-background-clip:text; background-clip:text; color:transparent;">Oráculo Mundialista</h2>
-                <p style="color:var(--text-muted); text-align:center; font-size:0.9rem; margin-bottom:14px; padding:0 10px;">Demuestra cuánto sabes de fútbol y compite por ser el <span style="color:var(--gold);font-weight:700;">Oráculo Futbolero</span> de la Familia.</p>
-                
-                <div style="width:100%; max-width:340px; background:linear-gradient(135deg,rgba(30,41,59,0.9),rgba(15,23,42,0.85)); backdrop-filter:blur(16px); border:1px solid rgba(251,191,36,0.35); border-left:4px solid var(--gold); border-radius:14px; padding:14px 16px; margin-bottom:16px; box-shadow:0 4px 20px rgba(251,191,36,0.12);">
-                    <p style="font-size:0.85rem; color:var(--text-main); display:flex; align-items:flex-start; gap:8px; margin-bottom:10px;">
-                        <span style="font-size:1.3rem; line-height:1;">⚠️</span>
-                        <span>La polla cierra el <strong style="color:var(--gold);">10 de junio</strong> — ¡No dejes tus pronósticos para último momento!</span>
-                    </p>
-                    
-                    <div style="background:rgba(45,212,191,0.08); border:1px solid rgba(45,212,191,0.3); border-radius:12px; padding:14px 16px; text-align:center;">
-                        <div style="font-size:1.8rem; margin-bottom:6px;">⚽</div>
-                        <p style="font-weight:900; color:var(--green); font-size:1rem; margin-bottom:4px;">¡El Mundial ya comenzó!</p>
-                        <p style="font-size:0.82rem; color:var(--text-muted); line-height:1.5;">Puedes registrarte y hacer tus pronósticos, pero los partidos que ya comenzaron están bloqueados automáticamente.</p>
-                        
-                        <div style="display:flex; justify-content:center; gap:8px; margin-top: 12px;">
-                            <div style="background:rgba(0,0,0,0.3); border-radius:10px; padding:8px 12px; text-align:center; min-width:56px;">
-                                <div id="cdDays" style="font-size:1.5rem; font-weight:900; color:var(--gold); line-height:1;">—</div>
-                                <div style="font-size:0.65rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px; margin-top:2px;">días</div>
-                            </div>
-                            <div style="background:rgba(0,0,0,0.3); border-radius:10px; padding:8px 12px; text-align:center; min-width:56px;">
-                                <div id="cdHours" style="font-size:1.5rem; font-weight:900; color:var(--gold); line-height:1;">—</div>
-                                <div style="font-size:0.65rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px; margin-top:2px;">horas</div>
-                            </div>
-                            <div style="background:rgba(0,0,0,0.3); border-radius:10px; padding:8px 12px; text-align:center; min-width:56px;">
-                                <div id="cdMins" style="font-size:1.5rem; font-weight:900; color:var(--gold); line-height:1;">—</div>
-                                <div style="font-size:0.65rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px; margin-top:2px;">mins</div>
-                            </div>
-                            <div style="background:rgba(0,0,0,0.3); border-radius:10px; padding:8px 12px; text-align:center; min-width:56px;">
-                                <div id="cdSecs" style="font-size:1.5rem; font-weight:900; color:var(--gold); line-height:1;">—</div>
-                                <div style="font-size:0.65rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px; margin-top:2px;">segs</div>
-                            </div>
-                        </div> </div>
-                </div>
+        <div class="screen active" id="screenWelcome">
+            <section class="home-hero" aria-labelledby="homeTitle">
+                <div class="home-trophy" aria-hidden="true">🏆</div>
+                <h2 class="home-title" id="homeTitle">Oráculo Mundialista</h2>
+                <p class="home-subtitle">Compite con tu familia y demuestra quién sabe más de fútbol.</p>
+            </section>
 
-                <p id="closureWarning" style="color:#EF4444; font-weight:bold; font-size:0.9rem; margin-bottom:12px;"></p>
-                <button id="btnCrearUsuario" class="btn" onclick="APP.goToScreen('screenRegister')" style="max-width:340px;">🎯 Crear Mi Usuario</button>
-                <button class="btn secondary" onclick="APP.goToScreen('screenLogin')" style="max-width:340px;">Ya tengo usuario</button>
-                
-                <div style="width:100%; max-width:340px; margin-top:20px; background:linear-gradient(135deg,rgba(30,41,59,0.85),rgba(15,23,42,0.8)); backdrop-filter:blur(16px); border:1px solid rgba(255,255,255,0.08); border-radius:16px; padding:14px; box-shadow:0 4px 20px rgba(0,0,0,0.3);">
-                    <p style="text-align:center; font-weight:800; font-size:0.9rem; color:var(--gold); margin-bottom:12px; letter-spacing:0.3px;">💎 Sistema de Puntos</p>
-                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
-                        <div style="background:rgba(0,0,0,0.25); border-radius:10px; padding:10px; text-align:center;"><div style="font-size:1.5rem;">🎯</div><div style="font-weight:800; color:var(--green); font-size:1rem; margin:2px 0;">+3 pts</div><div style="font-size:0.7rem; color:var(--text-muted);">Marcador exacto</div></div>
-                        <div style="background:rgba(0,0,0,0.25); border-radius:10px; padding:10px; text-align:center;"><div style="font-size:1.5rem;">✅</div><div style="font-weight:800; color:var(--green); font-size:1rem; margin:2px 0;">+1 pt</div><div style="font-size:0.7rem; color:var(--text-muted);">Ganador correcto</div></div>
-                        <div style="background:rgba(0,0,0,0.25); border-radius:10px; padding:10px; text-align:center;"><div style="font-size:1.5rem;">🌟</div><div style="font-weight:800; color:var(--gold); font-size:1rem; margin:2px 0;">+5 pts</div><div style="font-size:0.7rem; color:var(--text-muted);">Selec. revelación</div></div>
-                        <div style="background:rgba(0,0,0,0.25); border-radius:10px; padding:10px; text-align:center;"><div style="font-size:1.5rem;">😱</div><div style="font-weight:800; color:var(--gold); font-size:1rem; margin:2px 0;">+5 pts</div><div style="font-size:0.7rem; color:var(--text-muted);">Mayor decepción</div></div>
-                        <div style="background:rgba(0,0,0,0.25); border-radius:10px; padding:10px; text-align:center;"><div style="font-size:1.5rem;">🇪🇨</div><div style="font-weight:800; color:var(--gold); font-size:1rem; margin:2px 0;">+10 pts</div><div style="font-size:0.7rem; color:var(--text-muted);">Ecuador</div></div>
-                        <div style="background:rgba(0,0,0,0.25); border-radius:10px; padding:10px; text-align:center;"><div style="font-size:1.5rem;">👑</div><div style="font-weight:800; color:var(--gold); font-size:1rem; margin:2px 0;">+10 pts</div><div style="font-size:0.7rem; color:var(--text-muted);">Campeón</div></div>
-                        <div style="background:rgba(0,0,0,0.25); border-radius:10px; padding:10px; text-align:center; grid-column:1/-1;"><div style="font-size:1.5rem;">⚽</div><div style="font-weight:800; color:var(--gold); font-size:1rem; margin:2px 0;">+10 pts</div><div style="font-size:0.7rem; color:var(--text-muted);">Máximo goleador</div></div>
+            <section id="homeTournamentStatus" class="home-card home-status" aria-live="polite"></section>
+            <section id="homeSessionArea"></section>
+
+            <div class="home-layout">
+                <section class="home-card" aria-labelledby="homeNextMatchTitle">
+                    <div class="home-section-head"><h3 class="home-section-title" id="homeNextMatchTitle">⚽ Próximo partido</h3></div>
+                    <div id="homeNextMatch"></div>
+                </section>
+
+                <section class="home-card" aria-labelledby="homeTopThreeTitle">
+                    <div class="home-section-head">
+                        <h3 class="home-section-title" id="homeTopThreeTitle">🏆 Top 3 actual</h3>
+                        <button type="button" class="home-link" onclick="APP.goToScreen('screenRanking')">Ver ranking completo</button>
                     </div>
-                    <p style="text-align:center; font-size:0.72rem; color:var(--text-muted); font-style:italic; margin-top:10px;">No se vale llorar si perdieron 😉</p>
-                </div>
+                    <div id="homeTopThree" class="home-leaders"></div>
+                </section>
             </div>
+
+            <button type="button" class="btn-rules home-points-button" onclick="APP.showHomePointsModal()">💎 ¿Cómo gano puntos?</button>
         </div>
 
         <div class="screen" id="screenLogin">
@@ -474,7 +487,7 @@
         </div>
 
         <div class="bottom-nav">
-            <button class="nav-item" onclick="APP.goToScreen('screenMenu')"><span class="icon">🏠</span>Inicio</button>
+            <button class="nav-item" onclick="APP.goToScreen('screenWelcome')"><span class="icon">🏠</span>Inicio</button>
             <button id="navItemPredictions" class="nav-item" onclick="APP.goToScreen('screenPredictions')"><span class="icon">⚽</span>Pronósticos</button>
             <button id="navItemFaseFinal" class="nav-item" style="display:none;" onclick="APP.goToScreen('screenFaseFinal')"><span class="icon">🔥</span>Fase Final</button>
             <button class="nav-item" onclick="APP.goToScreen('screenTables')"><span class="icon">📊</span>Tablas</button>
@@ -1041,6 +1054,116 @@
         }
         document.getElementById('modalDesglose').addEventListener('click', function(e) { if (e.target === this) cerrarModalDesglose(); });
 
+        function formatHomeRemaining(ms) {
+            if (ms <= 0) return 'Pronósticos cerrados';
+            const totalMinutes = Math.ceil(ms / 60000);
+            const days = Math.floor(totalMinutes / 1440);
+            const hours = Math.floor((totalMinutes % 1440) / 60);
+            const minutes = totalMinutes % 60;
+            if (days > 0) return `${days} d ${hours} h`;
+            if (hours > 0) return `${hours} h ${minutes} min`;
+            return `${minutes} min`;
+        }
+
+        function getNextHomeMatch(now = new Date()) {
+            return ALL_MATCHES
+                .filter(match => new Date(match.kickoff) > now)
+                .sort((a, b) => new Date(a.kickoff) - new Date(b.kickoff))[0] || null;
+        }
+
+        function renderHomeTimeSensitive() {
+            const status = DOM.get('homeTournamentStatus');
+            const nextRoot = DOM.get('homeNextMatch');
+            if (!status || !nextRoot) return;
+            const now = new Date();
+            const firstKickoff = ALL_MATCHES.reduce((earliest, match) => Math.min(earliest, new Date(match.kickoff).getTime()), Infinity);
+            if (now.getTime() >= firstKickoff) {
+                status.innerHTML = '<span class="home-status-icon">🟢</span><div><strong>Mundial en curso</strong><p>Los partidos se bloquean automáticamente según su horario de juego.</p></div>';
+            } else {
+                status.innerHTML = `<span class="home-status-icon">⏳</span><div><strong>El Mundial comienza pronto</strong><p>Faltan ${escapeHtml(formatHomeRemaining(firstKickoff - now.getTime()))} para el primer partido.</p></div>`;
+            }
+
+            const match = getNextHomeMatch(now);
+            if (!match) {
+                nextRoot.innerHTML = '<p class="small" style="text-align:center; padding:8px 0;">No hay partidos pendientes por ahora.</p>';
+                return;
+            }
+            const kickoff = new Date(match.kickoff);
+            const lockAt = new Date(kickoff.getTime() - 15 * 60000);
+            const locked = now >= lockAt;
+            nextRoot.innerHTML = `
+                <div class="home-match">
+                    <div class="home-team"><span class="flag">${FLAGS[match.local] || '🏳️'}</span><span class="home-team-name">${escapeHtml(match.local)}</span></div>
+                    <span class="home-versus">VS</span>
+                    <div class="home-team"><span class="flag">${FLAGS[match.visitante] || '🏳️'}</span><span class="home-team-name">${escapeHtml(match.visitante)}</span></div>
+                </div>
+                <p class="home-match-meta">${escapeHtml(match.fechaStr)} · Grupo ${escapeHtml(match.grupo)}<br><strong>${locked ? 'El pronóstico ya está bloqueado' : `Se bloquea en ${escapeHtml(formatHomeRemaining(lockAt - now))}`}</strong></p>
+                <button type="button" class="btn" style="margin:0;" onclick="APP.homePronosticar()" ${locked ? 'disabled' : ''}>Pronosticar</button>`;
+        }
+
+        function renderHome() {
+            const sessionRoot = DOM.get('homeSessionArea');
+            const topRoot = DOM.get('homeTopThree');
+            if (!sessionRoot || !topRoot) return;
+            calculatePointsEngine();
+            const ranking = calcularRankingGeneral(Object.values(STATE.users));
+            const medals = ['🥇', '🥈', '🥉'];
+            const leaders = ranking.slice(0, 3);
+            topRoot.innerHTML = leaders.length ? leaders.map((item, index) => `
+                <div class="home-leader">
+                    <span class="home-leader-medal">${medals[index]}</span>
+                    <span class="home-leader-name">${escapeHtml(item.nombre)}</span>
+                    <span class="home-leader-points">${item.puntos} pts</span>
+                </div>`).join('') : '<p class="small" style="text-align:center; padding:8px 0;">Aún no hay participantes en el ranking.</p>';
+
+            if (STATE.currentUser && STATE.myId) {
+                const me = ranking.find(item => item.id === STATE.myId);
+                const predictions = STATE.predictions[STATE.myId] || {};
+                const completed = ALL_MATCHES.filter(match => normalizeScorePair(predictions[match.id]?.gl, predictions[match.id]?.gv)).length;
+                const percentage = Math.round((completed / ALL_MATCHES.length) * 100);
+                sessionRoot.innerHTML = `
+                    <div class="home-card">
+                        <div class="home-profile-head">
+                            <div><p class="small">Tu resumen</p><h3 class="home-profile-name">Hola, ${escapeHtml(STATE.currentUser.nombre_apodo || 'Jugador')} 👋</h3></div>
+                            <span class="home-rank-pill">#${me ? me.posicion : '—'}</span>
+                        </div>
+                        <div class="home-stats">
+                            <div class="home-stat"><div class="home-stat-value">${me ? me.puntos : 0}</div><div class="home-stat-label">Puntos</div></div>
+                            <div class="home-stat"><div class="home-stat-value">${me ? `#${me.posicion}` : '—'}</div><div class="home-stat-label">Posición</div></div>
+                            <div class="home-stat"><div class="home-stat-value">${percentage}%</div><div class="home-stat-label">Pronósticos</div></div>
+                        </div>
+                        <button type="button" class="btn" style="margin:0;" onclick="APP.goToScreen('screenPredictions')" ${STATE.predictionsVisible ? '' : 'disabled'}>⚽ Continuar pronósticos</button>
+                    </div>`;
+            } else {
+                sessionRoot.innerHTML = `<div class="home-actions">
+                    <button id="btnCrearUsuario" type="button" class="btn" onclick="APP.goToScreen('screenRegister')" ${STATE.registrosLock ? 'style="display:none;"' : ''}>🎯 Crear mi usuario</button>
+                    <button type="button" class="btn secondary" onclick="APP.goToScreen('screenLogin')">Ya tengo usuario</button>
+                </div>`;
+            }
+            renderHomeTimeSensitive();
+        }
+
+        function showHomePointsModal() {
+            const container = DOM.get('dynamicModalContainer'); if (!container) return;
+            const overlay = document.createElement('div'); overlay.className = 'modal-overlay';
+            overlay.innerHTML = `<div class="modal-card"><h3>💎 ¿Cómo gano puntos?</h3><ul>
+                <li><span>🎯 Marcador exacto</span><span class="pts">+3 pts</span></li>
+                <li><span>✅ Ganador correcto</span><span class="pts">+1 pt</span></li>
+                <li><span>🌟 Selección revelación</span><span class="pts">+5 pts</span></li>
+                <li><span>😱 Mayor decepción</span><span class="pts">+5 pts</span></li>
+                <li><span>🇪🇨 Ecuador</span><span class="pts">+10 pts</span></li>
+                <li><span>👑 Campeón</span><span class="pts">+10 pts</span></li>
+                <li><span>⚽ Máximo goleador</span><span class="pts">+10 pts</span></li>
+            </ul><button type="button" class="modal-close-btn">Cerrar</button></div>`;
+            overlay.querySelector('.modal-close-btn').addEventListener('click', () => overlay.remove());
+            overlay.addEventListener('click', event => { if (event.target === overlay) overlay.remove(); });
+            container.appendChild(overlay);
+        }
+
+        function homePronosticar() {
+            goToScreen(STATE.currentUser ? 'screenPredictions' : 'screenLogin');
+        }
+
         function goToScreen(id) {
             if (!STATE.adminConnected) {
                 if (id === 'screenPredictions' && !STATE.predictionsVisible) { goToScreen('screenMenu'); return; }
@@ -1051,6 +1174,7 @@
             document.querySelectorAll('.bottom-nav .nav-item').forEach(btn => btn.classList.remove('active'));
             const navBtn = document.querySelector(`.bottom-nav .nav-item[onclick*="${id}"]`);
             if (navBtn) navBtn.classList.add('active');
+            if (id === 'screenWelcome') renderHome();
             if (id === 'screenPredictions') { renderPredictions(); updateUIForLockState(); }
             if (id === 'screenTables') renderTables();
             if (id === 'screenSpecial') { populateSpecials(); updateUIForLockState(); }
@@ -1876,7 +2000,7 @@
         }
         
         window.APP = {
-            goToScreen, registerUser, loginExistingUser, logout, saveScoreCloud, setTableGroupActive, saveKo, saveAllKoDrafts, setTablesView, setTableSource, showRankingRulesModal, cerrarDesglose: cerrarModalDesglose, adminLoadResults, generateOfficialBracket, saveOfficialSpecials, loadOfficialSpecials, toggleFaseFinalVisibility, togglePredictionsVisibility, adminDeleteUser, adminResetUser, saveAdmMatchesCloud, saveOfficialKoFromInput, saveOfficialKnockoutBatch,toggleRegistrosStatus,
+            goToScreen, registerUser, loginExistingUser, logout, saveScoreCloud, setTableGroupActive, saveKo, saveAllKoDrafts, setTablesView, setTableSource, showRankingRulesModal, showHomePointsModal, homePronosticar, cerrarDesglose: cerrarModalDesglose, adminLoadResults, generateOfficialBracket, saveOfficialSpecials, loadOfficialSpecials, toggleFaseFinalVisibility, togglePredictionsVisibility, adminDeleteUser, adminResetUser, saveAdmMatchesCloud, saveOfficialKoFromInput, saveOfficialKnockoutBatch,toggleRegistrosStatus,
             saveSpecial: function(field, val) {
                 const mySpec = STATE.specials[STATE.myId] || {};
                 const { globalLocked: comodinesGlobalCerrados, userAlreadyFilled } = getSpecialsLockState(mySpec);
@@ -1957,15 +2081,11 @@
         };
 
         function startCountdown() {
-            const deadline = new Date('2026-06-10T23:59:59-05:00');
             function tick() {
-                const now = new Date(); const diff = deadline - now;
-                if (diff <= 0) { ['cdDays','cdHours','cdMins','cdSecs'].forEach(id => { const el = document.getElementById(id); if (el) el.textContent = '00'; }); return; }
-                const days = Math.floor(diff / 86400000); const hours = Math.floor((diff % 86400000) / 3600000); const mins = Math.floor((diff % 3600000) / 60000); const secs = Math.floor((diff % 60000) / 1000);
-                const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = String(val).padStart(2,'0'); };
-                set('cdDays', days); set('cdHours', hours); set('cdMins', mins); set('cdSecs', secs);
+                const activeScreen = document.querySelector('.screen.active');
+                if (activeScreen && activeScreen.id === 'screenWelcome') renderHomeTimeSensitive();
             }
-            tick(); setInterval(tick, 1000);
+            tick(); setInterval(tick, 30000);
         }
         
         setInterval(() => {
@@ -1980,12 +2100,13 @@
         function refreshUIAfterData() {
             const ub = DOM.get('userBadge'); if (ub) ub.textContent = STATE.currentUser ? `👤 ${STATE.currentUser.nombre_apodo}` : '👤 Sin sesión';
             const btnCrear = DOM.get('btnCrearUsuario'); if (btnCrear) btnCrear.style.display = STATE.registrosLock ? 'none' : '';
+            renderHome();
             applyVisibility();
             if (STATE.adminConnected) renderAdminUsers();
             updateUIForLockState(); updateAdminButtonsUI();
         }
 
-        if (STATE.myId) goToScreen('screenMenu'); else goToScreen('screenWelcome');
+        goToScreen('screenWelcome');
         
     })();
     </script>
