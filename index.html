@@ -931,6 +931,31 @@
             return { puntos: REGLAS_POLLA.PUNTOS_NADA, motivo: 'Pronóstico incorrecto (0 pts)', tipo: 'incorrecto' };
         }
 
+        function getKnockoutScoreDetails(uid) {
+            const picks = STATE.knockoutPreds[uid] || {};
+            const details = [];
+            Object.keys(STATE.officialKnockout || {}).forEach(mid => {
+                const winner = STATE.officialKnockout[mid];
+                const pick = picks[mid];
+                const def = KNOCKOUT_DEFS.find(d => d.id === parseInt(mid, 10));
+                if (!winner || !pick || !def || pick !== winner) return;
+                details.push({ matchId: parseInt(mid, 10), round: def.round, team: pick, points: KO_POINTS[def.round] || 0 });
+            });
+            return details;
+        }
+
+        function getSpecialScoreDetails(uid) {
+            const user = STATE.specials[uid] || {};
+            const official = STATE.officialSpecials || {};
+            const details = [];
+            if (official.revelacion && user.seleccion_revelacion === official.revelacion) details.push({ label: 'Seleccion revelacion', value: user.seleccion_revelacion, points: 5 });
+            if (official.decepcion && user.seleccion_decepcion === official.decepcion) details.push({ label: 'Mayor decepcion', value: user.seleccion_decepcion, points: 5 });
+            if (official.ecuador && user.posicion_ecuador === official.ecuador) details.push({ label: 'Ecuador', value: user.posicion_ecuador, points: 10 });
+            if (official.campeon && user.campeon_mundial === official.campeon) details.push({ label: 'Campeon del Mundial', value: user.campeon_mundial, points: 10 });
+            if (official.goleador && user.goleador_mundial && user.goleador_mundial.trim().toLowerCase() === official.goleador.trim().toLowerCase()) details.push({ label: 'Maximo goleador', value: user.goleador_mundial, points: 10 });
+            return details;
+        }
+
         function calcularRankingGeneral(usuariosArray) {
             if (!usuariosArray || !Array.isArray(usuariosArray)) return [];
             const ranking = usuariosArray.map(usuario => {
@@ -950,11 +975,19 @@
                         desgloseHistorial.push({ partidoId: partido.id, infoPartido: partido, prediccion: predAdapted, resultadoReal: realAdapted, evaluacion: evaluacion });
                     }
                 });
-                return { id: uid, nombre: usuario.nombre_apodo || 'Usuario Anónimo', puntos: usuario.total_puntos || 0, exactos: exactosContador, fecha_registro: usuario.date_registered || 0, desglose: desgloseHistorial };
+                const classification = getClassificationScoreDetails(uid);
+                classification.details.forEach(detail => desgloseHistorial.push({ kind: 'bonus', sortOrder: 1000, label: detail.label, value: detail.value, evaluacion: { puntos: detail.points, motivo: `${detail.label} (+${detail.points} pts)`, tipo: 'bonus' } }));
+                const specialDetails = getSpecialScoreDetails(uid);
+                specialDetails.forEach(detail => desgloseHistorial.push({ kind: 'bonus', sortOrder: 2000, label: detail.label, value: detail.value, evaluacion: { puntos: detail.points, motivo: `${detail.label} (+${detail.points} pts)`, tipo: 'bonus' } }));
+                const knockoutDetails = getKnockoutScoreDetails(uid);
+                knockoutDetails.forEach(detail => desgloseHistorial.push({ kind: 'bonus', sortOrder: 3000 + detail.matchId, label: `Fase final - partido ${detail.matchId}`, value: detail.team, evaluacion: { puntos: detail.points, motivo: `Acierto fase final (+${detail.points} pts)`, tipo: 'bonus' } }));
+                return { id: uid, nombre: usuario.nombre_apodo || 'Usuario Anónimo', puntos: usuario.total_puntos || 0, exactos: exactosContador, campeonAcertado: specialDetails.some(d => d.label === 'Campeon del Mundial'), aciertosKo: knockoutDetails.length, fecha_registro: usuario.date_registered || 0, desglose: desgloseHistorial };
             });
             ranking.sort((a, b) => {
                 if (b.puntos !== a.puntos) return b.puntos - a.puntos;
                 if (b.exactos !== a.exactos) return b.exactos - a.exactos;
+                if (b.campeonAcertado !== a.campeonAcertado) return Number(b.campeonAcertado) - Number(a.campeonAcertado);
+                if (b.aciertosKo !== a.aciertosKo) return b.aciertosKo - a.aciertosKo;
                 const timeA = new Date(a.fecha_registro).getTime(); const timeB = new Date(b.fecha_registro).getTime();
                 if (timeA !== timeB) return timeA - timeB;
                 return a.nombre.localeCompare(b.nombre);
@@ -966,16 +999,23 @@
             const cuerpo = DOM.get('modalDesgloseCuerpo'); const titulo = DOM.get('modalDesgloseTitulo'); const modal  = DOM.get('modalDesglose');
             if (!cuerpo || !titulo || !modal) return;
             titulo.textContent = `Puntos de: ${nombreParticipante}`; cuerpo.innerHTML = '';
-            const itemsVisibles = desglose.filter(item => item.evaluacion.tipo !== 'pendiente' || item.prediccion !== null);
+            const itemsVisibles = desglose.filter(item => item.kind === 'bonus' || item.evaluacion.tipo !== 'pendiente' || item.prediccion !== null);
             if (itemsVisibles.length === 0) {
                 cuerpo.innerHTML = `<p style="text-align:center; color:var(--text-muted); padding:24px;">Este participante no tiene pronósticos registrados aún.</p>`;
             } else {
                 const ordenados = [...itemsVisibles].sort((a, b) => {
+                    if (a.kind === 'bonus' || b.kind === 'bonus') return (a.sortOrder || 0) - (b.sortOrder || 0);
                     const tieneResultA = a.resultadoReal ? 0 : 1; const tieneResultB = b.resultadoReal ? 0 : 1;
                     if (tieneResultA !== tieneResultB) return tieneResultA - tieneResultB;
                     return a.partidoId - b.partidoId;
                 });
                 ordenados.forEach(item => {
+                    if (item.kind === 'bonus') {
+                        const div = document.createElement('div'); div.className = 'desglose-item'; div.style.borderLeft = '4px solid var(--gold)';
+                        div.innerHTML = `<div style="display:flex; justify-content:space-between; align-items:center; gap:8px;"><span class="desglose-match-name">${escapeHtml(item.label)}</span><span class="desglose-motivo" style="color:var(--gold);">${escapeHtml(item.evaluacion.motivo)}</span></div><div class="desglose-scores"><div><span class="desglose-score-label">Pronostico acertado: </span><span class="desglose-score-val">${escapeHtml(item.value || '')}</span></div></div>`;
+                        cuerpo.appendChild(div);
+                        return;
+                    }
                     const part = item.infoPartido; const pred = item.prediccion; const real = item.resultadoReal; const eval_ = item.evaluacion;
                     const colorBorde = eval_.tipo === 'exacto' ? 'var(--gold)' : eval_.tipo === 'tendencia' ? 'var(--green)' : eval_.tipo === 'incorrecto' ? 'var(--coral)' : 'var(--border)';
                     const predStr = pred ? `${pred.goles_local} - ${pred.goles_visitante}` : '—';
@@ -1273,6 +1313,7 @@
         }
 
         function renderRanking() {
+            calculatePointsEngine();
             const rankingProcesado = calcularRankingGeneral(Object.values(STATE.users));
             const contenedor = DOM.get('rankingContent'); if (!contenedor) return;
             if (rankingProcesado.length === 0) { contenedor.innerHTML = `<p style="text-align:center; padding:24px; color:var(--text-muted);">Aún no hay participantes registrados.</p>`; return; }
@@ -1329,33 +1370,22 @@
 
         function calculatePointsEngine() {
             Object.keys(STATE.users).forEach(uid => {
-                let pts = 0; let exacts = 0; const uPreds = STATE.predictions[uid] || {}; const uSpec = STATE.specials[uid] || {};
+                let pts = 0; let exacts = 0; const uPreds = STATE.predictions[uid] || {};
                 ALL_MATCHES.forEach(m => {
                     const off = STATE.officialResults[m.id]; const pr = uPreds[m.id];
                     const evaluacion = evaluarPuntosPartido(pr?.gl, pr?.gv, off?.gl, off?.gv);
                     pts += evaluacion.puntos;
                     if (evaluacion.tipo === 'exacto') exacts++;
                 });
-                const oSp = STATE.officialSpecials || {};
-                if (oSp.revelacion && uSpec.seleccion_revelacion === oSp.revelacion) pts += 5;
-                if (oSp.decepcion && uSpec.seleccion_decepcion === oSp.decepcion) pts += 5;
-                if (oSp.ecuador && uSpec.posicion_ecuador === oSp.ecuador) pts += 10;
-                if (oSp.campeon && uSpec.campeon_mundial === oSp.campeon) pts += 10;
-                if (oSp.goleador && uSpec.goleador_mundial && uSpec.goleador_mundial.trim().toLowerCase() === oSp.goleador.trim().toLowerCase()) pts += 10;
-                const uKo = STATE.knockoutPreds[uid] || {};
-                Object.keys(STATE.officialKnockout || {}).forEach(mid => {
-                    const officialWinner = STATE.officialKnockout[mid]; const userPick = uKo[mid];
-                    if (officialWinner && userPick && userPick === officialWinner) {
-                        const def = KNOCKOUT_DEFS.find(d => d.id === parseInt(mid)); if (def) pts += (KO_POINTS[def.round] || 0);
-                    }
-                });
+                pts += getSpecialScoreDetails(uid).reduce((sum, detail) => sum + detail.points, 0);
+                pts += getKnockoutScoreDetails(uid).reduce((sum, detail) => sum + detail.points, 0);
                 pts += calcularPuntosClasificacion(uid);
                 STATE.users[uid].total_puntos = pts; STATE.users[uid].exacts = exacts;
             });
         }
 
-        function calcularPuntosClasificacion(uid) {
-            let pts = 0; const userPreds = STATE.predictions[uid] || {};
+        function getClassificationScoreDetails(uid) {
+            let pts = 0; const details = []; const userPreds = STATE.predictions[uid] || {};
             const realGrouped = computeStandingsFromResults(STATE.officialResults);
             const userResults = {};
             ALL_MATCHES.forEach(m => {
@@ -1364,24 +1394,27 @@
             });
             const userGrouped = computeStandingsFromResults(userResults);
             const gruposCompletos = Object.keys(GROUPS).every(g => { const arr = realGrouped[g] || []; return arr.length === 4 && arr.every(t => t.pj === 3); });
-            if (!gruposCompletos) return 0;
+            if (!gruposCompletos) return { points: 0, details: [] };
             
             Object.keys(GROUPS).forEach(g => {
                 const real = realGrouped[g] || []; const user = userGrouped[g] || [];
-                if (real[0] && user[0] && real[0].team === user[0].team) pts += 2;
-                if (real[1] && user[1] && real[1].team === user[1].team) pts += 2;
+                const groupMatches = ALL_MATCHES.filter(m => m.grupo === g);
+                const userGroupComplete = groupMatches.length === 6 && groupMatches.every(m => normalizeScorePair(userPreds[m.id]?.gl, userPreds[m.id]?.gv));
+                if (!userGroupComplete) return;
+                if (real[0] && user[0] && real[0].team === user[0].team) { pts += 2; details.push({ label: `Primero del grupo ${g}`, value: user[0].team, points: 2 }); }
+                if (real[1] && user[1] && real[1].team === user[1].team) { pts += 2; details.push({ label: `Segundo del grupo ${g}`, value: user[1].team, points: 2 }); }
             });
-            const realThirds = [];
-            Object.keys(GROUPS).forEach(g => { const arr = realGrouped[g] || []; if (arr[2]) realThirds.push({ team: arr[2].team, pts: arr[2].pts, dg: arr[2].dg, gf: arr[2].gf }); });
-            realThirds.sort((a, b) => b.pts - a.pts || b.dg - a.dg || b.gf - a.gf);
-            const top8Thirds = realThirds.slice(0, 8).map(x => x.team);
-            
-            const userThirds = [];
-            Object.keys(GROUPS).forEach(g => { const arr = userGrouped[g] || []; if (arr[2]) userThirds.push({ team: arr[2].team, pts: arr[2].pts, dg: arr[2].dg, gf: arr[2].gf }); });
-            userThirds.sort((a, b) => b.pts - a.pts || b.dg - a.dg || b.gf - a.gf);
-            const userTop8Thirds = userThirds.slice(0, 8).map(x => x.team);
-            userTop8Thirds.forEach(team => { if (top8Thirds.includes(team)) pts += 1; });
-            return pts;
+            const simulationComplete = ALL_MATCHES.every(m => normalizeScorePair(userPreds[m.id]?.gl, userPreds[m.id]?.gv));
+            if (simulationComplete) {
+                const top8Thirds = getBestThirdsStandings(STATE.officialResults).filter(x => x.qualifies).map(x => x.team);
+                const userTop8Thirds = getBestThirdsStandings(userResults).filter(x => x.qualifies).map(x => x.team);
+                userTop8Thirds.forEach(team => { if (top8Thirds.includes(team)) { pts += 1; details.push({ label: 'Mejor tercero clasificado', value: team, points: 1 }); } });
+            }
+            return { points: pts, details };
+        }
+
+        function calcularPuntosClasificacion(uid) {
+            return getClassificationScoreDetails(uid).points;
         }
         
         function computeStandingsFromResults(resultsMap) {
@@ -1400,7 +1433,7 @@
             const grouped = {};
             Object.keys(GROUPS).forEach(g => {
                 grouped[g] = Object.values(standings).filter(s => s.group === g); grouped[g].forEach(t => t.dg = t.gf - t.gc);
-                grouped[g].sort((a,b) => b.pts - a.pts || b.dg - a.dg || b.gf - a.gf);
+                grouped[g].sort((a,b) => b.pts - a.pts || b.dg - a.dg || b.gf - a.gf || a.gc - b.gc || a.team.localeCompare(b.team));
             });
             return grouped;
         }
@@ -1508,8 +1541,8 @@
                         const thirdCard = document.createElement('div'); thirdCard.className = 'match'; thirdCard.dataset.matchId = 103;
                         thirdCard.innerHTML = `<div style="font-size:0.65rem; color:var(--sky); font-weight:900; text-align:center; margin-bottom:4px; letter-spacing:1px;">🥉 TERCER PUESTO</div><div class="match-meta"><span>Partido 103</span></div>`;
                         const lName = resolvedNames[103].local; const vName = resolvedNames[103].visitor; const closed = isQuinielaClosed();
-                        const lDis = !interactive || isPlaceholderTeam(lName) || ((closed || isMatchClosed(m.id)) && !STATE.adminConnected);
-                        const vDis = !interactive || isPlaceholderTeam(vName) || ((closed || isMatchClosed(m.id)) && !STATE.adminConnected);
+                        const lDis = !interactive || isPlaceholderTeam(lName) || ((closed || isMatchClosed(thirdMatch.id)) && !STATE.adminConnected);
+                        const vDis = !interactive || isPlaceholderTeam(vName) || ((closed || isMatchClosed(thirdMatch.id)) && !STATE.adminConnected);
                         thirdCard.appendChild(createKoButton(103, lName, myKo[103] === lName, lDis)); thirdCard.appendChild(createKoButton(103, vName, myKo[103] === vName, vDis));
                         thirdContainer.appendChild(thirdCard); col.appendChild(thirdContainer);
                     }
@@ -1527,8 +1560,8 @@
             }
             const meta = document.createElement('div'); meta.className = 'match-meta'; meta.innerHTML = `<span>Partido ${m.id}</span>`; card.appendChild(meta);
             const lName = resolvedNames.local; const vName = resolvedNames.visitor; const closed = isQuinielaClosed();
-            const lDis = !interactive || isPlaceholderTeam(lName) || (closed && !STATE.adminConnected);
-            const vDis = !interactive || isPlaceholderTeam(vName) || (closed && !STATE.adminConnected);
+            const lDis = !interactive || isPlaceholderTeam(lName) || ((closed || isMatchClosed(m.id)) && !STATE.adminConnected);
+            const vDis = !interactive || isPlaceholderTeam(vName) || ((closed || isMatchClosed(m.id)) && !STATE.adminConnected);
             card.appendChild(createKoButton(m.id, lName, myKo[m.id] === lName, lDis));
             card.appendChild(createKoButton(m.id, vName, myKo[m.id] === vName, vDis));
             slot.appendChild(card); return slot;
