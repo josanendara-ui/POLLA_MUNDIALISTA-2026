@@ -193,7 +193,7 @@
         }
 
         /* ========== HOME ========== */
-        #screenWelcome { gap: 14px; padding-top: 20px; }
+        #screenWelcome, #screenProfile { gap: 14px; padding-top: 20px; }
         .home-hero { text-align: center; padding: 10px 12px 2px; }
         .home-trophy { font-size: 4rem; line-height: 1; margin-bottom: 10px; filter: drop-shadow(0 8px 18px rgba(247,201,72,0.32)); animation: welcomeFloat 3s ease-in-out infinite; }
         .home-title { font-size: 1.65rem; font-weight: 900; color: var(--gold); margin-bottom: 7px; }
@@ -229,7 +229,7 @@
         .home-leader-points { color: var(--gold); font-size: 0.8rem; font-weight: 900; white-space: nowrap; }
         .home-points-button { margin: 0 0 4px; }
         @media (min-width: 560px) {
-            #screenWelcome { padding-left: 24px; padding-right: 24px; }
+            #screenWelcome, #screenProfile { padding-left: 24px; padding-right: 24px; }
             .home-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
             .home-layout > .home-card { margin: 0; }
         }
@@ -238,7 +238,7 @@
 <body>
     <div class="app-container" id="appContainer">
         <div class="header">
-            <h1 onclick="APP.goToScreen('screenWelcome')">🏆 POLLA FAMILIAR 2026</h1>
+            <h1 onclick="APP.goToScreen('screenMenu')">🏆 POLLA FAMILIAR 2026</h1>
             <span class="user-tag" id="userBadge">Conectando...</span>
         </div>
         <div id="toast" class="toast">Sincronizado con la Nube</div>
@@ -249,25 +249,27 @@
                 <h2 class="home-title" id="homeTitle">Oráculo Mundialista</h2>
                 <p class="home-subtitle">Compite con tu familia y demuestra quién sabe más de fútbol.</p>
             </section>
+            <section class="home-card home-status"><span class="home-status-icon">🟢</span><div><strong>Mundial en curso</strong><p>Los partidos se bloquean automáticamente según su horario de juego.</p></div></section>
+            <div class="home-actions">
+                <button id="btnCrearUsuario" type="button" class="btn" onclick="APP.goToScreen('screenRegister')">🎯 Crear mi usuario</button>
+                <button type="button" class="btn secondary" onclick="APP.goToScreen('screenLogin')">Ya tengo usuario</button>
+            </div>
+        </div>
 
+        <div class="screen" id="screenProfile">
+            <div class="home-section-head" style="margin-bottom:0;"><h2 class="home-section-title" style="font-size:1.15rem;">Mi perfil</h2><button type="button" class="home-link" onclick="APP.goToScreen('screenMenu')">Volver al menú</button></div>
             <section id="homeTournamentStatus" class="home-card home-status" aria-live="polite"></section>
             <section id="homeSessionArea"></section>
-
             <div class="home-layout">
                 <section class="home-card" aria-labelledby="homeNextMatchTitle">
                     <div class="home-section-head"><h3 class="home-section-title" id="homeNextMatchTitle">⚽ Próximo partido</h3></div>
                     <div id="homeNextMatch"></div>
                 </section>
-
                 <section class="home-card" aria-labelledby="homeTopThreeTitle">
-                    <div class="home-section-head">
-                        <h3 class="home-section-title" id="homeTopThreeTitle">🏆 Top 3 actual</h3>
-                        <button type="button" class="home-link" onclick="APP.goToScreen('screenRanking')">Ver ranking completo</button>
-                    </div>
+                    <div class="home-section-head"><h3 class="home-section-title" id="homeTopThreeTitle">🏆 Top 3 actual</h3><button type="button" class="home-link" onclick="APP.goToScreen('screenRanking')">Ver ranking completo</button></div>
                     <div id="homeTopThree" class="home-leaders"></div>
                 </section>
             </div>
-
             <button type="button" class="btn-rules home-points-button" onclick="APP.showHomePointsModal()">💎 ¿Cómo gano puntos?</button>
         </div>
 
@@ -407,6 +409,7 @@
         <div class="screen" id="screenMenu">
             <h3 style="margin-bottom:20px; font-size:1.2rem; text-align:center;">Panel de Control</h3>
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                <button class="btn secondary" style="padding:24px 0; display:flex; flex-direction:column; align-items:center; gap:8px;" onclick="APP.goToScreen('screenProfile')"><span style="font-size:1.6rem;">👤</span><span style="font-size:0.85rem;">Mi perfil</span></button>
                 <button id="btnPredMenu" class="btn secondary" style="padding:24px 0; display:flex; flex-direction:column; align-items:center; gap:8px;" onclick="APP.goToScreen('screenPredictions')"><span style="font-size:1.6rem;">⚽</span><span style="font-size:0.85rem;">Pronósticos</span></button>
                 <button class="btn secondary" style="padding:24px 0; display:flex; flex-direction:column; align-items:center; gap:8px;" onclick="APP.goToScreen('screenTables')"><span style="font-size:1.6rem;">📊</span><span style="font-size:0.85rem;">Tablas Grupos</span></button>
                 <button class="btn secondary" style="padding:24px 0; display:flex; flex-direction:column; align-items:center; gap:8px;" onclick="APP.goToScreen('screenRanking')"><span style="font-size:1.6rem;">🏆</span><span style="font-size:0.85rem;">Leaderboard</span></button>
@@ -487,7 +490,7 @@
         </div>
 
         <div class="bottom-nav">
-            <button class="nav-item" onclick="APP.goToScreen('screenWelcome')"><span class="icon">🏠</span>Inicio</button>
+            <button class="nav-item" onclick="APP.goToScreen('screenMenu')"><span class="icon">🏠</span>Inicio</button>
             <button id="navItemPredictions" class="nav-item" onclick="APP.goToScreen('screenPredictions')"><span class="icon">⚽</span>Pronósticos</button>
             <button id="navItemFaseFinal" class="nav-item" style="display:none;" onclick="APP.goToScreen('screenFaseFinal')"><span class="icon">🔥</span>Fase Final</button>
             <button class="nav-item" onclick="APP.goToScreen('screenTables')"><span class="icon">📊</span>Tablas</button>
@@ -850,7 +853,7 @@
             refreshUIAfterData();
             
             const activeScreenId = document.querySelector('.screen.active')?.id || 'screenWelcome';
-            goToScreen(activeScreenId);
+            goToScreen(STATE.currentUser && activeScreenId === 'screenWelcome' ? 'screenMenu' : activeScreenId);
         }, error => {
             console.error("Error cargando Firebase:", error);
             const userBadge = DOM.get('userBadge'); if (userBadge) userBadge.textContent = "⚠️ Error de Red";
@@ -1136,7 +1139,7 @@
                     </div>`;
             } else {
                 sessionRoot.innerHTML = `<div class="home-actions">
-                    <button id="btnCrearUsuario" type="button" class="btn" onclick="APP.goToScreen('screenRegister')" ${STATE.registrosLock ? 'style="display:none;"' : ''}>🎯 Crear mi usuario</button>
+                    <button type="button" class="btn" onclick="APP.goToScreen('screenRegister')" ${STATE.registrosLock ? 'style="display:none;"' : ''}>🎯 Crear mi usuario</button>
                     <button type="button" class="btn secondary" onclick="APP.goToScreen('screenLogin')">Ya tengo usuario</button>
                 </div>`;
             }
@@ -1174,7 +1177,7 @@
             document.querySelectorAll('.bottom-nav .nav-item').forEach(btn => btn.classList.remove('active'));
             const navBtn = document.querySelector(`.bottom-nav .nav-item[onclick*="${id}"]`);
             if (navBtn) navBtn.classList.add('active');
-            if (id === 'screenWelcome') renderHome();
+            if (id === 'screenProfile') renderHome();
             if (id === 'screenPredictions') { renderPredictions(); updateUIForLockState(); }
             if (id === 'screenTables') renderTables();
             if (id === 'screenSpecial') { populateSpecials(); updateUIForLockState(); }
@@ -2083,7 +2086,7 @@
         function startCountdown() {
             function tick() {
                 const activeScreen = document.querySelector('.screen.active');
-                if (activeScreen && activeScreen.id === 'screenWelcome') renderHomeTimeSensitive();
+                if (activeScreen && activeScreen.id === 'screenProfile') renderHomeTimeSensitive();
             }
             tick(); setInterval(tick, 30000);
         }
@@ -2106,7 +2109,7 @@
             updateUIForLockState(); updateAdminButtonsUI();
         }
 
-        goToScreen('screenWelcome');
+        if (STATE.myId) goToScreen('screenMenu'); else goToScreen('screenWelcome');
         
     })();
     </script>
