@@ -280,7 +280,6 @@
                     <div id="homeTopThree" class="home-leaders"></div>
                 </section>
             </div>
-            <button type="button" class="btn-rules home-points-button" onclick="APP.showHomePointsModal()">💎 ¿Cómo gano puntos?</button>
         </div>
 
         <div class="screen" id="screenLogin">
@@ -341,8 +340,8 @@
             </div>
             <div id="closureBannerPredictions" class="closure-banner" style="display:none;">🔒Los comodines están cerrados</div>
             <div class="prediction-filter-switch" role="tablist" aria-label="Filtrar partidos">
-                <button id="predictionFilterOpen" class="active" type="button" onclick="APP.setPredictionFilter('open')">Abiertos <span id="predictionCountOpen" class="prediction-filter-count">0</span></button>
-                <button id="predictionFilterToday" type="button" onclick="APP.setPredictionFilter('today')">Hoy <span id="predictionCountToday" class="prediction-filter-count">0</span></button>
+                <button id="predictionFilterToday" class="active" type="button" onclick="APP.setPredictionFilter('today')">Hoy <span id="predictionCountToday" class="prediction-filter-count">0</span></button>
+                <button id="predictionFilterOpen" type="button" onclick="APP.setPredictionFilter('open')">Abiertos <span id="predictionCountOpen" class="prediction-filter-count">0</span></button>
                 <button id="predictionFilterClosed" type="button" onclick="APP.setPredictionFilter('closed')">Cerrados <span id="predictionCountClosed" class="prediction-filter-count">0</span></button>
             </div>
             <div id="predictionGroupTabs" class="group-nav prediction-groups"></div>
@@ -433,6 +432,7 @@
                 <button class="btn secondary" style="padding:24px 0; display:flex; flex-direction:column; align-items:center; gap:8px;" onclick="APP.goToScreen('screenSpecial')"><span style="font-size:1.6rem;">🌟</span><span style="font-size:0.85rem;">Comodines</span></button>
                 <button class="btn secondary grid-full" style="font-size:0.85rem;" onclick="APP.goToScreen('screenAdmin')">🔧 Panel de Administrador</button>
             </div>
+            <button type="button" class="btn-rules home-points-button" onclick="APP.showHomePointsModal()">💎 ¿Cómo gano puntos?</button>
             <button class="btn danger" style="margin-top:24px;" onclick="APP.logout()">Cerrar Sesión</button>
         </div>
 
@@ -697,7 +697,7 @@
             users: {}, predictions: {}, specials: {}, officialResults: {}, officialSpecials: {},
             knockoutPreds: {}, officialKnockout: {}, officialKnockoutMatches: {}, status: 'open',
             myId: null, currentUser: null, currentSelectedGroup: 'A',
-            currentPredictionFilter: 'open', currentPredictionGroup: 'all',
+            currentPredictionFilter: 'today', currentPredictionGroup: 'all',
             currentTablesView: 'groups', adminConnected: sessionStorage.getItem('p26adm') === '1',
             faseFinalEnabled: false, predictionsVisible: true, gruposLock: false, registrosLock: false,
             settings: { predictionsLocked: false },
@@ -1310,7 +1310,7 @@
         }
 
         function setPredictionFilter(filter) {
-            STATE.currentPredictionFilter = ['open', 'today', 'closed'].includes(filter) ? filter : 'open';
+            STATE.currentPredictionFilter = ['today', 'open', 'closed'].includes(filter) ? filter : 'today';
             renderPredictions();
         }
 
@@ -1339,7 +1339,7 @@
 
             const groupTabs = DOM.get('predictionGroupTabs');
             if (groupTabs) {
-                groupTabs.style.display = STATE.currentPredictionFilter === 'today' ? 'none' : 'flex';
+                groupTabs.style.display = 'flex';
                 groupTabs.innerHTML = ['all', ...Object.keys(GROUPS)].map(group => {
                     const label = group === 'all' ? 'Todos' : `Grupo ${group}`;
                     return `<button type="button" class="group-tab ${STATE.currentPredictionGroup === group ? 'active' : ''}" onclick="APP.setPredictionGroup('${group}')">${label}</button>`;
@@ -1347,10 +1347,10 @@
             }
 
             let visibleMatches = STATE.currentPredictionFilter === 'today' ? todayMatches : (STATE.currentPredictionFilter === 'closed' ? closedMatches : openMatches);
-            if (STATE.currentPredictionFilter !== 'today' && STATE.currentPredictionGroup !== 'all') visibleMatches = visibleMatches.filter(match => match.grupo === STATE.currentPredictionGroup);
+            if (STATE.currentPredictionGroup !== 'all') visibleMatches = visibleMatches.filter(match => match.grupo === STATE.currentPredictionGroup);
             visibleMatches.sort((a, b) => new Date(a.kickoff) - new Date(b.kickoff));
             if (visibleMatches.length === 0) {
-                const emptyText = STATE.currentPredictionFilter === 'today' ? 'No hay partidos programados para hoy.' : STATE.currentPredictionFilter === 'closed' ? 'No hay partidos cerrados en este grupo.' : 'No hay partidos abiertos en este grupo.';
+                const emptyText = STATE.currentPredictionFilter === 'today' ? 'No hay partidos programados para hoy en este grupo.' : STATE.currentPredictionFilter === 'closed' ? 'No hay partidos cerrados en este grupo.' : 'No hay partidos abiertos en este grupo.';
                 container.innerHTML = `<div class="prediction-empty">${emptyText}</div>`;
                 if (screen) requestAnimationFrame(() => { screen.scrollTop = Math.min(scrollBefore, screen.scrollHeight); });
                 return;
