@@ -243,6 +243,41 @@
             .home-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
             .home-layout > .home-card { margin: 0; }
         }
+        /* 1. Aclaramos un 15% el texto secundario para mayor contraste visual */
+        :root {
+            --text-muted: #cbd5e1; /* Reemplaza el #A7B4C7 anterior */
+        }
+        
+        /* 2. Subir el tamaño mínimo de textos secundarios para facilitar la lectura */
+        .home-stat-label { 
+            color: var(--text-muted); 
+            font-size: 0.8rem; /* Subido desde 0.65rem */
+            font-weight: 600; /* Mayor grosor para compensar */
+            margin-top: 4px; 
+        }
+        
+        .match-meta, .match-date { 
+            font-size: 0.85rem; /* Subido desde 0.72/0.75rem */
+            font-weight: 700; 
+        }
+        
+        /* 3. Proteger el área de toque en teléfonos móviles */
+        @media (max-width: 860px) { 
+            .score-inputs {
+                gap: 12px; /* Mayor separación horizontal entre los cuadros de texto */
+            }
+            .score-box { 
+                width: 44px; /* Mantenemos el mínimo recomendado de 44px */
+                height: 44px; 
+                font-size: 1.15rem; /* Números más grandes para ver claramente el pronóstico */
+            } 
+        }
+        
+        /* 4. Dar respiro a las tablas para evitar toques accidentales al hacer scroll */
+        .standings th, .standings td { 
+            font-size: 0.85rem; 
+            padding: 14px 6px; /* Aumentamos el padding vertical */
+        }
     </style>
 </head>
 <body>
