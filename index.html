@@ -730,6 +730,7 @@
             myId: null, currentUser: null, currentSelectedGroup: 'A',
             currentPredictionFilter: 'today', currentPredictionGroup: 'all',
             currentTablesView: 'groups', adminConnected: sessionStorage.getItem('p26adm') === '1',
+            bracketSimulationPicks: {},
             faseFinalEnabled: false, koRoundsEnabled: { dieciseisavos: false, octavos: false, cuartos: false, semis: false, tercero: false, final: false }, predictionsVisible: true, gruposLock: false, registrosLock: false,
             currentKoRound: 'dieciseisavos',
             settings: { predictionsLocked: false },
@@ -1835,7 +1836,7 @@
             const root = DOM.get('tablesBracketRoot'); if (!root) return;
             const isReal = STATE.tableSource === 'real';
             const data = isReal ? getOfficialKnockoutBase() : getUserGeneratedKnockoutMatches();
-            const bracketPicks = isReal ? (STATE.officialKnockoutScores || {}) : (STATE.knockoutPreds[STATE.myId] || {});
+            const bracketPicks = isReal ? (STATE.officialKnockoutScores || {}) : (STATE.bracketSimulationPicks || {});
             renderBracketInto(root, data.matches, data.grouped, data.best3, bracketPicks, !isReal);
             root.onclick = isReal ? null : function(e) {
                 const btn = e.target.closest('.ko-team-btn');
@@ -1844,8 +1845,14 @@
             };
             const count = DOM.get('bracketCountText');
             if (count) {
-                count.textContent = isReal ? 'Resultados oficiales' : `${Object.keys(bracketPicks).length}/32 selecciones`;
+                count.innerHTML = isReal ? 'Resultados oficiales' : `${Object.keys(bracketPicks).length}/32 selecciones <button type="button" class="home-link" style="margin-left:8px;" onclick="APP.resetBracketSimulation()">Reiniciar</button>`;
             }
+        }
+
+        function resetBracketSimulation() {
+            STATE.bracketSimulationPicks = {};
+            renderTablesBracket();
+            triggerToast('Simulación reiniciada');
         }
 
         function getResolvedWinnerForBracket(matchId, resolvedNames, picks) {
@@ -1863,19 +1870,17 @@
 
         function saveTablesBracketPick(matchId, team) {
             if (STATE.tableSource !== 'simulated') return;
-            if (!STATE.myId) { triggerToast('Inicia sesión'); return; }
             const root = DOM.get('tablesBracketRoot'); if (!root) return;
             const btn = Array.from(root.querySelectorAll(`.ko-team-btn[data-match-id="${matchId}"]`)).find(b => b.dataset.team === team);
             const card = btn ? btn.closest('.match') : null;
             const options = card ? Array.from(card.querySelectorAll('.ko-team-btn')).map(b => b.dataset.team) : [];
             if (options.length < 2 || isPlaceholderTeam(team)) return;
             const pair = team === options[0] ? { gl: 1, gv: 0 } : { gl: 0, gv: 1 };
-            if (!STATE.knockoutPreds[STATE.myId]) STATE.knockoutPreds[STATE.myId] = {};
-            if (valuesEqual(STATE.knockoutPreds[STATE.myId][matchId], pair)) return;
-            STATE.knockoutPreds[STATE.myId][matchId] = pair;
-            db.ref(`knockout_preds/${STATE.myId}/${matchId}`).set(pair)
-              .then(() => { triggerToast('✅ Selección simulada'); renderTablesBracket(); })
-              .catch(err => { console.error(err); triggerToast('❌ Error'); });
+            if (!STATE.bracketSimulationPicks) STATE.bracketSimulationPicks = {};
+            if (valuesEqual(STATE.bracketSimulationPicks[matchId], pair)) return;
+            STATE.bracketSimulationPicks[matchId] = pair;
+            triggerToast('✅ Simulación actualizada');
+            renderTablesBracket();
         }
 
         function renderBracketInto(root, matches, grouped, best3, myKo, interactive) {
@@ -2414,7 +2419,7 @@
         }
         
         window.APP = {
-            goToScreen, registerUser, loginExistingUser, logout, saveScoreCloud, setPredictionFilter, setPredictionGroup, setTableGroupActive, saveKo, scheduleKoSave, saveAllKoDrafts, setTablesView, setTableSource, showRankingRulesModal, showHomePointsModal, showMyPointsBreakdown, homePronosticar, cerrarDesglose: cerrarModalDesglose, adminLoadResults, generateOfficialBracket, saveOfficialSpecials, loadOfficialSpecials, toggleFaseFinalVisibility, togglePredictionsVisibility, adminDeleteUser, adminResetUser, saveAdmMatchesCloud, saveOfficialKoFromInput, saveOfficialKnockoutBatch,toggleRegistrosStatus, setKoRoundTab, toggleKoRound,
+            goToScreen, registerUser, loginExistingUser, logout, saveScoreCloud, setPredictionFilter, setPredictionGroup, setTableGroupActive, saveKo, scheduleKoSave, saveAllKoDrafts, setTablesView, setTableSource, resetBracketSimulation, showRankingRulesModal, showHomePointsModal, showMyPointsBreakdown, homePronosticar, cerrarDesglose: cerrarModalDesglose, adminLoadResults, generateOfficialBracket, saveOfficialSpecials, loadOfficialSpecials, toggleFaseFinalVisibility, togglePredictionsVisibility, adminDeleteUser, adminResetUser, saveAdmMatchesCloud, saveOfficialKoFromInput, saveOfficialKnockoutBatch,toggleRegistrosStatus, setKoRoundTab, toggleKoRound,
             saveSpecial: function(field, val) {
                 const mySpec = STATE.specials[STATE.myId] || {};
                 const { globalLocked: comodinesGlobalCerrados, userAlreadyFilled } = getSpecialsLockState(mySpec);
