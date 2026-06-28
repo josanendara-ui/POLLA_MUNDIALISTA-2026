@@ -19,7 +19,7 @@
             --coral: #FB7185;
             --sky: #60A5FA;
             --text-main: #F8FAFC;
-            --text-muted: #cbd5e1; /* Reemplaza el #A7B4C7 anterior */
+            --text-muted: #A7B4C7;
             --border: rgba(148, 163, 184, 0.22);
             --radius: 10px;
             --shadow: 0 16px 40px rgba(3, 7, 18, 0.32);
@@ -76,7 +76,7 @@
         .progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--green), var(--gold)); transition: width 0.3s ease; width: 0%; }
         
         .match-row { background: linear-gradient(180deg, rgba(31,42,63,0.96), rgba(23,32,51,0.96)); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; margin-bottom: 12px; display: flex; flex-direction: column; box-shadow: var(--shadow); }
-        .match-date { font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; margin-bottom: 10px; text-align: left; letter-spacing: 0.5px; display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 6px; }
+        .match-date { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; margin-bottom: 10px; text-align: left; letter-spacing: 0.5px; display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 6px; }
         .match-status.locked { color: #EF4444; }
         .match-status.open { color: var(--green); }
         .match-status.live { color: var(--gold); }
@@ -136,12 +136,12 @@
         .ko-team-btn:hover { transform: translateY(-3px); box-shadow: 0 6px 18px rgba(0,0,0,0.35); }
         .ko-team-btn:focus { outline: 3px solid rgba(45,212,191,0.15); outline-offset: 2px; }
         .ko-team-btn.disabled, .ko-team-btn[disabled] { cursor: not-allowed; opacity: 0.45; transform: none; box-shadow: none; }
-        .ko-team-btn.selected { background: linear-gradient(90deg, rgba(45,212,191,0.18), rgba(247,201,72,0.08)); border-color: var(--green); color: #fff; box-shadow: 0 8px 22px rgba(45,212,141,0.14); }
+        .ko-team-btn.selected { background: linear-gradient(90deg, rgba(45,212,191,0.18), rgba(247,201,72,0.08)); border-color: var(--green); color: #fff; box-shadow: 0 8px 22px rgba(45,212,191,0.14); }
         .ko-team-btn .ko-icon { font-size: 1.1rem; color: var(--green); opacity: 0; transition: opacity 0.12s ease, transform 0.12s ease; }
         .ko-team-btn.selected .ko-icon { opacity: 1; transform: scale(1.05); }
-        .match-meta { display: flex; justify-content: space-between; font-size: 0.85rem; text-transform: uppercase; font-weight: 800; color: var(--text-muted); margin-bottom: 6px; }
+        .match-meta { display: flex; justify-content: space-between; font-size: 0.72rem; text-transform: uppercase; font-weight: 800; color: var(--text-muted); margin-bottom: 6px; }
         
-        @media (max-width: 860px) { .app-container { max-width: 100%; } .team { font-size: 0.86rem; } .score-box { width: 44px; height: 44px; font-size: 1.15rem; } .score-inputs { gap: 12px; } }
+        @media (max-width: 860px) { .app-container { max-width: 100%; } .team { font-size: 0.86rem; } .score-box { width: 38px; height: 42px; } }
         
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .grid-full { grid-column: span 2; }
@@ -220,10 +220,10 @@
         .home-profile-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 14px; }
         .home-profile-name { font-size: 1.05rem; font-weight: 900; overflow-wrap: anywhere; }
         .home-rank-pill { flex: 0 0 auto; color: var(--gold); border: 1px solid rgba(247,201,72,0.32); background: rgba(247,201,72,0.08); border-radius: 999px; padding: 6px 9px; font-size: 0.75rem; font-weight: 900; }
-        .home-stats { display: grid; grid-template-columns: grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 13px; }
+        .home-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 13px; }
         .home-stat { background: rgba(13,20,34,0.7); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 10px 6px; text-align: center; min-width: 0; }
         .home-stat-value { color: var(--text-main); font-weight: 900; font-size: 1rem; overflow-wrap: anywhere; }
-        .home-stat-label { color: var(--text-muted); font-size: 0.8rem; font-weight: 600; margin-top: 4px; }
+        .home-stat-label { color: var(--text-muted); font-size: 0.65rem; margin-top: 3px; }
         .home-leaders { display: grid; gap: 7px; }
         .home-leader { display: grid; grid-template-columns: 28px minmax(0,1fr) auto; align-items: center; gap: 8px; padding: 9px 10px; background: rgba(13,20,34,0.6); border-radius: 8px; }
         .home-leader-medal { font-size: 1.1rem; }
@@ -242,15 +242,6 @@
             #screenWelcome, #screenProfile { padding-left: 24px; padding-right: 24px; }
             .home-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
             .home-layout > .home-card { margin: 0; }
-        }
-        .match-meta, .match-date { 
-            font-size: 0.85rem; 
-            font-weight: 700; 
-        }
-        
-        .standings th, .standings td { 
-            font-size: 0.85rem; 
-            padding: 14px 6px; 
         }
     </style>
 </head>
@@ -418,16 +409,13 @@
         </div>
 
         <div class="screen" id="screenFaseFinal" aria-live="polite" aria-label="Fase Final del Mundial">
-          <h3 style="margin-bottom:8px; font-size:1.2rem;">🔥 Fase Final</h3>
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; gap:12px;">    <p style="font-size:0.85rem; color:var(--text-muted);">Selecciona el ganador de cada cruce. Los emparejamientos se actualizan automáticamente según tus tablas de grupos.</p>    <button class="btn-rules" style="white-space:nowrap; margin:0;" onclick="APP.showKoPointsModal()">🏆 Puntos</button></div>
-          <div id="closureBannerFaseFinal" class="closure-banner" style="display:none;">🔒 La quiniela está cerrada</div>
-          <div class="bracket-panel">
-              <div id="bracketRoot" class="bracket" role="region" aria-label="Llave eliminatoria"></div>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; gap:8px;">
+            <h3 style="font-size:1.1rem;">🔥 Fase Final</h3>
+            <button class="btn-rules" style="white-space:nowrap; margin:0; padding:8px 12px; font-size:0.8rem;" onclick="APP.showKoPointsModal()">🏆 Puntos</button>
           </div>
-          <div style="display:flex; gap:8px; margin-top:12px;">
-            <button class="btn secondary" onclick="APP.goToScreen('screenMenu')">Volver al Menú</button>
-            <button class="btn" id="btnConfirmAll" style="flex:1;" onclick="APP.saveAllKoDrafts()">Guardar todas mis selecciones</button>
-          </div>
+          <div id="koRoundTabs" class="group-nav" style="margin-bottom:12px;"></div>
+          <div id="koRoundContent"></div>
+          <button class="btn secondary" style="margin-top:8px;" onclick="APP.goToScreen('screenMenu')">Volver al Menú</button>
         </div>
 
         <div class="screen" id="screenMenu">
@@ -452,9 +440,13 @@
                 <button class="btn" onclick="APP.adminLogin()">Ingresar</button>
             </div>
             <div id="adminPanel" style="display:none;">
-                <div style="display:flex; gap:10px; margin-bottom:12px;">
-                    <button id="btnAdminFFVisible" class="btn secondary" style="flex:1;" onclick="APP.toggleFaseFinalVisibility(true)">👁️ Fase final visible</button>
-                    <button id="btnAdminFFHidden" class="btn secondary" style="flex:1;" onclick="APP.toggleFaseFinalVisibility(false)">🙈 Fase final oculta</button>
+                <h4 style="font-size:0.85rem; color:var(--text-muted); margin-bottom:8px; text-transform:uppercase; font-weight:800;">🔥 Habilitar rondas Fase Final</h4>
+                <div id="adminKoRoundsPanel" style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:16px;">
+                    <button id="btnKoRound_dieciseisavos" class="btn secondary" style="font-size:0.8rem;" onclick="APP.toggleKoRound('dieciseisavos')">16vos</button>
+                    <button id="btnKoRound_octavos" class="btn secondary" style="font-size:0.8rem;" onclick="APP.toggleKoRound('octavos')">Octavos</button>
+                    <button id="btnKoRound_cuartos" class="btn secondary" style="font-size:0.8rem;" onclick="APP.toggleKoRound('cuartos')">Cuartos</button>
+                    <button id="btnKoRound_semis" class="btn secondary" style="font-size:0.8rem;" onclick="APP.toggleKoRound('semis')">Semifinales</button>
+                    <button id="btnKoRound_final" class="btn secondary" style="grid-column:span 2; font-size:0.8rem;" onclick="APP.toggleKoRound('final')">Final + 3er Puesto</button>
                 </div>
                 <div style="display:flex; gap:10px; margin-bottom:20px;">
                     <button id="btnAdminPredsVisible" class="btn secondary" style="flex:1;" onclick="APP.togglePredictionsVisibility(true)">📋 Pronósticos visibles</button>
@@ -663,7 +655,7 @@
             { id: 74,  round: 'dieciseisavos', local: '1E',        visitor: 'Best3',     kickoff: "2026-06-29T15:30:00-05:00", fechaStr: "Lun 29 Jun 15:30" },
             { id: 75,  round: 'dieciseisavos', local: '1F',        visitor: '2C',        kickoff: "2026-06-29T20:00:00-05:00", fechaStr: "Lun 29 Jun 20:00" },
             { id: 76,  round: 'dieciseisavos', local: '1C',        visitor: '2F',        kickoff: "2026-06-29T12:00:00-05:00", fechaStr: "Lun 29 Jun 12:00" },
-            { id: 77,  round: 'dieciseisavos', local: '1I',        visitor: 'Best3',     kickoff: "2026-07-30T16:00:00-05:00", fechaStr: "Mar 30 Jun 16:00" },
+            { id: 77,  round: 'dieciseisavos', local: '1I',        visitor: 'Best3',     kickoff: "2026-06-30T16:00:00-05:00", fechaStr: "Mar 30 Jun 16:00" },
             { id: 78,  round: 'dieciseisavos', local: '2E',        visitor: '2I',        kickoff: "2026-06-30T12:00:00-05:00", fechaStr: "Mar 30 Jun 12:00" },
             { id: 79,  round: 'dieciseisavos', local: '1A',        visitor: 'Best3',     kickoff: "2026-06-30T20:00:00-05:00", fechaStr: "Mar 30 Jun 20:00" },
             { id: 80,  round: 'dieciseisavos', local: '1L',        visitor: 'Best3',     kickoff: "2026-07-01T11:00:00-05:00", fechaStr: "Mié 01 Jul 11:00" },
@@ -701,14 +693,22 @@
             { round: 'final', title: 'Fase Final', matches: [104] }
         ];
         const KO_POINTS = { dieciseisavos: 1, octavos: 2, cuartos: 3, semis: 4, final: 5, tercero: 2 };
+        const KO_ROUNDS_META = [
+            { key: 'dieciseisavos', label: '16vos', emoji: '⚡', ids: [73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88] },
+            { key: 'octavos', label: 'Octavos', emoji: '🔥', ids: [89,90,91,92,93,94,95,96] },
+            { key: 'cuartos', label: 'Cuartos', emoji: '⚔️', ids: [97,98,99,100] },
+            { key: 'semis', label: 'Semis', emoji: '🌟', ids: [101,102] },
+            { key: 'final', label: 'Final', emoji: '👑', ids: [103,104] }
+        ];
 
         const STATE = {
             users: {}, predictions: {}, specials: {}, officialResults: {}, officialSpecials: {},
-            knockoutPreds: {}, officialKnockout: {}, officialKnockoutMatches: {}, status: 'open',
+            knockoutPreds: {}, officialKnockout: {}, officialKnockoutScores: {}, officialKnockoutMatches: {}, status: 'open',
             myId: null, currentUser: null, currentSelectedGroup: 'A',
             currentPredictionFilter: 'today', currentPredictionGroup: 'all',
             currentTablesView: 'groups', adminConnected: sessionStorage.getItem('p26adm') === '1',
-            faseFinalEnabled: false, predictionsVisible: true, gruposLock: false, registrosLock: false,
+            faseFinalEnabled: false, koRoundsEnabled: { dieciseisavos: false, octavos: false, cuartos: false, semis: false, final: false }, predictionsVisible: true, gruposLock: false, registrosLock: false,
+            currentKoRound: 'dieciseisavos',
             settings: { predictionsLocked: false },
             tableSource: 'simulated'
         };
@@ -784,6 +784,7 @@
                     const mapped = key === 'official_results' ? 'officialResults'
                         : key === 'official_specials' ? 'officialSpecials'
                         : key === 'official_knockout' ? 'officialKnockout'
+                        : key === 'official_knockout_scores' ? 'officialKnockoutScores'
                         : key === 'official_knockout_matches' ? 'officialKnockoutMatches'
                         : key === 'knockout_preds' ? 'knockoutPreds'
                         : key;
@@ -808,14 +809,7 @@
                     btnClosed.style.background = '#EF4444'; btnClosed.style.color = '#fff';
                 }
             }
-            const btnFFVis = DOM.get('btnAdminFFVisible');
-            const btnFFHid = DOM.get('btnAdminFFHidden');
-            if (btnFFVis && btnFFHid) {
-                btnFFVis.style.background = STATE.faseFinalEnabled ? 'var(--green)' : 'transparent';
-                btnFFVis.style.color = STATE.faseFinalEnabled ? '#06201C' : 'var(--text-muted)';
-                btnFFHid.style.background = !STATE.faseFinalEnabled ? 'var(--green)' : 'transparent';
-                btnFFHid.style.color = !STATE.faseFinalEnabled ? '#06201C' : 'var(--text-muted)';
-            }
+            updateAdminKoRoundsUI();
             const btnPredVis = DOM.get('btnAdminPredsVisible');
             const btnPredHid = DOM.get('btnAdminPredsHidden');
             if (btnPredVis && btnPredHid) {
@@ -854,8 +848,11 @@
             STATE.users = data.users || {}; STATE.predictions = data.predictions || {}; STATE.specials = data.specials || {};
             STATE.officialResults = data.official_results || {}; STATE.officialSpecials = data.official_specials || {};
             STATE.knockoutPreds = data.knockout_preds || {}; STATE.officialKnockout = data.official_knockout || {};
+            STATE.officialKnockoutScores = data.official_knockout_scores || {};
             STATE.officialKnockoutMatches = data.official_knockout_matches || {}; STATE.status = data.status || 'open';
             STATE.faseFinalEnabled = data.fase_final_enabled !== undefined ? data.fase_final_enabled : false;
+            STATE.koRoundsEnabled = Object.assign({ dieciseisavos: false, octavos: false, cuartos: false, semis: false, final: false }, data.ko_rounds_enabled || {});
+            if (STATE.faseFinalEnabled && !data.ko_rounds_enabled) STATE.koRoundsEnabled.dieciseisavos = true;
             STATE.predictionsVisible = data.predictions_visible !== undefined ? data.predictions_visible : true;
             STATE.gruposLock = !!data.grupos_lock; STATE.registrosLock = !!data.registros_lock;
             STATE.settings.predictionsLocked = !!(data.settings && data.settings.predictionsLocked);
@@ -877,6 +874,7 @@
                 }
             }, 50);
             refreshUIAfterData();
+            autoEnableFaseFinalIfComplete();
             
             const activeScreenId = document.querySelector('.screen.active')?.id || 'screenWelcome';
             goToScreen(STATE.currentUser && activeScreenId === 'screenWelcome' ? 'screenMenu' : activeScreenId);
@@ -901,9 +899,6 @@
             const comodinesSellaosUsuario = specialsLock.userLocked;
             const lockSpecials = specialsLock.lockSpecials;
 
-            const bannerFaseFinal = DOM.get('closureBannerFaseFinal');
-            if (bannerFaseFinal) bannerFaseFinal.style.display = closed ? 'block' : 'none';
-            
             const bannerSpecial = DOM.get('closureBannerSpecial');
             if (bannerSpecial) {
                 if (comodinesGlobalCerrados) {
@@ -929,19 +924,6 @@
                 btnGuardarSpecial.disabled = lockSpecials && !STATE.adminConnected;
             }
 
-            document.querySelectorAll('#screenFaseFinal .ko-team-btn').forEach(btn => {
-                const matchId = parseInt(btn.dataset.matchId, 10);
-                const matchClosedIndividually = isMatchClosed(matchId);
-                const isPlaceholder = isPlaceholderTeam(btn.dataset.team);
-                
-                if (closed || matchClosedIndividually || isPlaceholder) {
-                    btn.disabled = true;
-                    btn.classList.add('disabled');
-                } else {
-                    btn.disabled = false;
-                    btn.classList.remove('disabled');
-                }
-            });
         }
         function updateProgress() {
             if (!STATE.myId) return;
@@ -973,15 +955,28 @@
             return { puntos: REGLAS_POLLA.PUNTOS_NADA, motivo: 'Pronóstico incorrecto (0 pts)', tipo: 'incorrecto' };
         }
 
-        function getKnockoutScoreDetails(uid) {
+        function getKoPredictionScore(uid, mid) {
             const picks = STATE.knockoutPreds[uid] || {};
+            const raw = picks[mid];
+            return raw ? normalizeScorePair(raw.gl, raw.gv) : null;
+        }
+
+        function getKoOfficialScore(mid) {
+            const raw = STATE.officialKnockoutScores[mid];
+            return raw ? normalizeScorePair(raw.gl, raw.gv) : null;
+        }
+
+        function getKnockoutScoreDetails(uid) {
             const details = [];
-            Object.keys(STATE.officialKnockout || {}).forEach(mid => {
-                const winner = STATE.officialKnockout[mid];
-                const pick = picks[mid];
+            Object.keys(STATE.officialKnockoutScores || {}).forEach(mid => {
+                const pred = getKoPredictionScore(uid, mid);
+                const off = getKoOfficialScore(mid);
                 const def = KNOCKOUT_DEFS.find(d => d.id === parseInt(mid, 10));
-                if (!winner || !pick || !def || pick !== winner) return;
-                details.push({ matchId: parseInt(mid, 10), round: def.round, team: pick, points: KO_POINTS[def.round] || 0 });
+                if (!def || !pred || !off) return;
+                const eval_ = evaluarPuntosPartido(pred.gl, pred.gv, off.gl, off.gv);
+                if (eval_.puntos > 0) {
+                    details.push({ matchId: parseInt(mid, 10), round: def.round, team: `${pred.gl}-${pred.gv}`, points: eval_.puntos });
+                }
             });
             return details;
         }
@@ -1186,27 +1181,6 @@
             </ul><button type="button" class="modal-close-btn">Cerrar</button></div>`;
             overlay.querySelector('.modal-close-btn').addEventListener('click', () => overlay.remove());
             overlay.addEventListener('click', event => { if (event.target === overlay) overlay.remove(); });
-            container.appendChild(overlay);
-        }
-
-        function showKoPointsModal() {
-            const container = DOM.get('dynamicModalContainer'); if (!container) return;
-            const overlay = document.createElement('div'); overlay.className = 'modal-overlay';
-            overlay.innerHTML = `
-                <div class="modal-card">
-                    <h3>🔥 Puntos — Fase Final</h3>
-                    <ul>
-                        <li><span>Dieciseisavos</span><span class="pts">+1 pt</span></li>
-                        <li><span>Octavos de final</span><span class="pts">+2 pts</span></li>
-                        <li><span>Cuartos de final</span><span class="pts">+3 pts</span></li>
-                        <li><span>Semifinal</span><span class="pts">+4 pts</span></li>
-                        <li><span>3er y 4o puesto</span><span class="pts">+2 pts</span></li>
-                        <li><span>👑 Gran Final</span><span class="pts">+5 pts</span></li>
-                    </ul>
-                    <p style="font-size:0.78rem; color:var(--text-muted); margin-top:12px;">Aciertas si eliges el equipo que avanza en cada cruce. Mientras más lejos llegue tu selección, más vale cada acierto.</p>
-                    <button class="modal-close-btn" onclick="this.closest('.modal-overlay').remove()">Entendido 👍</button>
-                </div>`;
-            overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
             container.appendChild(overlay);
         }
 
@@ -1534,7 +1508,7 @@
             const root = DOM.get('bestThirdsStandings'); if (!root) return;
             const thirds = getBestThirdsStandings(source);
             if (thirds.length === 0) {
-                root.innerHTML = `<p style="text-align:center; padding:24px; color:var(--text-muted); ">Aún no hay datos para calcular mejores terceros.</p>`;
+                root.innerHTML = `<p style="text-align:center; padding:24px; color:var(--text-muted);">Aún no hay datos para calcular mejores terceros.</p>`;
                 return;
             }
             const rows = thirds.map(t => {
@@ -1703,7 +1677,7 @@
                 let local = def.local, visitor = def.visitor;
                 if (def.round === 'dieciseisavos') { local = resolveToken(local); visitor = resolveToken(visitor); }
                 else { if (/^[12][A-L]$/.test(local)) local = resolveToken(local); if (/^[12][A-L]$/.test(visitor)) visitor = resolveToken(visitor); }
-                return { id: def.id, round: def.round, local, visitor, fechaStr: def.fechaStr };
+                return { id: def.id, round: def.round, local, visitor };
             });
         }
 
@@ -1747,12 +1721,33 @@
         function resolveBracketTokenGeneral(token, matches, myKo, grouped, best3Queue) {
             if (!token) return ''; if (token === 'Best3') return best3Queue.length ? best3Queue.shift() : 'Mejor 3°';
             if (/^[12][A-L]$/.test(token)) { const g = token.slice(1); const pos = parseInt(token[0], 10) - 1; return (grouped[g] && grouped[g][pos]) ? grouped[g][pos].team : `Por definir (${token})`; }
-            if (token.startsWith('Winner')) { const refId = token.replace('Winner', ''); return myKo[refId] || `Ganador M${refId}`; }
+            if (token.startsWith('Winner')) {
+                const refId = parseInt(token.replace('Winner', ''), 10);
+                const pred = myKo[refId];
+                if (pred && pred.gl !== undefined && pred.gv !== undefined) {
+                    const pair = normalizeScorePair(pred.gl, pred.gv);
+                    if (pair) {
+                        const parent = matches.find(x => x.id === refId);
+                        if (parent) {
+                            const pLocal = resolveBracketTokenGeneral(parent.local, matches, myKo, grouped, best3Queue);
+                            const pVisitor = resolveBracketTokenGeneral(parent.visitor, matches, myKo, grouped, best3Queue);
+                            if (pair.gl > pair.gv) return pLocal;
+                            if (pair.gv > pair.gl) return pVisitor;
+                            return pLocal || pVisitor;
+                        }
+                    }
+                }
+                const fallbackWinner = STATE.officialKnockout[refId];
+                if (fallbackWinner) return fallbackWinner;
+                return `Ganador M${refId}`;
+            }
             if (token.startsWith('Losers')) {
                 const refId = token.replace('Losers', ''); const parentMatch = matches.find(x => x.id === parseInt(refId, 10)); if (!parentMatch) return `Perdedor M${refId}`;
                 const pLocal = resolveBracketTokenGeneral(parentMatch.local, matches, myKo, grouped, best3Queue); const pVisitor = resolveBracketTokenGeneral(parentMatch.visitor, matches, myKo, grouped, best3Queue);
-                const winner = myKo[refId]; if (!winner || winner.startsWith('Ganador') || winner.startsWith('Por definir')) return `Perdedor M${refId}`;
-                return winner === pLocal ? pVisitor : pLocal;
+                const pred = myKo[parseInt(refId, 10)];
+                const pair = pred ? normalizeScorePair(pred.gl, pred.gv) : null;
+                if (!pair) return `Perdedor M${refId}`;
+                return pair.gl > pair.gv ? pVisitor : pLocal;
             }
             return token;
         }
@@ -1773,11 +1768,10 @@
                 const title = document.createElement('div'); title.className = 'round-title'; title.textContent = colDef.title;
                 col.appendChild(title);
                 if (colDef.round !== 'final') {
-                    colDef.matches.forEach((matchId, idx) => { const m = matches.find(x => x.id === matchId); if (m) { m._displayNum = idx + 1; col.appendChild(createMatchSlot(m, resolvedNames[m.id], myKo, interactive)); } });
+                    colDef.matches.forEach(matchId => { const m = matches.find(x => x.id === matchId); if (m) col.appendChild(createMatchSlot(m, resolvedNames[m.id], myKo, interactive)); });
                 } else {
                     const finalMatch = matches.find(m => m.id === 104);
                     if (finalMatch) {
-                        finalMatch._displayNum = 1;
                         const finalSlot = createMatchSlot(finalMatch, resolvedNames[104], myKo, interactive, '👑 GRAN FINAL');
                         finalSlot.querySelector('.match').classList.add('bracket-champion'); col.appendChild(finalSlot);
                     }
@@ -1785,7 +1779,7 @@
                     if (thirdMatch) {
                         const thirdContainer = document.createElement('div'); thirdContainer.className = 'match-third-container';
                         const thirdCard = document.createElement('div'); thirdCard.className = 'match'; thirdCard.dataset.matchId = 103;
-                        thirdCard.innerHTML = `<div style="font-size:0.65rem; color:var(--sky); font-weight:900; text-align:center; margin-bottom:4px; letter-spacing:1px;">🥉 TERCER PUESTO</div><div class="match-meta"><span>Partido 103</span><span>${thirdMatch.fechaStr || ''}</span></div>`;
+                        thirdCard.innerHTML = `<div style="font-size:0.65rem; color:var(--sky); font-weight:900; text-align:center; margin-bottom:4px; letter-spacing:1px;">🥉 TERCER PUESTO</div><div class="match-meta"><span>Partido 103</span></div>`;
                         const lName = resolvedNames[103].local; const vName = resolvedNames[103].visitor; const closed = isQuinielaClosed();
                         const lDis = !interactive || isPlaceholderTeam(lName) || ((closed || isMatchClosed(thirdMatch.id)) && !STATE.adminConnected);
                         const vDis = !interactive || isPlaceholderTeam(vName) || ((closed || isMatchClosed(thirdMatch.id)) && !STATE.adminConnected);
@@ -1804,7 +1798,7 @@
                 const tag = document.createElement('div'); tag.style.cssText = 'font-size:0.65rem; color:var(--gold); font-weight:900; text-align:center; margin-bottom:4px; letter-spacing:1px;';
                 tag.textContent = customTitle; card.appendChild(tag);
             }
-            const meta = document.createElement('div'); meta.className = 'match-meta'; meta.innerHTML = `<span>Partido ${m.id}</span><span>${m.fechaStr || ''}</span>`; card.appendChild(meta);
+            const meta = document.createElement('div'); meta.className = 'match-meta'; meta.innerHTML = `<span>Partido ${m.id}</span>`; card.appendChild(meta);
             const lName = resolvedNames.local; const vName = resolvedNames.visitor; const closed = isQuinielaClosed();
             const lDis = !interactive || isPlaceholderTeam(lName) || ((closed || isMatchClosed(m.id)) && !STATE.adminConnected);
             const vDis = !interactive || isPlaceholderTeam(vName) || ((closed || isMatchClosed(m.id)) && !STATE.adminConnected);
@@ -1813,28 +1807,148 @@
             slot.appendChild(card); return slot;
         }
 
-        function renderFaseFinal() {
-            const root = DOM.get('bracketRoot'); if (!root) return;
-            
-            const data = getOfficialKnockoutBase();
-            
-            if (Object.keys(STATE.officialResults || {}).length === 0 && !STATE.adminConnected) {
-                root.innerHTML = `<div style="text-align:center; padding:32px 16px; color:var(--text-muted); width:100%; grid-column:1/-1;">
-                    <div style="font-size:3rem; margin-bottom:12px;">⏳</div>
-                    <p style="font-weight:700; color:var(--text-main); margin-bottom:8px;">Llave en espera</p>
-                    <p style="font-size:0.85rem;">La Fase Final se habilitará cuando el administrador registre los primeros resultados oficiales de los grupos.</p>
-                </div>`;
-                root.onclick = null; return;
+        function setKoRoundTab(roundKey) {
+            STATE.currentKoRound = roundKey;
+            renderFaseFinal();
+        }
+
+        function updateAdminKoRoundsUI() {
+            KO_ROUNDS_META.forEach(r => {
+                const btn = DOM.get(`btnKoRound_${r.key}`);
+                if (!btn) return;
+                const enabled = !!STATE.koRoundsEnabled?.[r.key];
+                btn.style.background = enabled ? 'var(--green)' : '';
+                btn.style.color = enabled ? '#06201C' : '';
+                btn.style.borderColor = enabled ? 'var(--green)' : '';
+                btn.textContent = `${enabled ? '✅' : '🔒'} ${r.label}`;
+            });
+        }
+
+        function toggleKoRound(roundKey) {
+            const previous = !!STATE.koRoundsEnabled[roundKey];
+            const next = !previous;
+            STATE.koRoundsEnabled[roundKey] = next;
+            STATE.faseFinalEnabled = Object.values(STATE.koRoundsEnabled).some(Boolean);
+            if (!STATE.faseFinalEnabled && document.querySelector('.screen.active')?.id === 'screenFaseFinal') {
+                goToScreen('screenMenu');
             }
-            
-            renderBracketInto(root, data.matches, data.grouped, data.best3, STATE.knockoutPreds[STATE.myId] || {}, true);
-            
-            root.onclick = function(e) { const btn = e.target.closest('.ko-team-btn'); if (!btn || btn.disabled) return; APP.saveKo(parseInt(btn.dataset.matchId, 10), btn.dataset.team); };
-            root.onkeydown = function(e) {
-                if (e.key !== 'Enter' && e.key !== ' ') return;
-                const active = document.activeElement; if (!active || !active.classList.contains('ko-team-btn') || active.disabled) return;
-                e.preventDefault(); APP.saveKo(parseInt(active.dataset.matchId, 10), active.dataset.team);
+            const updates = {
+                'fase_final_enabled': STATE.faseFinalEnabled,
+                [`ko_rounds_enabled/${roundKey}`]: next
             };
+            db.ref('/').update(updates).then(() => {
+                triggerToast(next ? `✅ ${roundKey} habilitada` : `🔒 ${roundKey} deshabilitada`);
+                updateAdminKoRoundsUI();
+                updateAdminButtonsUI();
+                renderFaseFinal();
+            }).catch(err => console.error(err));
+        }
+
+        function areGroupsComplete() {
+            return ALL_MATCHES.every(m => {
+                const r = STATE.officialResults[m.id];
+                return r && normalizeScorePair(r.gl, r.gv) !== null;
+            });
+        }
+
+        function autoEnableFaseFinalIfComplete() {
+            if (areGroupsComplete() && !STATE.koRoundsEnabled.dieciseisavos) {
+                STATE.koRoundsEnabled.dieciseisavos = true;
+                STATE.faseFinalEnabled = true;
+                db.ref('/').update({
+                    'fase_final_enabled': true,
+                    'ko_rounds_enabled/dieciseisavos': true
+                }).catch(err => console.error(err));
+            }
+        }
+
+        function renderKoRoundContent(container, roundKey) {
+            const data = getOfficialKnockoutBase();
+            const myKo = STATE.knockoutPreds[STATE.myId] || {};
+            const roundMatches = KNOCKOUT_DEFS.filter(d => {
+                if (roundKey === 'final') return d.round === 'final' || d.round === 'tercero';
+                return d.round === roundKey;
+            });
+            if (roundMatches.length === 0) {
+                container.innerHTML = `<p style="color:var(--text-muted); text-align:center; padding:24px;">No hay partidos disponibles aún.</p>`;
+                return;
+            }
+            const resolvedNames = {};
+            const best3Queue = [...data.best3];
+            [...roundMatches].sort((a, b) => a.id - b.id).forEach(m => {
+                resolvedNames[m.id] = {
+                    local: resolveBracketTokenGeneral(m.local, data.matches, myKo, data.grouped, best3Queue),
+                    visitor: resolveBracketTokenGeneral(m.visitor, data.matches, myKo, data.grouped, best3Queue)
+                };
+            });
+
+            const html = roundMatches.sort((a, b) => a.id - b.id).map(m => {
+                const names = resolvedNames[m.id];
+                const localName = names.local;
+                const visitorName = names.visitor;
+                const localIsPlaceholder = isPlaceholderTeam(localName);
+                const visitorIsPlaceholder = isPlaceholderTeam(visitorName);
+                const matchLocked = (isMatchClosed(m.id)) && !STATE.adminConnected;
+                const pred = myKo[m.id] ? normalizeScorePair(myKo[m.id].gl, myKo[m.id].gv) : null;
+                const roundPts = KO_POINTS[m.round] || (m.round === 'tercero' ? KO_POINTS.tercero : 1);
+                const official = getKoOfficialScore(m.id);
+                const resultTag = official ? `<span style="font-size:0.75rem; color:var(--sky); font-weight:700;">🏁 Resultado oficial: ${official.gl}-${official.gv}</span>` : '';
+                const block = (name, val, isPlaceholder, side) => {
+                    const disabled = matchLocked || isPlaceholder;
+                    return `<div class="home-match" style="grid-template-columns: minmax(0,1fr) auto minmax(0,1fr); gap:8px; align-items:center; margin-bottom:0;">
+                        <div class="home-team" style="align-items:flex-start; text-align:left;">
+                            <span class="flag">${isPlaceholder ? '❓' : (FLAGS[name] || '🏳️')}</span>
+                            <span class="home-team-name" style="font-size:0.84rem;">${escapeHtml(name)}</span>
+                        </div>
+                        <input type="number" min="0" inputmode="numeric" class="score-box ko-score-box" data-mid="${m.id}" data-side="${side}" value="${val !== null && val !== undefined ? escapeHtml(val) : ''}" ${disabled ? 'disabled' : ''} style="margin:0;">
+                        <div></div>
+                    </div>`;
+                };
+                return `<div class="match-row" style="margin-bottom:12px;">
+                    <div class="match-date">
+                        <span>📅 ${escapeHtml(m.fechaStr)} · Partido ${m.id}</span>
+                        <span style="color:var(--gold); font-size:0.75rem; font-weight:700;">+${roundPts} pts</span>
+                    </div>
+                    ${resultTag ? `<div style="padding:4px 0 8px;">${resultTag}</div>` : ''}
+                    <div style="display:flex; flex-direction:column; gap:10px;">
+                        <div class="small" style="text-align:center; margin-bottom:-2px;">Ingresá el marcador</div>
+                        <div style="display:grid; gap:8px;">
+                            ${block(localName, pred ? pred.gl : '', localIsPlaceholder, 'gl')}
+                            ${block(visitorName, pred ? pred.gv : '', visitorIsPlaceholder, 'gv')}
+                        </div>
+                        <button class="btn secondary" style="margin:2px 0 0;" type="button" ${matchLocked ? 'disabled' : ''} onclick="APP.saveKo(${m.id})">Guardar marcador</button>
+                    </div>
+                </div>`;
+            }).join('');
+
+            container.innerHTML = html;
+        }
+
+        function renderFaseFinal() {
+            const tabsContainer = DOM.get('koRoundTabs');
+            const content = DOM.get('koRoundContent');
+            if (!tabsContainer || !content) return;
+
+            const enabledRounds = KO_ROUNDS_META.filter(r => STATE.koRoundsEnabled?.[r.key]);
+            if (enabledRounds.length === 0) {
+                tabsContainer.innerHTML = '';
+                content.innerHTML = `<div style="text-align:center; padding:40px 16px; color:var(--text-muted);">
+                    <div style="font-size:3rem; margin-bottom:12px;">⏳</div>
+                    <p style="font-weight:700; color:var(--text-main); margin-bottom:8px;">Fase Final no disponible aún</p>
+                    <p style="font-size:0.85rem;">Se habilitará cuando el administrador complete los resultados de grupos.</p>
+                </div>`;
+                return;
+            }
+
+            if (!STATE.koRoundsEnabled[STATE.currentKoRound]) {
+                STATE.currentKoRound = enabledRounds[0].key;
+            }
+
+            tabsContainer.innerHTML = enabledRounds.map(r =>
+                `<button type="button" class="group-tab ${STATE.currentKoRound === r.key ? 'active' : ''}" onclick="APP.setKoRoundTab('${r.key}')">${r.emoji} ${r.label}</button>`
+            ).join('');
+
+            renderKoRoundContent(content, STATE.currentKoRound);
         }
 
         function createKoButton(matchId, teamName, selected, disabled) {
@@ -1848,32 +1962,45 @@
             return btn;
         }
 
-        async function saveKo(mid, team) {
-            if (isQuinielaClosed()) { triggerToast('🔒 La quiniela está cerrada'); return; }
+        function getKoWinnerFromScorePair(scorePair, matchId) {
+            if (!scorePair) return '';
+            const def = KNOCKOUT_DEFS.find(d => d.id === matchId);
+            if (!def) return '';
+            const data = getOfficialKnockoutBase();
+            const match = data.matches.find(m => m.id === matchId) || def;
+            const local = resolveBracketTokenGeneral(match.local, data.matches, STATE.knockoutPreds[STATE.myId] || {}, data.grouped, [...data.best3]);
+            const visitor = resolveBracketTokenGeneral(match.visitor, data.matches, STATE.knockoutPreds[STATE.myId] || {}, data.grouped, [...data.best3]);
+            if (scorePair.gl > scorePair.gv) return local;
+            if (scorePair.gv > scorePair.gl) return visitor;
+            return local || visitor;
+        }
+
+        async function saveKo(mid) {
             if (!STATE.myId) { triggerToast('Inicia sesión'); return; }
             try {
                 const previousKo = { ...(STATE.knockoutPreds[STATE.myId] || {}) };
                 if (!STATE.knockoutPreds[STATE.myId]) STATE.knockoutPreds[STATE.myId] = {};
-                STATE.knockoutPreds[STATE.myId][mid] = team;
-                
-                const data = getOfficialKnockoutBase(); 
+                const glEl = DOM.q(`.ko-score-box[data-mid="${mid}"][data-side="gl"]`);
+                const gvEl = DOM.q(`.ko-score-box[data-mid="${mid}"][data-side="gv"]`);
+                const pair = normalizeScorePair(glEl?.value, gvEl?.value);
+                if (!pair) { triggerToast('Ingresa un marcador válido'); return; }
+                STATE.knockoutPreds[STATE.myId][mid] = { gl: pair.gl, gv: pair.gv };
+
+                const data = getOfficialKnockoutBase();
                 const myKo = STATE.knockoutPreds[STATE.myId];
                 const resolvedNames = {}; const best3NumQueue = [...data.best3];
-                
                 const sortedMatches = [...data.matches].sort((a,b) => a.id - b.id);
                 sortedMatches.forEach(m => { resolvedNames[m.id] = { local: resolveBracketTokenGeneral(m.local, data.matches, myKo, data.grouped, best3NumQueue), visitor: resolveBracketTokenGeneral(m.visitor, data.matches, myKo, data.grouped, best3NumQueue) }; });
-                
                 const orderOfMatches = KNOCKOUT_DEFS.map(d => d.id).sort((a,b) => a - b);
                 orderOfMatches.forEach(id => {
                     const currentPick = myKo[id]; if (!currentPick) return;
-                    if (currentPick !== resolvedNames[id].local && currentPick !== resolvedNames[id].visitor) delete myKo[id];
+                    if (resolvedNames[id] && currentPick.gl !== undefined && currentPick.gv !== undefined) return;
                 });
                 
                 if (!valuesEqual(previousKo, myKo)) await db.ref(`knockout_preds/${STATE.myId}`).set(myKo);
                 STATE.knockoutPreds[STATE.myId] = myKo;
                 renderFaseFinal();
-                
-                if (mid === 104) showChampionCelebration(team); else triggerToast('✅ Guardado');
+                if (mid === 104) showChampionCelebration(getKoWinnerFromScorePair(pair, mid)); else triggerToast('✅ Guardado');
             } catch (e) { console.error(e); triggerToast('❌ Error'); }
         }
         
@@ -1897,22 +2024,28 @@
         }
 
         function saveAllKoDrafts() {
-            if (isQuinielaClosed()) { triggerToast('🔒 La quiniela está cerrada'); return; }
             const root = DOM.get('bracketRoot'); if (!root) return;
             const toSave = {};
-            root.querySelectorAll('.ko-team-btn.selected').forEach(b => {
-                const mid = b.dataset.matchId; const team = b.dataset.team;
-                if (mid && team && !isPlaceholderTeam(team)) toSave[mid] = team;
+            root.querySelectorAll('.ko-score-box').forEach(inp => {
+                const mid = inp.dataset.mid;
+                if (!toSave[mid]) toSave[mid] = { gl: '', gv: '' };
+                toSave[mid][inp.dataset.side] = inp.value;
             });
-            const promises = Object.keys(toSave).filter(mid => !valuesEqual(STATE.knockoutPreds[STATE.myId]?.[mid], toSave[mid])).map(mid => db.ref(`knockout_preds/${STATE.myId}/${mid}`).set(toSave[mid]));
+            const clean = {};
+            Object.keys(toSave).forEach(mid => {
+                const pair = normalizeScorePair(toSave[mid].gl, toSave[mid].gv);
+                if (pair) clean[mid] = pair;
+            });
+            const promises = Object.keys(clean).filter(mid => !valuesEqual(STATE.knockoutPreds[STATE.myId]?.[mid], clean[mid])).map(mid => db.ref(`knockout_preds/${STATE.myId}/${mid}`).set(clean[mid]));
             Promise.all(promises).then(() => {
-                STATE.knockoutPreds[STATE.myId] = STATE.knockoutPreds[STATE.myId] || {}; Object.assign(STATE.knockoutPreds[STATE.myId], toSave);
+                STATE.knockoutPreds[STATE.myId] = STATE.knockoutPreds[STATE.myId] || {}; Object.assign(STATE.knockoutPreds[STATE.myId], clean);
                 triggerToast('✅ Selecciones guardadas'); renderFaseFinal();
             }).catch(err => { console.error(err); triggerToast('❌ Error'); });
         }
 
         function adminLoadResults() {
-            let html = '';
+            let html = '<div style="display:flex; flex-direction:column; gap:10px;">';
+            html += `<details open class="card" style="margin:0;"><summary style="cursor:pointer; font-weight:900; color:var(--gold); list-style:none;">Fase de grupos</summary><div style="margin-top:12px;">`;
             ALL_MATCHES.forEach(m => {
                 const r = STATE.officialResults[m.id] || { gl: '', gv: '' };
                 html += `<div class="match-row" style="background:var(--bg-input); margin-bottom:8px;">
@@ -1928,28 +2061,31 @@
                     </div>
                 </div>`;
             });
-            html += `<button class="btn" style="margin-top:12px;" onclick="APP.saveAdmMatchesCloud()">💾 Guardar Resultados Oficiales</button>`;
+            html += `<button class="btn" style="margin-top:12px;" onclick="APP.saveAdmMatchesCloud()">💾 Guardar Resultados Oficiales</button></div></details>`;
             DOM.get('adminContent').innerHTML = html;
-            let htmlK = '';
+            let htmlK = `<details open class="card" style="margin:0;"><summary style="cursor:pointer; font-weight:900; color:var(--gold); list-style:none;">Fase final</summary><div style="margin-top:12px;">`;
             KNOCKOUT_DEFS.forEach(d => {
                 const defOfficialMatch = (STATE.officialKnockoutMatches && STATE.officialKnockoutMatches[d.id]) ? STATE.officialKnockoutMatches[d.id] : null;
                 const local = defOfficialMatch ? defOfficialMatch.local : d.local; const visitor = defOfficialMatch ? defOfficialMatch.visitor : d.visitor;
+                const offScore = STATE.officialKnockoutScores[d.id] || { gl: '', gv: '' };
                 htmlK += `<div class="match-row" style="background:var(--bg-input); margin-bottom:8px;">
                     <div class="match-date">📅 Partido N°${d.id} — ${d.round}</div>
-                    <div style="font-size:0.9rem; color:var(--text-muted); margin-bottom:6px;">${local}  vs  ${visitor}</div>
-                    <div style="display:flex; gap:8px;">
-                        <select class="input-field ko-official-select" data-id="${d.id}">
-                            <option value="">-- Selecciona ganador oficial --</option>
-                            <option value="${local}">${local}</option>
-                            <option value="${visitor}">${visitor}</option>
-                        </select>
-                        <button class="btn" onclick="APP.saveOfficialKoFromInput(${d.id})">Guardar</button>
+                    <div class="home-match" style="grid-template-columns:minmax(0,1fr) auto minmax(0,1fr); align-items:center; gap:8px; margin-bottom:8px;">
+                        <div class="home-team"><span class="home-team-name" style="font-size:0.82rem;">${escapeHtml(local)}</span></div>
+                        <input type="number" min="0" inputmode="numeric" class="score-box ko-off-gl" data-id="${d.id}" value="${offScore.gl !== '' && offScore.gl !== null ? offScore.gl : ''}">
+                        <div></div>
                     </div>
+                    <div class="home-match" style="grid-template-columns:minmax(0,1fr) auto minmax(0,1fr); align-items:center; gap:8px;">
+                        <div class="home-team"><span class="home-team-name" style="font-size:0.82rem;">${escapeHtml(visitor)}</span></div>
+                        <input type="number" min="0" inputmode="numeric" class="score-box ko-off-gv" data-id="${d.id}" value="${offScore.gv !== '' && offScore.gv !== null ? offScore.gv : ''}">
+                        <div></div>
+                    </div>
+                    <button class="btn secondary" style="margin-top:8px;" onclick="APP.saveOfficialKoFromInput(${d.id})">Guardar marcador oficial</button>
                 </div>`;
             });
-            htmlK += `<button class="btn secondary" onclick="APP.generateOfficialBracket()">Generar Bracket Oficial desde resultados de grupos</button>`;
+            htmlK += `<button class="btn secondary" onclick="APP.generateOfficialBracket()">Generar bracket oficial desde grupos</button></div></details>`;
             DOM.get('adminKnockoutContent').innerHTML = htmlK;
-            renderAdminUsers(); populateAdminSpecialsOptions(); updateAdminButtonsUI(); 
+            renderAdminUsers(); populateAdminSpecialsOptions(); updateAdminButtonsUI(); updateAdminKoRoundsUI(); 
         }
 
         function saveAdmMatchesCloud() {
@@ -1967,14 +2103,16 @@
                     }
                 });
                 const scoreWrite = Object.keys(updates).length ? db.ref('/').update(updates) : Promise.resolve();
-                scoreWrite.then(() => { alert('Resultados actualizados.'); generateOfficialBracketAndSave(); triggerToast('Resultados guardados'); });
+                scoreWrite.then(() => { alert('Resultados actualizados.'); generateOfficialBracketAndSave(); triggerToast('Resultados guardados'); autoEnableFaseFinalIfComplete(); });
             }).catch(err => { console.error(err); alert('Error al guardar'); });
         }
 
         function saveOfficialKoFromInput(matchId) {
-            const sel = document.querySelector(`.ko-official-select[data-id="${matchId}"]`); if (!sel) return;
-            const winner = sel.value; if (!winner) { alert('Selecciona un ganador'); return; }
-            setIfChanged(`official_knockout/${matchId}`, STATE.officialKnockout[matchId], winner).then(changed => { if (changed) triggerToast('Ganador oficial guardado'); }).catch(err => { console.error(err); });
+            const gl = DOM.q(`.ko-off-gl[data-id="${matchId}"]`)?.value;
+            const gv = DOM.q(`.ko-off-gv[data-id="${matchId}"]`)?.value;
+            const pair = normalizeScorePair(gl, gv);
+            if (!pair) { alert('Ingresa un marcador válido'); return; }
+            setIfChanged(`official_knockout_scores/${matchId}`, STATE.officialKnockoutScores[matchId], pair).then(changed => { if (changed) triggerToast('Marcador oficial guardado'); }).catch(err => { console.error(err); });
         }
 
         function generateOfficialBracket() { generateOfficialBracketAndSave(); }
@@ -2085,10 +2223,18 @@
 
         function toggleFaseFinalVisibility(enable) {
             const previous = STATE.faseFinalEnabled;
-            STATE.faseFinalEnabled = !!enable; applyVisibility();
+            STATE.faseFinalEnabled = !!enable;
+            if (enable) {
+                Object.keys(STATE.koRoundsEnabled).forEach(k => STATE.koRoundsEnabled[k] = true);
+            } else {
+                Object.keys(STATE.koRoundsEnabled).forEach(k => STATE.koRoundsEnabled[k] = false);
+            }
+            applyVisibility();
             const activeId = document.querySelector('.screen.active')?.id;
             if (!enable && activeId === 'screenFaseFinal') goToScreen('screenMenu');
-            setIfChanged('fase_final_enabled', previous, !!enable).then(changed => { if (changed) triggerToast(enable ? 'Fase Final visible' : 'Fase Final oculta'); updateAdminButtonsUI(); });
+            const updates = { 'fase_final_enabled': !!enable };
+            Object.keys(STATE.koRoundsEnabled).forEach(k => { updates[`ko_rounds_enabled/${k}`] = !!enable; });
+            db.ref('/').update(updates).then(() => { triggerToast(enable ? 'Fase Final visible' : 'Fase Final oculta'); updateAdminButtonsUI(); updateAdminKoRoundsUI(); renderFaseFinal(); }).catch(err => console.error(err));
         }
 
         function togglePredictionsVisibility(visible) {
@@ -2122,7 +2268,7 @@
         }
         
         window.APP = {
-            goToScreen, registerUser, loginExistingUser, logout, saveScoreCloud, setPredictionFilter, setPredictionGroup, setTableGroupActive, saveKo, saveAllKoDrafts, setTablesView, setTableSource, showRankingRulesModal, showHomePointsModal, showKoPointsModal, homePronosticar, cerrarDesglose: cerrarModalDesglose, adminLoadResults, generateOfficialBracket, saveOfficialSpecials, loadOfficialSpecials, toggleFaseFinalVisibility, togglePredictionsVisibility, adminDeleteUser, adminResetUser, saveAdmMatchesCloud, saveOfficialKoFromInput, saveOfficialKnockoutBatch,toggleRegistrosStatus,
+            goToScreen, registerUser, loginExistingUser, logout, saveScoreCloud, setPredictionFilter, setPredictionGroup, setTableGroupActive, saveKo, saveAllKoDrafts, setTablesView, setTableSource, showRankingRulesModal, showHomePointsModal, homePronosticar, cerrarDesglose: cerrarModalDesglose, adminLoadResults, generateOfficialBracket, saveOfficialSpecials, loadOfficialSpecials, toggleFaseFinalVisibility, togglePredictionsVisibility, adminDeleteUser, adminResetUser, saveAdmMatchesCloud, saveOfficialKoFromInput, saveOfficialKnockoutBatch,toggleRegistrosStatus, setKoRoundTab, toggleKoRound,
             saveSpecial: function(field, val) {
                 const mySpec = STATE.specials[STATE.myId] || {};
                 const { globalLocked: comodinesGlobalCerrados, userAlreadyFilled } = getSpecialsLockState(mySpec);
@@ -2225,7 +2371,7 @@
             renderHome();
             applyVisibility();
             if (STATE.adminConnected) renderAdminUsers();
-            updateUIForLockState(); updateAdminButtonsUI();
+            updateUIForLockState(); updateAdminButtonsUI(); updateAdminKoRoundsUI();
         }
 
         if (STATE.myId) goToScreen('screenMenu'); else goToScreen('screenWelcome');
