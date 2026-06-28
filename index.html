@@ -244,6 +244,14 @@
         .home-leader-name { font-size: 0.84rem; font-weight: 800; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .home-leader-points { color: var(--gold); font-size: 0.8rem; font-weight: 900; white-space: nowrap; }
         .home-points-button { margin: 0 0 4px; }
+        .home-points-breakdown { display: grid; gap: 7px; margin: 0 0 13px; }
+        .home-points-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 8px 10px; background: rgba(13,20,34,0.62); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; font-size: 0.8rem; }
+        .home-points-row span:first-child { color: var(--text-muted); font-weight: 800; }
+        .home-points-row span:last-child { color: var(--gold); font-weight: 900; white-space: nowrap; }
+        .home-next-list { display: grid; gap: 9px; }
+        .home-next-item { padding: 10px; border-radius: 8px; background: rgba(13,20,34,0.62); border: 1px solid rgba(255,255,255,0.06); }
+        .home-next-item .home-match { margin-bottom: 6px; gap: 8px; }
+        .home-next-item .home-match-meta { margin-bottom: 0; font-size: 0.72rem; }
         .prediction-filter-switch { display: grid; grid-template-columns: repeat(3,1fr); gap: 5px; padding: 4px; margin-bottom: 10px; background: rgba(255,255,255,0.035); border: 1px solid var(--border); border-radius: 10px; }
         .prediction-filter-switch button { border: 0; background: transparent; color: var(--text-muted); border-radius: 7px; min-height: 42px; padding: 8px 5px; font-size: 0.78rem; font-weight: 900; cursor: pointer; white-space: nowrap; }
         .prediction-filter-switch button.active { background: var(--green); color: #06201C; box-shadow: 0 6px 16px rgba(45,212,191,0.15); }
@@ -322,7 +330,7 @@
                     <tr style="border-bottom:1px solid var(--border);"><td style="padding:12px 16px;">🥇 Acertar 1° del grupo</td><td style="text-align:right; padding:12px 16px; font-weight:bold; color:var(--green);">+2 pts</td></tr>
                     <tr style="border-bottom:1px solid var(--border);"><td style="padding:12px 16px;">🥈 Acertar 2° del grupo</td><td style="text-align:right; padding:12px 16px; font-weight:bold; color:var(--green);">+2 pts</td></tr>
                     <tr style="border-bottom:1px solid var(--border);"><td style="padding:12px 16px;">🥉 Acertar equipo que pasa 3°</td><td style="text-align:right; padding:12px 16px; font-weight:bold; color:var(--green);">+1 pt</td></tr>
-                    <tr style="border-bottom:1px solid var(--border);"><td style="padding:12px 16px;">🔥 Aciertos en cruces Fase Final</td><td style="text-align:right; padding:12px 16px; font-weight:bold; color:var(--gold);">+1 a +5</td></tr>
+                    <tr style="border-bottom:1px solid var(--border);"><td style="padding:12px 16px;">🔥 Marcador fase final</td><td style="text-align:right; padding:12px 16px; font-weight:bold; color:var(--green);">+3 / +1</td></tr>
                     <tr style="border-bottom:1px solid var(--border);"><td style="padding:12px 16px;">🌟 Selección revelación / Decepción</td><td style="text-align:right; padding:12px 16px; font-weight:bold; color:var(--gold);">+5 pts c/u</td></tr>
                     <tr style="border-bottom:1px solid var(--border);"><td style="padding:12px 16px;">🇪🇨 Posición final de Ecuador</td><td style="text-align:right; padding:12px 16px; font-weight:bold; color:var(--gold);">+10 pts</td></tr>
                     <tr><td style="padding:12px 16px;">👑 Campeón / ⚽ Goleador</td><td style="text-align:right; padding:12px 16px; font-weight:bold; color:var(--gold);">+10 pts c/u</td></tr>
@@ -1112,6 +1120,39 @@
                 .sort((a, b) => new Date(a.kickoff) - new Date(b.kickoff))[0] || null;
         }
 
+        function getUpcomingHomeMatches(now = new Date(), limit = 3) {
+            const koData = getOfficialKnockoutBase();
+            const koMatches = KNOCKOUT_DEFS.map(def => {
+                const stored = koData.matches.find(m => m.id === def.id) || def;
+                return {
+                    id: def.id,
+                    local: stored.local || def.local,
+                    visitante: stored.visitor || def.visitor,
+                    grupo: def.round === 'tercero' ? '3er puesto' : def.round,
+                    kickoff: def.kickoff,
+                    fechaStr: def.fechaStr,
+                    isKo: true
+                };
+            });
+            return ALL_MATCHES.concat(koMatches)
+                .filter(match => new Date(match.kickoff) > now)
+                .sort((a, b) => new Date(a.kickoff) - new Date(b.kickoff))
+                .slice(0, limit);
+        }
+
+        function summarizePointsBreakdown(desglose = []) {
+            const totals = { partidos: 0, clasificacion: 0, comodines: 0, faseFinal: 0 };
+            desglose.forEach(item => {
+                const points = item.evaluacion?.puntos || 0;
+                if (!points) return;
+                if (item.partidoId) totals.partidos += points;
+                else if (item.sortOrder >= 3000) totals.faseFinal += points;
+                else if (item.sortOrder >= 2000) totals.comodines += points;
+                else if (item.sortOrder >= 1000) totals.clasificacion += points;
+            });
+            return totals;
+        }
+
         function renderHomeTimeSensitive() {
             const status = DOM.get('homeTournamentStatus');
             const nextRoot = DOM.get('homeNextMatch');
@@ -1124,22 +1165,25 @@
                 status.innerHTML = `<span class="home-status-icon">⏳</span><div><strong>El Mundial comienza pronto</strong><p>Faltan ${escapeHtml(formatHomeRemaining(firstKickoff - now.getTime()))} para el primer partido.</p></div>`;
             }
 
-            const match = getNextHomeMatch(now);
-            if (!match) {
+            const matches = getUpcomingHomeMatches(now, 3);
+            if (!matches.length) {
                 nextRoot.innerHTML = '<p class="small" style="text-align:center; padding:8px 0;">No hay partidos pendientes por ahora.</p>';
                 return;
             }
-            const kickoff = new Date(match.kickoff);
-            const lockAt = new Date(kickoff.getTime() - 15 * 60000);
-            const locked = now >= lockAt;
-            nextRoot.innerHTML = `
-                <div class="home-match">
-                    <div class="home-team"><span class="flag">${FLAGS[match.local] || '🏳️'}</span><span class="home-team-name">${escapeHtml(match.local)}</span></div>
-                    <span class="home-versus">VS</span>
-                    <div class="home-team"><span class="flag">${FLAGS[match.visitante] || '🏳️'}</span><span class="home-team-name">${escapeHtml(match.visitante)}</span></div>
-                </div>
-                <p class="home-match-meta">${escapeHtml(match.fechaStr)} · Grupo ${escapeHtml(match.grupo)}<br><strong>${locked ? 'El pronóstico ya está bloqueado' : `Se bloquea en ${escapeHtml(formatHomeRemaining(lockAt - now))}`}</strong></p>
-                <button type="button" class="btn" style="margin:0;" onclick="APP.homePronosticar()" ${locked ? 'disabled' : ''}>Pronosticar</button>`;
+            nextRoot.innerHTML = `<div class="home-next-list">${matches.map(match => {
+                const kickoff = new Date(match.kickoff);
+                const lockAt = new Date(kickoff.getTime() - 15 * 60000);
+                const locked = now >= lockAt;
+                return `<div class="home-next-item">
+                    <div class="home-match">
+                        <div class="home-team"><span class="flag">${FLAGS[match.local] || '🏳️'}</span><span class="home-team-name">${escapeHtml(match.local)}</span></div>
+                        <span class="home-versus">VS</span>
+                        <div class="home-team"><span class="flag">${FLAGS[match.visitante] || '🏳️'}</span><span class="home-team-name">${escapeHtml(match.visitante)}</span></div>
+                    </div>
+                    <p class="home-match-meta">${escapeHtml(match.fechaStr)} · ${match.isKo ? 'Fase final' : `Grupo ${escapeHtml(match.grupo)}`}<br><strong>${locked ? 'El pronóstico ya está bloqueado' : `Se bloquea en ${escapeHtml(formatHomeRemaining(lockAt - now))}`}</strong></p>
+                </div>`;
+            }).join('')}</div>
+            <button type="button" class="btn" style="margin:10px 0 0;" onclick="APP.homePronosticar()">Pronosticar</button>`;
         }
 
         function renderHome() {
@@ -1159,9 +1203,11 @@
 
             if (STATE.currentUser && STATE.myId) {
                 const me = ranking.find(item => item.id === STATE.myId);
+                if (me) _desgloseCache[STATE.myId] = me.desglose;
                 const predictions = STATE.predictions[STATE.myId] || {};
                 const completed = ALL_MATCHES.filter(match => normalizeScorePair(predictions[match.id]?.gl, predictions[match.id]?.gv)).length;
                 const percentage = Math.round((completed / ALL_MATCHES.length) * 100);
+                const pointParts = summarizePointsBreakdown(me ? me.desglose : []);
                 sessionRoot.innerHTML = `
                     <div class="home-card">
                         <div class="home-profile-head">
@@ -1173,7 +1219,13 @@
                             <div class="home-stat"><div class="home-stat-value">${me ? `#${me.posicion}` : '—'}</div><div class="home-stat-label">Posición</div></div>
                             <div class="home-stat"><div class="home-stat-value">${percentage}%</div><div class="home-stat-label">Pronósticos</div></div>
                         </div>
-                        <button type="button" class="btn" style="margin:0;" onclick="APP.goToScreen('screenPredictions')" ${STATE.predictionsVisible ? '' : 'disabled'}>⚽ Continuar pronósticos</button>
+                        <div class="home-points-breakdown" aria-label="Desglose de puntos">
+                            <div class="home-points-row"><span>Partidos</span><span>${pointParts.partidos} pts</span></div>
+                            <div class="home-points-row"><span>Clasificación</span><span>${pointParts.clasificacion} pts</span></div>
+                            <div class="home-points-row"><span>Comodines</span><span>${pointParts.comodines} pts</span></div>
+                            <div class="home-points-row"><span>Fase final</span><span>${pointParts.faseFinal} pts</span></div>
+                        </div>
+                        <button type="button" class="btn" style="margin:0;" onclick="APP.showMyPointsBreakdown()">Cómo gané mis puntos</button>
                     </div>`;
             } else {
                 sessionRoot.innerHTML = `<div class="home-actions">
@@ -1199,6 +1251,16 @@
             overlay.querySelector('.modal-close-btn').addEventListener('click', () => overlay.remove());
             overlay.addEventListener('click', event => { if (event.target === overlay) overlay.remove(); });
             container.appendChild(overlay);
+        }
+
+        function showMyPointsBreakdown() {
+            if (!STATE.myId || !STATE.currentUser) { triggerToast('Inicia sesión'); return; }
+            calculatePointsEngine();
+            const ranking = calcularRankingGeneral(Object.values(STATE.users));
+            const me = ranking.find(item => item.id === STATE.myId);
+            if (!me) { triggerToast('Sin datos de desglose disponibles'); return; }
+            _desgloseCache[STATE.myId] = me.desglose;
+            abrirModalDesglose(me.desglose, me.nombre);
         }
 
         function homePronosticar() {
@@ -1588,12 +1650,12 @@
                 <div class="modal-card">
                     <h3>📜 ¿Cómo se ganan los puntos?</h3>
                     <ul>
-                        <li><span>🎯 Marcador exacto</span><span class="pts">3 pts</span></li>
-                        <li><span>✅ Ganador correcto</span><span class="pts">1 pt</span></li>
+                        <li><span>🎯 Marcador exacto (grupos y fase final)</span><span class="pts">3 pts</span></li>
+                        <li><span>✅ Ganador o empate correcto</span><span class="pts">1 pt</span></li>
                         <li><span>🥇 Primero de grupo</span><span class="pts">2 pts</span></li>
                         <li><span>🥈 Segundo de grupo</span><span class="pts">2 pts</span></li>
                         <li><span>🥉 Mejor tercero</span><span class="pts">1 pt</span></li>
-                        <li><span>🔥 Pronósticos Fase Final</span><span class="pts">+1 a +5 pts</span></li>
+                        <li><span>🔥 Fase final usa la misma regla de marcador</span><span class="pts">3 / 1 pts</span></li>
                         <li><span>🌟 Revelación / 😱 Decepción</span><span class="pts">5 pts c/u</span></li>
                         <li><span>🇪🇨 Ecuador (etapa final)</span><span class="pts">10 pts</span></li>
                         <li><span>👑 Campeón / ⚽ Goleador</span><span class="pts">10 pts c/u</span></li>
@@ -2352,7 +2414,7 @@
         }
         
         window.APP = {
-            goToScreen, registerUser, loginExistingUser, logout, saveScoreCloud, setPredictionFilter, setPredictionGroup, setTableGroupActive, saveKo, scheduleKoSave, saveAllKoDrafts, setTablesView, setTableSource, showRankingRulesModal, showHomePointsModal, homePronosticar, cerrarDesglose: cerrarModalDesglose, adminLoadResults, generateOfficialBracket, saveOfficialSpecials, loadOfficialSpecials, toggleFaseFinalVisibility, togglePredictionsVisibility, adminDeleteUser, adminResetUser, saveAdmMatchesCloud, saveOfficialKoFromInput, saveOfficialKnockoutBatch,toggleRegistrosStatus, setKoRoundTab, toggleKoRound,
+            goToScreen, registerUser, loginExistingUser, logout, saveScoreCloud, setPredictionFilter, setPredictionGroup, setTableGroupActive, saveKo, scheduleKoSave, saveAllKoDrafts, setTablesView, setTableSource, showRankingRulesModal, showHomePointsModal, showMyPointsBreakdown, homePronosticar, cerrarDesglose: cerrarModalDesglose, adminLoadResults, generateOfficialBracket, saveOfficialSpecials, loadOfficialSpecials, toggleFaseFinalVisibility, togglePredictionsVisibility, adminDeleteUser, adminResetUser, saveAdmMatchesCloud, saveOfficialKoFromInput, saveOfficialKnockoutBatch,toggleRegistrosStatus, setKoRoundTab, toggleKoRound,
             saveSpecial: function(field, val) {
                 const mySpec = STATE.specials[STATE.myId] || {};
                 const { globalLocked: comodinesGlobalCerrados, userAlreadyFilled } = getSpecialsLockState(mySpec);
