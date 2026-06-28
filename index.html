@@ -353,8 +353,8 @@
             <h3 style="margin-bottom:8px; font-size:1.15rem;">Tablas del Mundial</h3>
             <p class="small" style="margin-bottom:12px;">Revisa la clasificación de grupos y la llave final.</p>
             <div class="table-source-switch" role="tablist" aria-label="Fuente de datos de la tabla">
-                <button id="tabSourceSimulated" class="active" type="button" onclick="APP.setTableSource('simulated')">📊 Tabla Simulada</button>
-                <button id="tabSourceReal" type="button" onclick="APP.setTableSource('real')">🏆 Tabla Real</button>
+                <button id="tabSourceSimulated" type="button" onclick="APP.setTableSource('simulated')">📊 Tabla Simulada</button>
+                <button id="tabSourceReal" class="active" type="button" onclick="APP.setTableSource('real')">🏆 Tabla Real</button>
             </div>
             <div class="tables-switch" role="tablist" aria-label="Vista de tablas">
                 <button id="tabGroupsView" class="active" type="button" onclick="APP.setTablesView('groups')">Grupos</button>
@@ -446,7 +446,8 @@
                     <button id="btnKoRound_octavos" class="btn secondary" style="font-size:0.8rem;" onclick="APP.toggleKoRound('octavos')">Octavos</button>
                     <button id="btnKoRound_cuartos" class="btn secondary" style="font-size:0.8rem;" onclick="APP.toggleKoRound('cuartos')">Cuartos</button>
                     <button id="btnKoRound_semis" class="btn secondary" style="font-size:0.8rem;" onclick="APP.toggleKoRound('semis')">Semifinales</button>
-                    <button id="btnKoRound_final" class="btn secondary" style="grid-column:span 2; font-size:0.8rem;" onclick="APP.toggleKoRound('final')">Final + 3er Puesto</button>
+                    <button id="btnKoRound_tercero" class="btn secondary" style="font-size:0.8rem;" onclick="APP.toggleKoRound('tercero')">3er Puesto</button>
+                    <button id="btnKoRound_final" class="btn secondary" style="font-size:0.8rem;" onclick="APP.toggleKoRound('final')">Final</button>
                 </div>
                 <div style="display:flex; gap:10px; margin-bottom:20px;">
                     <button id="btnAdminPredsVisible" class="btn secondary" style="flex:1;" onclick="APP.togglePredictionsVisibility(true)">📋 Pronósticos visibles</button>
@@ -698,7 +699,12 @@
             { key: 'octavos', label: 'Octavos', emoji: '🔥', ids: [89,90,91,92,93,94,95,96] },
             { key: 'cuartos', label: 'Cuartos', emoji: '⚔️', ids: [97,98,99,100] },
             { key: 'semis', label: 'Semis', emoji: '🌟', ids: [101,102] },
-            { key: 'final', label: 'Final', emoji: '👑', ids: [103,104] }
+            { key: 'tercero', label: '3er Puesto', emoji: '🥉', ids: [103] },
+            { key: 'final', label: 'Final', emoji: '👑', ids: [104] }
+        ];
+        const KO_CONTEXT_TABS = [
+            { key: 'groups', label: 'Grupos', emoji: '📊' },
+            { key: 'thirds', label: 'Mejores terceros', emoji: '🥉' }
         ];
 
         const STATE = {
@@ -707,10 +713,10 @@
             myId: null, currentUser: null, currentSelectedGroup: 'A',
             currentPredictionFilter: 'today', currentPredictionGroup: 'all',
             currentTablesView: 'groups', adminConnected: sessionStorage.getItem('p26adm') === '1',
-            faseFinalEnabled: false, koRoundsEnabled: { dieciseisavos: false, octavos: false, cuartos: false, semis: false, final: false }, predictionsVisible: true, gruposLock: false, registrosLock: false,
-            currentKoRound: 'dieciseisavos',
+            faseFinalEnabled: false, koRoundsEnabled: { dieciseisavos: false, octavos: false, cuartos: false, semis: false, tercero: false, final: false }, predictionsVisible: true, gruposLock: false, registrosLock: false,
+            currentKoRound: 'groups',
             settings: { predictionsLocked: false },
-            tableSource: 'simulated'
+            tableSource: 'real'
         };
         
         try { STATE.myId = localStorage.getItem('polla_myId'); } catch(e) {}
@@ -851,7 +857,8 @@
             STATE.officialKnockoutScores = data.official_knockout_scores || {};
             STATE.officialKnockoutMatches = data.official_knockout_matches || {}; STATE.status = data.status || 'open';
             STATE.faseFinalEnabled = data.fase_final_enabled !== undefined ? data.fase_final_enabled : false;
-            STATE.koRoundsEnabled = Object.assign({ dieciseisavos: false, octavos: false, cuartos: false, semis: false, final: false }, data.ko_rounds_enabled || {});
+            STATE.koRoundsEnabled = Object.assign({ dieciseisavos: false, octavos: false, cuartos: false, semis: false, tercero: false, final: false }, data.ko_rounds_enabled || {});
+            if (data.ko_rounds_enabled && data.ko_rounds_enabled.final && data.ko_rounds_enabled.tercero === undefined) STATE.koRoundsEnabled.tercero = true;
             if (STATE.faseFinalEnabled && !data.ko_rounds_enabled) STATE.koRoundsEnabled.dieciseisavos = true;
             STATE.predictionsVisible = data.predictions_visible !== undefined ? data.predictions_visible : true;
             STATE.gruposLock = !!data.grupos_lock; STATE.registrosLock = !!data.registros_lock;
@@ -1862,11 +1869,55 @@
             }
         }
 
+        function getMatchLockLabel(match) {
+            if (!match || !match.kickoff) return 'Cierre por definir';
+            const cutoff = new Date(new Date(match.kickoff).getTime() - 15 * 60 * 1000);
+            if (new Date() >= cutoff) return 'Cerrado';
+            const date = cutoff.toLocaleDateString('es-EC', { day: '2-digit', month: 'short' });
+            const time = cutoff.toLocaleTimeString('es-EC', { hour: '2-digit', minute: '2-digit' });
+            return `Cierra: ${date} ${time}`;
+        }
+
+        function renderFaseFinalContextTab(container, tabKey) {
+            if (tabKey === 'groups') {
+                container.innerHTML = Object.keys(GROUPS).map((g, index) => `
+                    <details class="card" ${index === 0 ? 'open' : ''} style="margin-bottom:10px;">
+                        <summary style="cursor:pointer; font-weight:900; color:var(--gold); list-style:none;">Grupo ${escapeHtml(g)}</summary>
+                        <div style="margin-top:12px;">${buildGroupStandings(g, STATE.officialResults || {})}</div>
+                    </details>
+                `).join('');
+                return;
+            }
+            const thirds = getBestThirdsStandings('real');
+            if (!thirds.length) {
+                container.innerHTML = `<p class="prediction-empty">No hay mejores terceros disponibles todavía.</p>`;
+                return;
+            }
+            const rows = thirds.map(t => {
+                const dg = t.dg > 0 ? '+' + t.dg : t.dg;
+                return `<tr class="${t.qualifies ? 'row-qualified' : ''}">
+                    <td style="font-weight:800; color:${t.qualifies ? 'var(--gold)' : 'var(--text-muted)'};">#${t.rank}</td>
+                    <td class="st-team"><span class="flag">${t.flag}</span> <span>${escapeHtml(t.team)}</span></td>
+                    <td>${escapeHtml(t.group)}</td>
+                    <td>${t.pj}</td><td>${t.pg}</td><td>${t.pe}</td><td>${t.pp}</td>
+                    <td>${t.gf}</td><td>${t.gc}</td>
+                    <td style="color:${t.dg > 0 ? 'var(--green)' : t.dg < 0 ? '#EF4444' : 'inherit'}">${dg}</td>
+                    <td style="color:var(--gold); font-weight:bold; font-size:0.9rem;">${t.pts}</td>
+                </tr>`;
+            }).join('');
+            container.innerHTML = `<div class="standings-container"><table class="standings">
+                <tr><th>Pos</th><th style="text-align:left;">Equipo</th><th>Grupo</th><th>PJ</th><th>PG</th><th>PE</th><th>PP</th><th>GF</th><th>GC</th><th>DG</th><th>PTS</th></tr>
+                ${rows}
+            </table></div>
+            <p class="small" style="margin-top:10px;">🟣 Siguiente ronda</p>`;
+        }
+
         function renderKoRoundContent(container, roundKey) {
             const data = getOfficialKnockoutBase();
             const myKo = STATE.knockoutPreds[STATE.myId] || {};
             const roundMatches = KNOCKOUT_DEFS.filter(d => {
-                if (roundKey === 'final') return d.round === 'final' || d.round === 'tercero';
+                if (roundKey === 'final') return d.round === 'final';
+                if (roundKey === 'tercero') return d.round === 'tercero';
                 return d.round === roundKey;
             });
             if (roundMatches.length === 0) {
@@ -1890,7 +1941,6 @@
                 const visitorIsPlaceholder = isPlaceholderTeam(visitorName);
                 const matchLocked = (isMatchClosed(m.id)) && !STATE.adminConnected;
                 const pred = myKo[m.id] ? normalizeScorePair(myKo[m.id].gl, myKo[m.id].gv) : null;
-                const roundPts = KO_POINTS[m.round] || (m.round === 'tercero' ? KO_POINTS.tercero : 1);
                 const official = getKoOfficialScore(m.id);
                 const resultTag = official ? `<span style="font-size:0.75rem; color:var(--sky); font-weight:700;">🏁 Resultado oficial: ${official.gl}-${official.gv}</span>` : '';
                 const block = (name, val, isPlaceholder, side) => {
@@ -1907,7 +1957,7 @@
                 return `<div class="match-row" style="margin-bottom:12px;">
                     <div class="match-date">
                         <span>📅 ${escapeHtml(m.fechaStr)} · Partido ${m.id}</span>
-                        <span style="color:var(--gold); font-size:0.75rem; font-weight:700;">+${roundPts} pts</span>
+                        <span style="color:${matchLocked ? '#EF4444' : 'var(--green)'}; font-size:0.75rem; font-weight:700;">${escapeHtml(getMatchLockLabel(m))}</span>
                     </div>
                     ${resultTag ? `<div style="padding:4px 0 8px;">${resultTag}</div>` : ''}
                     <div style="display:flex; flex-direction:column; gap:10px;">
@@ -1930,25 +1980,21 @@
             if (!tabsContainer || !content) return;
 
             const enabledRounds = KO_ROUNDS_META.filter(r => STATE.koRoundsEnabled?.[r.key]);
-            if (enabledRounds.length === 0) {
-                tabsContainer.innerHTML = '';
-                content.innerHTML = `<div style="text-align:center; padding:40px 16px; color:var(--text-muted);">
-                    <div style="font-size:3rem; margin-bottom:12px;">⏳</div>
-                    <p style="font-weight:700; color:var(--text-main); margin-bottom:8px;">Fase Final no disponible aún</p>
-                    <p style="font-size:0.85rem;">Se habilitará cuando el administrador complete los resultados de grupos.</p>
-                </div>`;
-                return;
+            const allTabs = KO_CONTEXT_TABS.concat(enabledRounds);
+            const activeExists = allTabs.some(r => r.key === STATE.currentKoRound);
+            if (!activeExists) {
+                STATE.currentKoRound = allTabs[0].key;
             }
 
-            if (!STATE.koRoundsEnabled[STATE.currentKoRound]) {
-                STATE.currentKoRound = enabledRounds[0].key;
-            }
-
-            tabsContainer.innerHTML = enabledRounds.map(r =>
+            tabsContainer.innerHTML = allTabs.map(r =>
                 `<button type="button" class="group-tab ${STATE.currentKoRound === r.key ? 'active' : ''}" onclick="APP.setKoRoundTab('${r.key}')">${r.emoji} ${r.label}</button>`
             ).join('');
 
-            renderKoRoundContent(content, STATE.currentKoRound);
+            if (STATE.currentKoRound === 'groups' || STATE.currentKoRound === 'thirds') {
+                renderFaseFinalContextTab(content, STATE.currentKoRound);
+            } else {
+                renderKoRoundContent(content, STATE.currentKoRound);
+            }
         }
 
         function createKoButton(matchId, teamName, selected, disabled) {
