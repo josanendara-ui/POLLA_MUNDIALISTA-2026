@@ -109,6 +109,11 @@
         .ko-save-state { margin-top: 7px; min-height: 15px; color: var(--text-muted); font-size: 0.72rem; text-align: center; font-weight: 700; }
         .ko-save-state.saved { color: var(--green); }
         .ko-save-state.error { color: #EF4444; }
+        .ko-qualifier { margin-top: 8px; display: grid; grid-template-columns: auto 1fr 1fr; gap: 6px; align-items: center; }
+        .ko-qualifier-label { color: var(--text-muted); font-size: 0.72rem; font-weight: 900; text-transform: uppercase; }
+        .ko-qualifier button { min-height: 34px; padding: 7px 8px; border-radius: 7px; border: 1px solid var(--border); background: rgba(255,255,255,0.035); color: var(--text-muted); font-size: 0.75rem; font-weight: 900; cursor: pointer; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .ko-qualifier button.selected { background: rgba(45,212,191,0.16); border-color: var(--green); color: var(--text-main); }
+        .ko-qualifier button:disabled { opacity: 0.45; cursor: not-allowed; }
         
         .standings-container { overflow-x: auto; background: var(--bg-card); border-radius: var(--radius); border: 1px solid var(--border); margin-bottom: 20px; box-shadow: var(--shadow); }
         .standings { width: 100%; border-collapse: collapse; font-size: 0.8rem; min-width: 500px; }
@@ -331,6 +336,7 @@
                     <tr style="border-bottom:1px solid var(--border);"><td style="padding:12px 16px;">🥈 Acertar 2° del grupo</td><td style="text-align:right; padding:12px 16px; font-weight:bold; color:var(--green);">+2 pts</td></tr>
                     <tr style="border-bottom:1px solid var(--border);"><td style="padding:12px 16px;">🥉 Acertar equipo que pasa 3°</td><td style="text-align:right; padding:12px 16px; font-weight:bold; color:var(--green);">+1 pt</td></tr>
                     <tr style="border-bottom:1px solid var(--border);"><td style="padding:12px 16px;">🔥 Marcador fase final</td><td style="text-align:right; padding:12px 16px; font-weight:bold; color:var(--green);">+3 / +1</td></tr>
+                    <tr style="border-bottom:1px solid var(--border);"><td style="padding:12px 16px;">🏁 Clasificado correcto KO</td><td style="text-align:right; padding:12px 16px; font-weight:bold; color:var(--gold);">+1/+2/+3/+4/+5</td></tr>
                     <tr style="border-bottom:1px solid var(--border);"><td style="padding:12px 16px;">🌟 Selección revelación / Decepción</td><td style="text-align:right; padding:12px 16px; font-weight:bold; color:var(--gold);">+5 pts c/u</td></tr>
                     <tr style="border-bottom:1px solid var(--border);"><td style="padding:12px 16px;">🇪🇨 Posición final de Ecuador</td><td style="text-align:right; padding:12px 16px; font-weight:bold; color:var(--gold);">+10 pts</td></tr>
                     <tr><td style="padding:12px 16px;">👑 Campeón / ⚽ Goleador</td><td style="text-align:right; padding:12px 16px; font-weight:bold; color:var(--gold);">+10 pts c/u</td></tr>
@@ -715,7 +721,7 @@
             { round: 'semis', title: 'Semifinales', matches: [101, 102] },
             { round: 'final', title: 'Fase Final', matches: [104] }
         ];
-        const KO_POINTS = { dieciseisavos: 1, octavos: 2, cuartos: 3, semis: 4, final: 5, tercero: 2 };
+        const KO_POINTS = { dieciseisavos: 1, octavos: 2, cuartos: 3, semis: 4, tercero: 3, final: 5 };
         const KO_ROUNDS_META = [
             { key: 'dieciseisavos', label: '16vos', emoji: '⚡', ids: [73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88] },
             { key: 'octavos', label: 'Octavos', emoji: '🔥', ids: [89,90,91,92,93,94,95,96] },
@@ -992,8 +998,36 @@
             return raw ? normalizeScorePair(raw.gl, raw.gv) : null;
         }
 
+        function getKoWinnerFromPair(pair, localName, visitorName) {
+            if (!pair) return '';
+            if (pair.gl > pair.gv) return localName;
+            if (pair.gv > pair.gl) return visitorName;
+            return '';
+        }
+
+        function getOfficialKoWinner(mid, localName, visitorName) {
+            const stored = STATE.officialKnockout[mid];
+            if (stored) return stored;
+            return getKoWinnerFromPair(getKoOfficialScore(mid), localName, visitorName);
+        }
+
+        function getPredictedKoWinner(rawPick, localName, visitorName) {
+            if (!rawPick) return '';
+            if (rawPick.winner) return rawPick.winner;
+            return getKoWinnerFromPair(normalizeScorePair(rawPick.gl, rawPick.gv), localName, visitorName);
+        }
+
         function getKnockoutScoreDetails(uid) {
             const details = [];
+            const data = getOfficialKnockoutBase();
+            const userPicks = STATE.knockoutPreds[uid] || {};
+            const resolvedNames = {}; const best3Queue = [...data.best3];
+            [...data.matches].sort((a, b) => a.id - b.id).forEach(m => {
+                resolvedNames[m.id] = {
+                    local: resolveBracketTokenGeneral(m.local, data.matches, userPicks, data.grouped, best3Queue),
+                    visitor: resolveBracketTokenGeneral(m.visitor, data.matches, userPicks, data.grouped, best3Queue)
+                };
+            });
             Object.keys(STATE.officialKnockoutScores || {}).forEach(mid => {
                 const pred = getKoPredictionScore(uid, mid);
                 const off = getKoOfficialScore(mid);
@@ -1001,7 +1035,16 @@
                 if (!def || !pred || !off) return;
                 const eval_ = evaluarPuntosPartido(pred.gl, pred.gv, off.gl, off.gv);
                 if (eval_.puntos > 0) {
-                    details.push({ matchId: parseInt(mid, 10), round: def.round, team: `${pred.gl}-${pred.gv}`, points: eval_.puntos });
+                    details.push({ matchId: parseInt(mid, 10), round: def.round, kind: 'score', team: `${pred.gl}-${pred.gv}`, points: eval_.puntos, label: 'Marcador fase final' });
+                }
+                const matchId = parseInt(mid, 10);
+                const names = resolvedNames[matchId];
+                if (!names) return;
+                const predictedWinner = getPredictedKoWinner(userPicks[matchId], names.local, names.visitor);
+                const officialWinner = getOfficialKoWinner(matchId, names.local, names.visitor);
+                const bonus = KO_POINTS[def.round] || 0;
+                if (predictedWinner && officialWinner && predictedWinner === officialWinner && bonus > 0) {
+                    details.push({ matchId, round: def.round, kind: 'winner', team: predictedWinner, points: bonus, label: 'Clasificado fase final' });
                 }
             });
             return details;
@@ -1043,7 +1086,7 @@
                 const specialDetails = getSpecialScoreDetails(uid);
                 specialDetails.forEach(detail => desgloseHistorial.push({ kind: 'bonus', sortOrder: 2000, label: detail.label, value: detail.value, evaluacion: { puntos: detail.points, motivo: `${detail.label} (+${detail.points} pts)`, tipo: 'bonus' } }));
                 const knockoutDetails = getKnockoutScoreDetails(uid);
-                knockoutDetails.forEach(detail => desgloseHistorial.push({ kind: 'bonus', sortOrder: 3000 + detail.matchId, label: `Fase final - partido ${detail.matchId}`, value: detail.team, evaluacion: { puntos: detail.points, motivo: `Acierto fase final (+${detail.points} pts)`, tipo: 'bonus' } }));
+                knockoutDetails.forEach(detail => desgloseHistorial.push({ kind: 'bonus', sortOrder: 3000 + detail.matchId + (detail.kind === 'winner' ? 0.5 : 0), label: `${detail.label} - partido ${detail.matchId}`, value: detail.team, evaluacion: { puntos: detail.points, motivo: `${detail.label} (+${detail.points} pts)`, tipo: 'bonus' } }));
                 return { id: uid, nombre: usuario.nombre_apodo || 'Usuario Anónimo', puntos: usuario.total_puntos || 0, exactos: exactosContador, campeonAcertado: specialDetails.some(d => d.label === 'Campeon del Mundial'), aciertosKo: knockoutDetails.length, fecha_registro: usuario.date_registered || 0, desglose: desgloseHistorial };
             });
             ranking.sort((a, b) => {
@@ -1242,7 +1285,10 @@
             const overlay = document.createElement('div'); overlay.className = 'modal-overlay';
             overlay.innerHTML = `<div class="modal-card"><h3>💎 ¿Cómo gano puntos?</h3><ul>
                 <li><span>🎯 Marcador exacto</span><span class="pts">+3 pts</span></li>
-                <li><span>✅ Ganador correcto</span><span class="pts">+1 pt</span></li>
+                <li><span>✅ Ganador o empate correcto</span><span class="pts">+1 pt</span></li>
+                <li><span>🥇 1° / 🥈 2° de grupo</span><span class="pts">+2 pts c/u</span></li>
+                <li><span>🥉 Mejor tercero</span><span class="pts">+1 pt</span></li>
+                <li><span>🏁 Clasificado correcto KO</span><span class="pts">+1 a +5 pts</span></li>
                 <li><span>🌟 Selección revelación</span><span class="pts">+5 pts</span></li>
                 <li><span>😱 Mayor decepción</span><span class="pts">+5 pts</span></li>
                 <li><span>🇪🇨 Ecuador</span><span class="pts">+10 pts</span></li>
@@ -1656,7 +1702,8 @@
                         <li><span>🥇 Primero de grupo</span><span class="pts">2 pts</span></li>
                         <li><span>🥈 Segundo de grupo</span><span class="pts">2 pts</span></li>
                         <li><span>🥉 Mejor tercero</span><span class="pts">1 pt</span></li>
-                        <li><span>🔥 Fase final usa la misma regla de marcador</span><span class="pts">3 / 1 pts</span></li>
+                        <li><span>🔥 Marcador fase final</span><span class="pts">3 / 1 pts</span></li>
+                        <li><span>🏁 Clasificado correcto KO</span><span class="pts">16vos +1, 8vos +2, 4tos +3, Semis +4, 3er +3, Final +5</span></li>
                         <li><span>🌟 Revelación / 😱 Decepción</span><span class="pts">5 pts c/u</span></li>
                         <li><span>🇪🇨 Ecuador (etapa final)</span><span class="pts">10 pts</span></li>
                         <li><span>👑 Campeón / ⚽ Goleador</span><span class="pts">10 pts c/u</span></li>
@@ -1804,6 +1851,7 @@
             if (token.startsWith('Winner')) {
                 const refId = parseInt(token.replace('Winner', ''), 10);
                 const pred = myKo[refId];
+                if (pred && pred.winner) return pred.winner;
                 if (pred && pred.gl !== undefined && pred.gv !== undefined) {
                     const pair = normalizeScorePair(pred.gl, pred.gv);
                     if (pair) {
@@ -1825,6 +1873,7 @@
                 const refId = token.replace('Losers', ''); const parentMatch = matches.find(x => x.id === parseInt(refId, 10)); if (!parentMatch) return `Perdedor M${refId}`;
                 const pLocal = resolveBracketTokenGeneral(parentMatch.local, matches, myKo, grouped, best3Queue); const pVisitor = resolveBracketTokenGeneral(parentMatch.visitor, matches, myKo, grouped, best3Queue);
                 const pred = myKo[parseInt(refId, 10)];
+                if (pred && pred.winner) return pred.winner === pLocal ? pVisitor : pLocal;
                 const pair = pred ? normalizeScorePair(pred.gl, pred.gv) : null;
                 if (!pair) return `Perdedor M${refId}`;
                 return pair.gl > pair.gv ? pVisitor : pLocal;
@@ -2024,9 +2073,12 @@
                 const localIsPlaceholder = isPlaceholderTeam(localName);
                 const visitorIsPlaceholder = isPlaceholderTeam(visitorName);
                 const matchLocked = (isMatchClosed(m.id)) && !STATE.adminConnected;
-                const pred = myKo[m.id] ? normalizeScorePair(myKo[m.id].gl, myKo[m.id].gv) : null;
+                const rawPred = myKo[m.id] || null;
+                const pred = rawPred ? normalizeScorePair(rawPred.gl, rawPred.gv) : null;
+                const selectedWinner = getPredictedKoWinner(rawPred, localName, visitorName);
                 const official = getKoOfficialScore(m.id);
-                const resultTag = official ? `<span style="font-size:0.75rem; color:var(--sky); font-weight:700;">🏁 Resultado oficial: ${official.gl}-${official.gv}</span>` : '';
+                const officialWinner = getOfficialKoWinner(m.id, localName, visitorName);
+                const resultTag = official ? `<span style="font-size:0.75rem; color:var(--sky); font-weight:700;">🏁 Resultado oficial: ${official.gl}-${official.gv}${officialWinner ? ` · Clasificó ${escapeHtml(officialWinner)}` : ''}</span>` : '';
                 const localDisabled = matchLocked || localIsPlaceholder;
                 const visitorDisabled = matchLocked || visitorIsPlaceholder;
                 return `<div class="match-row ko-match-card">
@@ -2043,6 +2095,11 @@
                             <input type="number" min="0" inputmode="numeric" class="score-box ko-score-box" data-mid="${m.id}" data-side="gv" value="${pred ? escapeHtml(pred.gv) : ''}" ${visitorDisabled ? 'disabled' : ''} oninput="APP.scheduleKoSave(${m.id})">
                         </div>
                         <div class="ko-team-inline right"><span>${escapeHtml(visitorName)}</span><span class="flag">${visitorIsPlaceholder ? '❓' : (FLAGS[visitorName] || '🏳️')}</span></div>
+                    </div>
+                    <div class="ko-qualifier">
+                        <span class="ko-qualifier-label">Clasifica</span>
+                        <button type="button" class="${selectedWinner === localName ? 'selected' : ''}" ${matchLocked || localIsPlaceholder ? 'disabled' : ''} onclick="APP.setKoWinner(${m.id}, '${localName.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}')">${escapeHtml(localName)}</button>
+                        <button type="button" class="${selectedWinner === visitorName ? 'selected' : ''}" ${matchLocked || visitorIsPlaceholder ? 'disabled' : ''} onclick="APP.setKoWinner(${m.id}, '${visitorName.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}')">${escapeHtml(visitorName)}</button>
                     </div>
                     <div class="ko-save-state" id="koSaveState_${m.id}">${matchLocked ? 'Marcador cerrado' : ''}</div>
                 </div>`;
@@ -2123,6 +2180,19 @@
             koSaveTimers[mid] = setTimeout(() => saveKo(mid, true), 450);
         }
 
+        function setKoWinner(mid, winner) {
+            if (!STATE.myId) { triggerToast('Inicia sesión'); return; }
+            if (!STATE.knockoutPreds[STATE.myId]) STATE.knockoutPreds[STATE.myId] = {};
+            const current = STATE.knockoutPreds[STATE.myId][mid] || {};
+            STATE.knockoutPreds[STATE.myId][mid] = { ...current, winner };
+            const pair = normalizeScorePair(current.gl, current.gv);
+            if (pair) saveKo(mid, true);
+            else {
+                setKoSaveState(mid, 'Clasificado elegido. Falta marcador.');
+                renderFaseFinal();
+            }
+        }
+
         async function saveKo(mid, silent = false) {
             if (!STATE.myId) { if (!silent) triggerToast('Inicia sesión'); return; }
             try {
@@ -2132,10 +2202,19 @@
                 const gvEl = DOM.q(`.ko-score-box[data-mid="${mid}"][data-side="gv"]`);
                 const pair = normalizeScorePair(glEl?.value, gvEl?.value);
                 if (!pair) { setKoSaveState(mid, 'Marcador inválido', 'error'); if (!silent) triggerToast('Ingresa un marcador válido'); return; }
-                STATE.knockoutPreds[STATE.myId][mid] = { gl: pair.gl, gv: pair.gv };
-
                 const data = getOfficialKnockoutBase();
                 const myKo = STATE.knockoutPreds[STATE.myId];
+                const match = data.matches.find(m => m.id === mid) || KNOCKOUT_DEFS.find(d => d.id === mid);
+                const names = match ? {
+                    local: resolveBracketTokenGeneral(match.local, data.matches, myKo, data.grouped, [...data.best3]),
+                    visitor: resolveBracketTokenGeneral(match.visitor, data.matches, myKo, data.grouped, [...data.best3])
+                } : { local: '', visitor: '' };
+                const inferredWinner = getKoWinnerFromPair(pair, names.local, names.visitor);
+                const currentWinner = myKo[mid]?.winner;
+                const winner = inferredWinner || currentWinner;
+                if (!winner) { setKoSaveState(mid, 'Elige quién clasifica', 'error'); return; }
+                STATE.knockoutPreds[STATE.myId][mid] = { gl: pair.gl, gv: pair.gv, winner };
+
                 const resolvedNames = {}; const best3NumQueue = [...data.best3];
                 const sortedMatches = [...data.matches].sort((a,b) => a.id - b.id);
                 sortedMatches.forEach(m => { resolvedNames[m.id] = { local: resolveBracketTokenGeneral(m.local, data.matches, myKo, data.grouped, best3NumQueue), visitor: resolveBracketTokenGeneral(m.visitor, data.matches, myKo, data.grouped, best3NumQueue) }; });
@@ -2185,7 +2264,9 @@
             const clean = {};
             Object.keys(toSave).forEach(mid => {
                 const pair = normalizeScorePair(toSave[mid].gl, toSave[mid].gv);
-                if (pair) clean[mid] = pair;
+                if (!pair) return;
+                const previous = STATE.knockoutPreds[STATE.myId]?.[mid] || {};
+                clean[mid] = { ...pair, winner: previous.winner || '' };
             });
             const promises = Object.keys(clean).filter(mid => !valuesEqual(STATE.knockoutPreds[STATE.myId]?.[mid], clean[mid])).map(mid => db.ref(`knockout_preds/${STATE.myId}/${mid}`).set(clean[mid]));
             Promise.all(promises).then(() => {
@@ -2219,6 +2300,7 @@
                 const defOfficialMatch = (STATE.officialKnockoutMatches && STATE.officialKnockoutMatches[d.id]) ? STATE.officialKnockoutMatches[d.id] : null;
                 const local = defOfficialMatch ? defOfficialMatch.local : d.local; const visitor = defOfficialMatch ? defOfficialMatch.visitor : d.visitor;
                 const offScore = STATE.officialKnockoutScores[d.id] || { gl: '', gv: '' };
+                const officialWinner = STATE.officialKnockout[d.id] || '';
                 htmlK += `<div class="match-row" style="background:var(--bg-input); margin-bottom:8px;">
                     <div class="match-date">📅 Partido N°${d.id} — ${d.round}</div>
                     <div class="home-match" style="grid-template-columns:minmax(0,1fr) auto minmax(0,1fr); align-items:center; gap:8px; margin-bottom:8px;">
@@ -2231,6 +2313,11 @@
                         <input type="number" min="0" inputmode="numeric" class="score-box ko-off-gv" data-id="${d.id}" value="${offScore.gv !== '' && offScore.gv !== null ? offScore.gv : ''}">
                         <div></div>
                     </div>
+                    <select class="input-field ko-off-winner" data-id="${d.id}" style="margin-top:8px; margin-bottom:0;">
+                        <option value="">Clasificado oficial...</option>
+                        <option value="${escapeHtml(local)}" ${officialWinner === local ? 'selected' : ''}>${escapeHtml(local)}</option>
+                        <option value="${escapeHtml(visitor)}" ${officialWinner === visitor ? 'selected' : ''}>${escapeHtml(visitor)}</option>
+                    </select>
                     <button class="btn secondary" style="margin-top:8px;" onclick="APP.saveOfficialKoFromInput(${d.id})">Guardar marcador oficial</button>
                 </div>`;
             });
@@ -2263,7 +2350,17 @@
             const gv = DOM.q(`.ko-off-gv[data-id="${matchId}"]`)?.value;
             const pair = normalizeScorePair(gl, gv);
             if (!pair) { alert('Ingresa un marcador válido'); return; }
-            setIfChanged(`official_knockout_scores/${matchId}`, STATE.officialKnockoutScores[matchId], pair).then(changed => { if (changed) triggerToast('Marcador oficial guardado'); }).catch(err => { console.error(err); });
+            const selectWinner = DOM.q(`.ko-off-winner[data-id="${matchId}"]`)?.value || '';
+            const def = KNOCKOUT_DEFS.find(d => d.id === matchId);
+            const officialMatch = STATE.officialKnockoutMatches[matchId] || def || {};
+            const inferredWinner = getKoWinnerFromPair(pair, officialMatch.local, officialMatch.visitor);
+            const winner = inferredWinner || selectWinner;
+            if (!winner) { alert('Si el marcador empata, selecciona quién clasificó.'); return; }
+            const updates = {};
+            if (!valuesEqual(STATE.officialKnockoutScores[matchId], pair)) updates[`official_knockout_scores/${matchId}`] = pair;
+            if (!valuesEqual(STATE.officialKnockout[matchId], winner)) updates[`official_knockout/${matchId}`] = winner;
+            if (Object.keys(updates).length === 0) return;
+            db.ref('/').update(updates).then(() => triggerToast('Marcador oficial guardado')).catch(err => { console.error(err); });
         }
 
         function generateOfficialBracket() { generateOfficialBracketAndSave(); }
@@ -2419,7 +2516,7 @@
         }
         
         window.APP = {
-            goToScreen, registerUser, loginExistingUser, logout, saveScoreCloud, setPredictionFilter, setPredictionGroup, setTableGroupActive, saveKo, scheduleKoSave, saveAllKoDrafts, setTablesView, setTableSource, resetBracketSimulation, showRankingRulesModal, showHomePointsModal, showMyPointsBreakdown, homePronosticar, cerrarDesglose: cerrarModalDesglose, adminLoadResults, generateOfficialBracket, saveOfficialSpecials, loadOfficialSpecials, toggleFaseFinalVisibility, togglePredictionsVisibility, adminDeleteUser, adminResetUser, saveAdmMatchesCloud, saveOfficialKoFromInput, saveOfficialKnockoutBatch,toggleRegistrosStatus, setKoRoundTab, toggleKoRound,
+            goToScreen, registerUser, loginExistingUser, logout, saveScoreCloud, setPredictionFilter, setPredictionGroup, setTableGroupActive, saveKo, scheduleKoSave, setKoWinner, saveAllKoDrafts, setTablesView, setTableSource, resetBracketSimulation, showRankingRulesModal, showHomePointsModal, showMyPointsBreakdown, homePronosticar, cerrarDesglose: cerrarModalDesglose, adminLoadResults, generateOfficialBracket, saveOfficialSpecials, loadOfficialSpecials, toggleFaseFinalVisibility, togglePredictionsVisibility, adminDeleteUser, adminResetUser, saveAdmMatchesCloud, saveOfficialKoFromInput, saveOfficialKnockoutBatch,toggleRegistrosStatus, setKoRoundTab, toggleKoRound,
             saveSpecial: function(field, val) {
                 const mySpec = STATE.specials[STATE.myId] || {};
                 const { globalLocked: comodinesGlobalCerrados, userAlreadyFilled } = getSpecialsLockState(mySpec);
