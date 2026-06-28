@@ -1771,10 +1771,49 @@
 
         function renderTablesBracket() {
             const root = DOM.get('tablesBracketRoot'); if (!root) return;
-            const data = getUserGeneratedKnockoutMatches();
-            renderBracketInto(root, data.matches, data.grouped, data.best3, STATE.knockoutPreds[STATE.myId] || {}, false);
-            const picked = Object.keys(STATE.knockoutPreds[STATE.myId] || {}).length;
-            const count = DOM.get('bracketCountText'); if (count) count.textContent = `${picked}/32 selecciones`;
+            const isReal = STATE.tableSource === 'real';
+            const data = isReal ? getOfficialKnockoutBase() : getUserGeneratedKnockoutMatches();
+            const bracketPicks = isReal ? (STATE.officialKnockoutScores || {}) : (STATE.knockoutPreds[STATE.myId] || {});
+            renderBracketInto(root, data.matches, data.grouped, data.best3, bracketPicks, !isReal);
+            root.onclick = isReal ? null : function(e) {
+                const btn = e.target.closest('.ko-team-btn');
+                if (!btn || btn.disabled) return;
+                saveTablesBracketPick(parseInt(btn.dataset.matchId, 10), btn.dataset.team);
+            };
+            const count = DOM.get('bracketCountText');
+            if (count) {
+                count.textContent = isReal ? 'Resultados oficiales' : `${Object.keys(bracketPicks).length}/32 selecciones`;
+            }
+        }
+
+        function getResolvedWinnerForBracket(matchId, resolvedNames, picks) {
+            const pick = picks?.[matchId];
+            const pair = pick ? normalizeScorePair(pick.gl, pick.gv) : null;
+            if (pair) {
+                if (pair.gl > pair.gv) return resolvedNames.local;
+                if (pair.gv > pair.gl) return resolvedNames.visitor;
+                return resolvedNames.local;
+            }
+            const officialWinner = STATE.officialKnockout?.[matchId];
+            if (officialWinner === resolvedNames.local || officialWinner === resolvedNames.visitor) return officialWinner;
+            return '';
+        }
+
+        function saveTablesBracketPick(matchId, team) {
+            if (STATE.tableSource !== 'simulated') return;
+            if (!STATE.myId) { triggerToast('Inicia sesión'); return; }
+            const root = DOM.get('tablesBracketRoot'); if (!root) return;
+            const btn = Array.from(root.querySelectorAll(`.ko-team-btn[data-match-id="${matchId}"]`)).find(b => b.dataset.team === team);
+            const card = btn ? btn.closest('.match') : null;
+            const options = card ? Array.from(card.querySelectorAll('.ko-team-btn')).map(b => b.dataset.team) : [];
+            if (options.length < 2 || isPlaceholderTeam(team)) return;
+            const pair = team === options[0] ? { gl: 1, gv: 0 } : { gl: 0, gv: 1 };
+            if (!STATE.knockoutPreds[STATE.myId]) STATE.knockoutPreds[STATE.myId] = {};
+            if (valuesEqual(STATE.knockoutPreds[STATE.myId][matchId], pair)) return;
+            STATE.knockoutPreds[STATE.myId][matchId] = pair;
+            db.ref(`knockout_preds/${STATE.myId}/${matchId}`).set(pair)
+              .then(() => { triggerToast('✅ Selección simulada'); renderTablesBracket(); })
+              .catch(err => { console.error(err); triggerToast('❌ Error'); });
         }
 
         function renderBracketInto(root, matches, grouped, best3, myKo, interactive) {
@@ -1800,7 +1839,8 @@
                         const lName = resolvedNames[103].local; const vName = resolvedNames[103].visitor; const closed = isQuinielaClosed();
                         const lDis = !interactive || isPlaceholderTeam(lName) || ((closed || isMatchClosed(thirdMatch.id)) && !STATE.adminConnected);
                         const vDis = !interactive || isPlaceholderTeam(vName) || ((closed || isMatchClosed(thirdMatch.id)) && !STATE.adminConnected);
-                        thirdCard.appendChild(createKoButton(103, lName, myKo[103] === lName, lDis)); thirdCard.appendChild(createKoButton(103, vName, myKo[103] === vName, vDis));
+                        const winner = getResolvedWinnerForBracket(103, resolvedNames[103], myKo);
+                        thirdCard.appendChild(createKoButton(103, lName, winner === lName, lDis)); thirdCard.appendChild(createKoButton(103, vName, winner === vName, vDis));
                         thirdContainer.appendChild(thirdCard); col.appendChild(thirdContainer);
                     }
                 }
@@ -1819,8 +1859,9 @@
             const lName = resolvedNames.local; const vName = resolvedNames.visitor; const closed = isQuinielaClosed();
             const lDis = !interactive || isPlaceholderTeam(lName) || ((closed || isMatchClosed(m.id)) && !STATE.adminConnected);
             const vDis = !interactive || isPlaceholderTeam(vName) || ((closed || isMatchClosed(m.id)) && !STATE.adminConnected);
-            card.appendChild(createKoButton(m.id, lName, myKo[m.id] === lName, lDis));
-            card.appendChild(createKoButton(m.id, vName, myKo[m.id] === vName, vDis));
+            const winner = getResolvedWinnerForBracket(m.id, resolvedNames, myKo);
+            card.appendChild(createKoButton(m.id, lName, winner === lName, lDis));
+            card.appendChild(createKoButton(m.id, vName, winner === vName, vDis));
             slot.appendChild(card); return slot;
         }
 
