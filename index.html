@@ -679,51 +679,39 @@
             { id: 72, grupo: "J", local: "Jordania",            visitante: "Argentina",                       kickoff: "2026-06-27T21:00:00-05:00", fechaStr: "Sáb 27 Jun 21:00" }
         ];
 
-       const KNOCKOUT_DEFS = [
-            { id: 73, round: 'dieciseisavos', local: 'Sudáfrica', visitor: 'Canadá', kickoff: "2026-06-28T14:00:00-05:00", fechaStr: "Dom 28 Jun 14:00" },
-        
-            { id: 74, round: 'dieciseisavos', local: 'Brasil', visitor: 'Japón', kickoff: "2026-06-29T12:00:00-05:00", fechaStr: "Lun 29 Jun 12:00" },
-            { id: 75, round: 'dieciseisavos', local: 'Alemania', visitor: 'Paraguay', kickoff: "2026-06-29T15:30:00-05:00", fechaStr: "Lun 29 Jun 15:30" },
-            { id: 76, round: 'dieciseisavos', local: 'Países Bajos', visitor: 'Marruecos', kickoff: "2026-06-29T20:00:00-05:00", fechaStr: "Lun 29 Jun 20:00" },
-        
-            { id: 77, round: 'dieciseisavos', local: 'Costa de Marfil', visitor: 'Noruega', kickoff: "2026-06-30T12:00:00-05:00", fechaStr: "Mar 30 Jun 12:00" },
-            { id: 78, round: 'dieciseisavos', local: 'Francia', visitor: 'Suecia', kickoff: "2026-06-30T16:00:00-05:00", fechaStr: "Mar 30 Jun 16:00" },
-            { id: 79, round: 'dieciseisavos', local: 'México', visitor: 'Ecuador', kickoff: "2026-06-30T20:00:00-05:00", fechaStr: "Mar 30 Jun 20:00" },
-        
-            { id: 80, round: 'dieciseisavos', local: 'Inglaterra', visitor: 'República Democrática del Congo', kickoff: "2026-07-01T11:00:00-05:00", fechaStr: "Mié 01 Jul 11:00" },
-            { id: 81, round: 'dieciseisavos', local: 'Bélgica', visitor: 'Senegal', kickoff: "2026-07-01T15:00:00-05:00", fechaStr: "Mié 01 Jul 15:00" },
-            { id: 82, round: 'dieciseisavos', local: 'Estados Unidos', visitor: 'Bosnia y Herzegovina', kickoff: "2026-07-01T19:00:00-05:00", fechaStr: "Mié 01 Jul 19:00" },
-        
-            { id: 83, round: 'dieciseisavos', local: 'España', visitor: 'Austria', kickoff: "2026-07-02T14:00:00-05:00", fechaStr: "Jue 02 Jul 14:00" },
-            { id: 84, round: 'dieciseisavos', local: 'Portugal', visitor: 'Croacia', kickoff: "2026-07-02T18:00:00-05:00", fechaStr: "Jue 02 Jul 18:00" },
-            { id: 85, round: 'dieciseisavos', local: 'Suiza', visitor: 'Argelia', kickoff: "2026-07-02T20:00:00-05:00", fechaStr: "Jue 02 Jul 20:00" },
-        
-            { id: 86, round: 'dieciseisavos', local: 'Australia', visitor: 'Egipto', kickoff: "2026-07-03T13:00:00-05:00", fechaStr: "Vie 03 Jul 13:00" },
-            { id: 87, round: 'dieciseisavos', local: 'Argentina', visitor: 'Cabo Verde', kickoff: "2026-07-03T17:00:00-05:00", fechaStr: "Vie 03 Jul 17:00" },
-            { id: 88, round: 'dieciseisavos', local: 'Colombia', visitor: 'Ghana', kickoff: "2026-07-03T20:30:00-05:00", fechaStr: "Vie 03 Jul 20:30" },
-        
-            { id: 89,  round: 'octavos',  local: 'Winner74', visitor: 'Winner77', kickoff: "2026-07-04T16:00:00-05:00", fechaStr: "Sáb 04 Jul 16:00" },
-            { id: 90,  round: 'octavos',  local: 'Winner73', visitor: 'Winner75', kickoff: "2026-07-04T12:00:00-05:00", fechaStr: "Sáb 04 Jul 12:00" },
-        
-            { id: 91,  round: 'octavos',  local: 'Winner76', visitor: 'Winner78', kickoff: "2026-07-05T15:00:00-05:00", fechaStr: "Dom 05 Jul 15:00" },
-            { id: 92,  round: 'octavos',  local: 'Winner79', visitor: 'Winner80', kickoff: "2026-07-05T19:00:00-05:00", fechaStr: "Dom 05 Jul 19:00" },
-        
-            { id: 93,  round: 'octavos',  local: 'Winner83', visitor: 'Winner84', kickoff: "2026-07-06T14:00:00-05:00", fechaStr: "Lun 06 Jul 14:00" },
-            { id: 94,  round: 'octavos',  local: 'Winner81', visitor: 'Winner82', kickoff: "2026-07-06T19:00:00-05:00", fechaStr: "Lun 06 Jul 19:00" },
-        
-            { id: 95,  round: 'octavos',  local: 'Winner86', visitor: 'Winner88', kickoff: "2026-07-07T11:00:00-05:00", fechaStr: "Mar 07 Jul 11:00" },
-            { id: 96,  round: 'octavos',  local: 'Winner85', visitor: 'Winner87', kickoff: "2026-07-07T15:00:00-05:00", fechaStr: "Mar 07 Jul 15:00" },
-        
-            { id: 97,  round: 'cuartos', local: 'Winner89', visitor: 'Winner90', kickoff: "2026-07-09T15:00:00-05:00", fechaStr: "Jue 09 Jul 15:00" },
-            { id: 98,  round: 'cuartos', local: 'Winner93', visitor: 'Winner94', kickoff: "2026-07-10T14:00:00-05:00", fechaStr: "Vie 10 Jul 14:00" },
-            { id: 99,  round: 'cuartos', local: 'Winner91', visitor: 'Winner92', kickoff: "2026-07-11T16:00:00-05:00", fechaStr: "Sáb 11 Jul 16:00" },
-            { id: 100, round: 'cuartos', local: 'Winner95', visitor: 'Winner96', kickoff: "2026-07-11T20:00:00-05:00", fechaStr: "Sáb 11 Jul 20:00" },
-        
-            { id: 101, round: 'semis', local: 'Winner97', visitor: 'Winner98', kickoff: "2026-07-14T14:00:00-05:00", fechaStr: "Mar 14 Jul 14:00" },
-            { id: 102, round: 'semis', local: 'Winner99', visitor: 'Winner100', kickoff: "2026-07-15T14:00:00-05:00", fechaStr: "Mié 15 Jul 14:00" },
-        
-            { id: 103, round: 'tercero', local: 'Losers101', visitor: 'Losers102', kickoff: "2026-07-18T16:00:00-05:00", fechaStr: "Sáb 18 Jul 16:00" },
-            { id: 104, round: 'final', local: 'Winner101', visitor: 'Winner102', kickoff: "2026-07-19T14:00:00-05:00", fechaStr: "Dom 19 Jul 14:00" }
+        const KNOCKOUT_DEFS = [
+            { id: 73,  round: 'dieciseisavos', local: 'Sudáfrica', visitor: 'Canadá', kickoff: "2026-06-28T14:00:00-05:00", fechaStr: "Dom 28 Jun 14:00" },
+            { id: 74,  round: 'dieciseisavos', local: 'Brasil', visitor: 'Japón', kickoff: "2026-06-29T12:00:00-05:00", fechaStr: "Lun 29 Jun 12:00" },
+            { id: 75,  round: 'dieciseisavos', local: 'Alemania', visitor: 'Paraguay', kickoff: "2026-06-29T15:30:00-05:00", fechaStr: "Lun 29 Jun 15:30" },
+            { id: 76,  round: 'dieciseisavos', local: 'Países Bajos', visitor: 'Marruecos', kickoff: "2026-06-29T20:00:00-05:00", fechaStr: "Lun 29 Jun 20:00" },
+            { id: 77,  round: 'dieciseisavos', local: 'Costa de Marfil', visitor: 'Noruega', kickoff: "2026-06-30T12:00:00-05:00", fechaStr: "Mar 30 Jun 12:00" },
+            { id: 78,  round: 'dieciseisavos', local: 'Francia', visitor: 'Suecia', kickoff: "2026-06-30T16:00:00-05:00", fechaStr: "Mar 30 Jun 16:00" },
+            { id: 79,  round: 'dieciseisavos', local: 'México', visitor: 'Ecuador', kickoff: "2026-06-30T20:00:00-05:00", fechaStr: "Mar 30 Jun 20:00" },
+            { id: 80,  round: 'dieciseisavos', local: 'Inglaterra', visitor: 'República Democrática del Congo', kickoff: "2026-07-01T11:00:00-05:00", fechaStr: "Mié 01 Jul 11:00" },
+            { id: 81,  round: 'dieciseisavos', local: 'Bélgica', visitor: 'Senegal', kickoff: "2026-07-01T15:00:00-05:00", fechaStr: "Mié 01 Jul 15:00" },
+            { id: 82,  round: 'dieciseisavos', local: 'Estados Unidos', visitor: 'Bosnia y Herzegovina', kickoff: "2026-07-01T19:00:00-05:00", fechaStr: "Mié 01 Jul 19:00" },
+            { id: 83,  round: 'dieciseisavos', local: 'España', visitor: 'Austria', kickoff: "2026-07-02T14:00:00-05:00", fechaStr: "Jue 02 Jul 14:00" },
+            { id: 84,  round: 'dieciseisavos', local: 'Portugal', visitor: 'Croacia', kickoff: "2026-07-02T18:00:00-05:00", fechaStr: "Jue 02 Jul 18:00" },
+            { id: 85,  round: 'dieciseisavos', local: 'Suiza', visitor: 'Argelia', kickoff: "2026-07-02T22:00:00-05:00", fechaStr: "Jue 02 Jul 22:00" },
+            { id: 86,  round: 'dieciseisavos', local: 'Australia', visitor: 'Egipto', kickoff: "2026-07-03T13:00:00-05:00", fechaStr: "Vie 03 Jul 13:00" },
+            { id: 87,  round: 'dieciseisavos', local: 'Argentina', visitor: 'Cabo Verde', kickoff: "2026-07-03T17:00:00-05:00", fechaStr: "Vie 03 Jul 17:00" },
+            { id: 88,  round: 'dieciseisavos', local: 'Colombia', visitor: 'Ghana', kickoff: "2026-07-03T20:30:00-05:00", fechaStr: "Vie 03 Jul 20:30" },
+            { id: 89,  round: 'octavos',       local: 'Winner74',  visitor: 'Winner77',  kickoff: "2026-07-04T16:00:00-05:00", fechaStr: "Sáb 04 Jul 16:00" },
+            { id: 90,  round: 'octavos',       local: 'Winner73',  visitor: 'Winner75',  kickoff: "2026-07-04T12:00:00-05:00", fechaStr: "Sáb 04 Jul 12:00" },
+            { id: 91,  round: 'octavos',       local: 'Winner76',  visitor: 'Winner78',  kickoff: "2026-07-05T15:00:00-05:00", fechaStr: "Dom 05 Jul 15:00" },
+            { id: 92,  round: 'octavos',       local: 'Winner79',  visitor: 'Winner80',  kickoff: "2026-07-05T19:00:00-05:00", fechaStr: "Dom 05 Jul 19:00" },
+            { id: 93,  round: 'octavos',       local: 'Winner83',  visitor: 'Winner84',  kickoff: "2026-07-06T14:00:00-05:00", fechaStr: "Lun 06 Jul 14:00" },
+            { id: 94,  round: 'octavos',       local: 'Winner81',  visitor: 'Winner82',  kickoff: "2026-07-06T19:00:00-05:00", fechaStr: "Lun 06 Jul 19:00" },
+            { id: 95,  round: 'octavos',       local: 'Winner86',  visitor: 'Winner88',  kickoff: "2026-07-07T11:00:00-05:00", fechaStr: "Mar 07 Jul 11:00" },
+            { id: 96,  round: 'octavos',       local: 'Winner85',  visitor: 'Winner87',  kickoff: "2026-07-07T15:00:00-05:00", fechaStr: "Mar 07 Jul 15:00" },
+            { id: 97,  round: 'cuartos',       local: 'Winner89',  visitor: 'Winner90',  kickoff: "2026-07-09T15:00:00-05:00", fechaStr: "Jue 09 Jul 15:00" },
+            { id: 98,  round: 'cuartos',       local: 'Winner93',  visitor: 'Winner94',  kickoff: "2026-07-10T14:00:00-05:00", fechaStr: "Vie 10 Jul 14:00" },
+            { id: 99,  round: 'cuartos',       local: 'Winner91',  visitor: 'Winner92',  kickoff: "2026-07-11T16:00:00-05:00", fechaStr: "Sáb 11 Jul 16:00" },
+            { id: 100, round: 'cuartos',       local: 'Winner95',  visitor: 'Winner96',  kickoff: "2026-07-11T20:00:00-05:00", fechaStr: "Sáb 11 Jul 20:00" },
+            { id: 101, round: 'semis',         local: 'Winner97',  visitor: 'Winner98',  kickoff: "2026-07-14T14:00:00-05:00", fechaStr: "Mar 14 Jul 14:00" },
+            { id: 102, round: 'semis',         local: 'Winner99',  visitor: 'Winner100', kickoff: "2026-07-15T14:00:00-05:00", fechaStr: "Mié 15 Jul 14:00" },
+            { id: 103, round: 'tercero',       local: 'Losers101', visitor: 'Losers102', kickoff: "2026-07-18T16:00:00-05:00", fechaStr: "Sáb 18 Jul 16:00" },
+            { id: 104, round: 'final',         local: 'Winner101', visitor: 'Winner102', kickoff: "2026-07-19T14:00:00-05:00", fechaStr: "Dom 19 Jul 14:00" }
         ];
 
         const BRACKET_LAYOUT = [
@@ -2373,7 +2361,18 @@
             if (!valuesEqual(STATE.officialKnockoutScores[matchId], pair)) updates[`official_knockout_scores/${matchId}`] = pair;
             if (!valuesEqual(STATE.officialKnockout[matchId], winner)) updates[`official_knockout/${matchId}`] = winner;
             if (Object.keys(updates).length === 0) return;
-            db.ref('/').update(updates).then(() => triggerToast('Marcador oficial guardado')).catch(err => { console.error(err); });
+            STATE.officialKnockoutScores[matchId] = pair;
+            STATE.officialKnockout[matchId] = winner;
+            const previousScores = {};
+            Object.keys(STATE.users).forEach(uid => { previousScores[uid] = { total_puntos: STATE.users[uid].total_puntos, exacts: STATE.users[uid].exacts }; });
+            calculatePointsEngine();
+            Object.keys(STATE.users).forEach(uid => {
+                if (STATE.users[uid].total_puntos !== undefined && (!previousScores[uid] || previousScores[uid].total_puntos !== STATE.users[uid].total_puntos || previousScores[uid].exacts !== STATE.users[uid].exacts)) {
+                    updates[`users/${uid}/total_puntos`] = STATE.users[uid].total_puntos;
+                    updates[`users/${uid}/exacts`] = STATE.users[uid].exacts;
+                }
+            });
+            db.ref('/').update(updates).then(() => { triggerToast('Marcador oficial guardado'); renderRanking(); }).catch(err => { console.error(err); });
         }
 
         function generateOfficialBracket() { generateOfficialBracketAndSave(); }
