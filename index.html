@@ -1596,7 +1596,7 @@
             return userResults;
         }
 
-        function sortBestThirdRows(thirds) {
+     function sortBestThirdRows(thirds) {
             return thirds.sort((a, b) =>
                 b.pts - a.pts ||
                 b.dg - a.dg ||
@@ -1604,6 +1604,51 @@
                 a.gc - b.gc ||
                 a.team.localeCompare(b.team)
             );
+        }
+        
+        function getBestThirdsStandings(source = 'simulated') {
+            const resultsMap = typeof source === 'string' ? getSourceResultsForTables(source) : (source || {});
+            const grouped = computeStandingsFromResults(resultsMap);
+        
+            const thirds = Object.keys(GROUPS).map(group => {
+                const team = grouped[group] && grouped[group][2];
+                if (!team) return null;
+                return {
+                    group,
+                    team: team.team,
+                    flag: FLAGS[team.team] || '🏳️',
+                    pj: team.pj,
+                    pg: team.pg,
+                    pe: team.pe,
+                    pp: team.pp,
+                    gf: team.gf,
+                    gc: team.gc,
+                    dg: team.dg,
+                    pts: team.pts
+                };
+            }).filter(Boolean);
+        
+            sortBestThirdRows(thirds);
+        
+            const best8 = thirds.slice(0, 8);
+            return best8.map((item, index) => ({ ...item, rank: index + 1, qualifies: true }));
+        }
+        
+        function computeBestThirds(groupedStandings) {
+            const thirds = [];
+            Object.keys(groupedStandings).forEach(g => {
+                const arr = groupedStandings[g];
+                if (arr && arr[2]) {
+                    thirds.push({
+                        team: arr[2].team,
+                        pts: arr[2].pts,
+                        dg: arr[2].dg,
+                        gf: arr[2].gf,
+                        gc: arr[2].gc
+                    });
+                }
+            });
+            return sortBestThirdRows(thirds).slice(0, 8).map(x => x.team);
         }
 
         function getBestThirdsStandings(source = 'simulated') {
@@ -1794,25 +1839,67 @@
 
         function buildKnockoutFromStandings(grouped, bestThirds) {
             const best3Queue = bestThirds.slice();
+        
             function resolveToken(token) {
-                if (!token) return ''; if (token === 'Best3') return best3Queue.length ? best3Queue.shift() : 'Mejor 3°';
-                if (token.startsWith('1')) { const g = token.slice(1); return (grouped[g] && grouped[g][0]) ? grouped[g][0].team : `1${g}`; }
-                if (token.startsWith('2')) { const g = token.slice(1); return (grouped[g] && grouped[g][1]) ? grouped[g][1].team : `2${g}`; }
+                if (!token) return '';
+        
+                if (token === 'Best3') {
+                    return best3Queue.length ? best3Queue.shift() : 'Mejor 3°';
+                }
+        
+                if (token.startsWith('1')) {
+                    const g = token.slice(1);
+                    return (grouped[g] && grouped[g][0]) ? grouped[g][0].team : `1${g}`;
+                }
+        
+                if (token.startsWith('2')) {
+                    const g = token.slice(1);
+                    return (grouped[g] && grouped[g][1]) ? grouped[g][1].team : `2${g}`;
+                }
+        
                 return token;
             }
+        
             return KNOCKOUT_DEFS.map(def => {
-                let local = def.local, visitor = def.visitor;
-                if (def.round === 'dieciseisavos') { local = resolveToken(local); visitor = resolveToken(visitor); }
-                else { if (/^[12][A-L]$/.test(local)) local = resolveToken(local); if (/^[12][A-L]$/.test(visitor)) visitor = resolveToken(visitor); }
-                return { id: def.id, round: def.round, local, visitor };
+                let local = def.local;
+                let visitor = def.visitor;
+        
+                if (def.round === 'dieciseisavos') {
+                    local = resolveToken(local);
+                    visitor = resolveToken(visitor);
+                } else {
+                    if (/^[12][A-L]$/.test(local)) local = resolveToken(local);
+                    if (/^[12][A-L]$/.test(visitor)) visitor = resolveToken(visitor);
+                }
+        
+                return {
+                    id: def.id,
+                    round: def.round,
+                    local,
+                    visitor,
+                    kickoff: def.kickoff || null,
+                    fechaStr: def.fechaStr || ''
+                };
             });
         }
 
         function generateOfficialBracketAndSave() {
-            const grouped = computeStandingsFromResults(STATE.officialResults); const best3 = getBestThirdsStandings('real').map(x => x.team);
-            const matches = buildKnockoutFromStandings(grouped, best3); const mapping = {};
-            matches.forEach(m => mapping[m.id] = { local: m.local, visitor: m.visitor, round: m.round });
-            setIfChanged('official_knockout_matches', STATE.officialKnockoutMatches, mapping).then(changed => { if (changed) triggerToast('✅ Bracket oficial generado'); }).catch(err => console.error(err));
+            const mapping = {};
+            KNOCKOUT_DEFS.forEach(m => {
+                mapping[m.id] = {
+                    local: m.local,
+                    visitor: m.visitor,
+                    round: m.round,
+                    kickoff: m.kickoff || null,
+                    fechaStr: m.fechaStr || ''
+                };
+            });
+        
+            setIfChanged('official_knockout_matches', STATE.officialKnockoutMatches, mapping)
+                .then(changed => {
+                    if (changed) triggerToast('✅ Cruces oficiales fijados');
+                })
+                .catch(err => console.error(err));
         }
 
         function getUserGeneratedKnockoutMatches() {
@@ -1830,19 +1917,18 @@
         }
        
         function getOfficialKnockoutBase() {
-            const grouped = computeStandingsFromResults(STATE.officialResults || {}); 
-            const best3 = getBestThirdsStandings('real').map(x => x.team);
-            const matches = buildKnockoutFromStandings(grouped, best3);
-            
-            if (STATE.officialKnockoutMatches && Object.keys(STATE.officialKnockoutMatches).length > 0) {
-                matches.forEach(m => {
-                    if (m.round === 'dieciseisavos') return;
-                    if (STATE.officialKnockoutMatches[m.id]) {
-                        m.local = STATE.officialKnockoutMatches[m.id].local;
-                        m.visitor = STATE.officialKnockoutMatches[m.id].visitor;
-                    }
-                });
-            }
+            const grouped = computeStandingsFromResults(STATE.officialResults || {});
+            const best3 = computeBestThirds(grouped);
+        
+            const matches = KNOCKOUT_DEFS.map(def => ({
+                id: def.id,
+                round: def.round,
+                local: def.local,
+                visitor: def.visitor,
+                kickoff: def.kickoff || null,
+                fechaStr: def.fechaStr || ''
+            }));
+        
             return { grouped, best3, matches };
         }
 
