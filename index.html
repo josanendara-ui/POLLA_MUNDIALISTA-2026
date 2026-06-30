@@ -1005,15 +1005,34 @@
             return '';
         }
 
+        function isValidKoWinnerName(winner, localName, visitorName) {
+            return !!winner && (winner === localName || winner === visitorName);
+        }
+
+        function evaluarMarcadorExactoKO(pronosticoLocal, pronosticoVisitante, resultadoLocal, resultadoVisitante) {
+            const real = normalizeScorePair(resultadoLocal, resultadoVisitante);
+            if (!real) {
+                return { puntos: REGLAS_POLLA.PUNTOS_NADA, motivo: 'Sin resultado oficial', tipo: 'pendiente' };
+            }
+            const pred = normalizeScorePair(pronosticoLocal, pronosticoVisitante);
+            if (!pred) {
+                return { puntos: REGLAS_POLLA.PUNTOS_NADA, motivo: 'No pronosticado', tipo: 'no_pronosticado' };
+            }
+            if (pred.gl === real.gl && pred.gv === real.gv) {
+                return { puntos: REGLAS_POLLA.PUNTOS_EXACTO, motivo: `Marcador exacto fase final (+${REGLAS_POLLA.PUNTOS_EXACTO} pts)`, tipo: 'exacto_ko' };
+            }
+            return { puntos: REGLAS_POLLA.PUNTOS_NADA, motivo: 'Marcador fase final incorrecto (0 pts)', tipo: 'incorrecto_ko' };
+        }
+
         function getOfficialKoWinner(mid, localName, visitorName) {
             const stored = STATE.officialKnockout[mid];
-            if (stored) return stored;
+            if (isValidKoWinnerName(stored, localName, visitorName)) return stored;
             return getKoWinnerFromPair(getKoOfficialScore(mid), localName, visitorName);
         }
 
         function getPredictedKoWinner(rawPick, localName, visitorName) {
             if (!rawPick) return '';
-            if (rawPick.winner) return rawPick.winner;
+            if (isValidKoWinnerName(rawPick.winner, localName, visitorName)) return rawPick.winner;
             return getKoWinnerFromPair(normalizeScorePair(rawPick.gl, rawPick.gv), localName, visitorName);
         }
 
@@ -1033,9 +1052,9 @@
                 const off = getKoOfficialScore(mid);
                 const def = KNOCKOUT_DEFS.find(d => d.id === parseInt(mid, 10));
                 if (!def || !pred || !off) return;
-                const eval_ = evaluarPuntosPartido(pred.gl, pred.gv, off.gl, off.gv);
+                const eval_ = evaluarMarcadorExactoKO(pred.gl, pred.gv, off.gl, off.gv);
                 if (eval_.puntos > 0) {
-                    details.push({ matchId: parseInt(mid, 10), round: def.round, kind: 'score', team: `${pred.gl}-${pred.gv}`, points: eval_.puntos, label: 'Marcador fase final' });
+                    details.push({ matchId: parseInt(mid, 10), round: def.round, kind: 'score', team: `${pred.gl}-${pred.gv}`, points: eval_.puntos, label: 'Marcador exacto fase final' });
                 }
                 const matchId = parseInt(mid, 10);
                 const names = resolvedNames[matchId];
@@ -1043,7 +1062,7 @@
                 const predictedWinner = getPredictedKoWinner(userPicks[matchId], names.local, names.visitor);
                 const officialWinner = getOfficialKoWinner(matchId, names.local, names.visitor);
                 const bonus = KO_POINTS[def.round] || 0;
-                if (predictedWinner && officialWinner && predictedWinner === officialWinner && bonus > 0) {
+                if (isValidKoWinnerName(predictedWinner, names.local, names.visitor) && officialWinner && predictedWinner === officialWinner && bonus > 0) {
                     details.push({ matchId, round: def.round, kind: 'winner', team: predictedWinner, points: bonus, label: 'Clasificado fase final' });
                 }
             });
@@ -2477,7 +2496,8 @@
                 const defOfficialMatch = (STATE.officialKnockoutMatches && STATE.officialKnockoutMatches[d.id]) ? STATE.officialKnockoutMatches[d.id] : null;
                 const local = defOfficialMatch ? defOfficialMatch.local : d.local; const visitor = defOfficialMatch ? defOfficialMatch.visitor : d.visitor;
                 const offScore = STATE.officialKnockoutScores[d.id] || { gl: '', gv: '' };
-                const officialWinner = STATE.officialKnockout[d.id] || '';
+                const officialWinnerRaw = STATE.officialKnockout[d.id] || '';
+                const officialWinner = isValidKoWinnerName(officialWinnerRaw, local, visitor) ? officialWinnerRaw : '';
                 htmlK += `<div class="match-row" style="background:var(--bg-input); margin-bottom:8px;">
                     <div class="match-date">📅 Partido N°${d.id} — ${d.round}</div>
                     <div class="home-match" style="grid-template-columns:minmax(0,1fr) auto minmax(0,1fr); align-items:center; gap:8px; margin-bottom:8px;">
@@ -2532,7 +2552,10 @@
             const officialMatch = STATE.officialKnockoutMatches[matchId] || def || {};
             const inferredWinner = getKoWinnerFromPair(pair, officialMatch.local, officialMatch.visitor);
             const winner = inferredWinner || selectWinner;
-            if (!winner) { alert('Si el marcador empata, selecciona quién clasificó.'); return; }
+            if (!isValidKoWinnerName(winner, officialMatch.local, officialMatch.visitor)) {
+                alert('Selecciona como clasificado oficial solo uno de los dos equipos de este partido.');
+                return;
+            }
             const updates = {};
             if (!valuesEqual(STATE.officialKnockoutScores[matchId], pair)) updates[`official_knockout_scores/${matchId}`] = pair;
             if (!valuesEqual(STATE.officialKnockout[matchId], winner)) updates[`official_knockout/${matchId}`] = winner;
