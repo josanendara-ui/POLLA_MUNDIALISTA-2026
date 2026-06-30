@@ -1606,12 +1606,9 @@
             );
         }
         
-        function getBestThirdsStandings(source = 'simulated') {
-            const resultsMap = typeof source === 'string' ? getSourceResultsForTables(source) : (source || {});
-            const grouped = computeStandingsFromResults(resultsMap);
-        
-            const thirds = Object.keys(GROUPS).map(group => {
-                const team = grouped[group] && grouped[group][2];
+        function getThirdPlaceRowsFromGrouped(groupedStandings) {
+            return Object.keys(GROUPS).map(group => {
+                const team = groupedStandings[group] && groupedStandings[group][2];
                 if (!team) return null;
                 return {
                     group,
@@ -1627,52 +1624,137 @@
                     pts: team.pts
                 };
             }).filter(Boolean);
-        
-            sortBestThirdRows(thirds);
-        
-            const best8 = thirds.slice(0, 8);
-            return best8.map((item, index) => ({ ...item, rank: index + 1, qualifies: true }));
         }
-        
-        function computeBestThirds(groupedStandings) {
-            const thirds = [];
-            Object.keys(groupedStandings).forEach(g => {
-                const arr = groupedStandings[g];
-                if (arr && arr[2]) {
-                    thirds.push({
-                        team: arr[2].team,
-                        pts: arr[2].pts,
-                        dg: arr[2].dg,
-                        gf: arr[2].gf,
-                        gc: arr[2].gc
-                    });
-                }
-            });
-            return sortBestThirdRows(thirds).slice(0, 8).map(x => x.team);
+
+        function rankThirdPlaceRows(groupedStandings) {
+            const thirds = getThirdPlaceRowsFromGrouped(groupedStandings);
+            sortBestThirdRows(thirds);
+            return thirds.map((item, index) => ({ ...item, rank: index + 1, qualifies: index < 8 }));
         }
 
         function getBestThirdsStandings(source = 'simulated') {
             const resultsMap = typeof source === 'string' ? getSourceResultsForTables(source) : (source || {});
             const grouped = computeStandingsFromResults(resultsMap);
-            const thirds = Object.keys(GROUPS).map(group => {
-                const team = grouped[group] && grouped[group][2];
-                if (!team) return null;
-                return {
-                    group,
-                    team: team.team,
-                    flag: FLAGS[team.team] || '🏳️',
-                    pj: team.pj,
-                    pg: team.pg,
-                    pe: team.pe,
-                    pp: team.pp,
-                    gf: team.gf,
-                    gc: team.gc,
-                    dg: team.dg,
-                    pts: team.pts
-                };
-            }).filter(Boolean);
-            sortBestThirdRows(thirds);
-            return thirds.map((item, index) => ({ ...item, rank: index + 1, qualifies: index < 8 }));
+            return rankThirdPlaceRows(grouped);
+        }
+
+        function normalizeBestThirdRows(bestThirds, groupedStandings) {
+            const rankedRows = rankThirdPlaceRows(groupedStandings);
+            const byTeam = {};
+            const byGroup = {};
+            rankedRows.forEach(row => {
+                byTeam[row.team] = row;
+                byGroup[row.group] = row;
+            });
+
+            if (!Array.isArray(bestThirds) || bestThirds.length === 0) {
+                return rankedRows.filter(row => row.qualifies);
+            }
+
+            return bestThirds.map(item => {
+                if (!item) return null;
+                if (typeof item === 'string') {
+                    return byTeam[item] || byGroup[item.replace(/^3/, '')] || null;
+                }
+                if (item.group && byGroup[item.group]) return { ...byGroup[item.group], ...item };
+                if (item.team && byTeam[item.team]) return { ...byTeam[item.team], ...item };
+                return item;
+            }).filter(Boolean).slice(0, 8);
+        }
+
+        function computeBestThirds(groupedStandings) {
+            return rankThirdPlaceRows(groupedStandings)
+                .filter(row => row.qualifies)
+                .map(row => row.team);
+        }
+
+        const THIRD_PLACE_WINNER_SLOTS = ['1A', '1B', '1D', '1E', '1G', '1I', '1K', '1L'];
+
+        /*
+         * Corrección mejores terceros:
+         * - El ranking global decide QUIÉNES clasifican.
+         * - La asignación a la llave decide DÓNDE juegan.
+         * - No se debe usar best3Queue.shift() como regla principal porque desordena
+         *   terceros cuando la combinación de grupos cambia.
+         *
+         * Si en KNOCKOUT_DEFS usas tokens explícitos como "Best3:1A", "Best3:1B",
+         * "3E" o "3J", la llave queda estable. Si queda un token viejo "Best3",
+         * se intenta inferir el slot desde el rival "1A/1B/1D/1E/1G/1I/1K/1L".
+         */
+        const THIRD_PLACE_SLOT_PREFERENCES = {
+            '1A': ['E','H','C','I','D','B','F','J','G','K','L'],
+            '1B': ['J','G','E','F','H','I','D','C','A','K','L'],
+            '1D': ['I','B','E','J','C','H','G','F','A','K','L'],
+            '1E': ['D','C','F','H','G','J','I','B','A','K','L'],
+            '1G': ['H','J','A','I','E','C','D','B','F','K','L'],
+            '1I': ['G','F','H','D','J','E','C','B','A','K','L'],
+            '1K': ['L','I','E','D','J','H','G','F','B','C','A'],
+            '1L': ['K','E','I','J','F','D','G','H','C','B','A']
+        };
+
+        function buildThirdPlaceSlotAssignments(bestThirdRows, groupedStandings) {
+            const rows = normalizeBestThirdRows(bestThirdRows, groupedStandings);
+            const rowByGroup = {};
+            rows.forEach(row => { if (row && row.group) rowByGroup[row.group] = row; });
+
+            const availableGroups = Object.keys(rowByGroup).sort();
+            const assignments = {};
+            const used = new Set();
+
+            function getCandidates(slot) {
+                const winnerGroup = slot.slice(1);
+                const preference = THIRD_PLACE_SLOT_PREFERENCES[slot] || availableGroups;
+                const ordered = preference.concat(availableGroups)
+                    .filter((group, index, arr) => arr.indexOf(group) === index);
+                return ordered.filter(group => {
+                    return rowByGroup[group] && group !== winnerGroup && !used.has(group);
+                });
+            }
+
+            function backtrack(slotIndex) {
+                if (slotIndex >= THIRD_PLACE_WINNER_SLOTS.length) return true;
+                const slot = THIRD_PLACE_WINNER_SLOTS[slotIndex];
+                const candidates = getCandidates(slot);
+                for (const group of candidates) {
+                    assignments[slot] = rowByGroup[group];
+                    used.add(group);
+                    if (backtrack(slotIndex + 1)) return true;
+                    used.delete(group);
+                    delete assignments[slot];
+                }
+                return false;
+            }
+
+            backtrack(0);
+            return assignments;
+        }
+
+        function resolveThirdPlaceToken(token, groupedStandings, slotAssignments, fallbackQueue, inferredWinnerSlot = '') {
+            if (!token) return '';
+
+            const explicitGroup = /^3([A-L])$/.exec(token);
+            if (explicitGroup) {
+                const group = explicitGroup[1];
+                return groupedStandings[group] && groupedStandings[group][2]
+                    ? groupedStandings[group][2].team
+                    : `3${group}`;
+            }
+
+            const explicitSlot = /^Best3[:_-]?(1[A-L])?$/.exec(token);
+            if (explicitSlot) {
+                const slot = explicitSlot[1] || inferredWinnerSlot;
+                if (slot && slotAssignments[slot]) return slotAssignments[slot].team;
+
+                while (fallbackQueue.length) {
+                    const next = fallbackQueue.shift();
+                    if (!next || !next.group) continue;
+                    const winnerGroup = slot ? slot.slice(1) : '';
+                    if (next.group !== winnerGroup) return next.team || `3${next.group}`;
+                }
+                return 'Mejor 3°';
+            }
+
+            return token;
         }
 
         function renderBestThirdsTable(source = 'simulated') {
@@ -1830,48 +1912,51 @@
         }
 
         function computeBestThirds(groupedStandings) {
-            const thirds = []; Object.keys(groupedStandings).forEach(g => {
-                const arr = groupedStandings[g];
-                if (arr && arr[2]) thirds.push({ team: arr[2].team, pts: arr[2].pts, dg: arr[2].dg, gf: arr[2].gf, gc: arr[2].gc });
-            });
-            return sortBestThirdRows(thirds).map(x => x.team);
+            return rankThirdPlaceRows(groupedStandings)
+                .filter(row => row.qualifies)
+                .map(row => row.team);
         }
 
         function buildKnockoutFromStandings(grouped, bestThirds) {
-            const best3Queue = bestThirds.slice();
-        
-            function resolveToken(token) {
+            const bestThirdRows = normalizeBestThirdRows(bestThirds, grouped);
+            const slotAssignments = buildThirdPlaceSlotAssignments(bestThirdRows, grouped);
+            const fallbackQueue = bestThirdRows.slice();
+
+            function resolveToken(token, inferredWinnerSlot = '') {
                 if (!token) return '';
-        
-                if (token === 'Best3') {
-                    return best3Queue.length ? best3Queue.shift() : 'Mejor 3°';
+
+                if (/^(3[A-L]|Best3)/.test(token)) {
+                    return resolveThirdPlaceToken(token, grouped, slotAssignments, fallbackQueue, inferredWinnerSlot);
                 }
-        
+
                 if (token.startsWith('1')) {
                     const g = token.slice(1);
                     return (grouped[g] && grouped[g][0]) ? grouped[g][0].team : `1${g}`;
                 }
-        
+
                 if (token.startsWith('2')) {
                     const g = token.slice(1);
                     return (grouped[g] && grouped[g][1]) ? grouped[g][1].team : `2${g}`;
                 }
-        
+
                 return token;
             }
-        
+
             return KNOCKOUT_DEFS.map(def => {
                 let local = def.local;
                 let visitor = def.visitor;
-        
+
                 if (def.round === 'dieciseisavos') {
-                    local = resolveToken(local);
-                    visitor = resolveToken(visitor);
+                    const localWinnerSlot = /^[1][A-L]$/.test(local) ? local : '';
+                    const visitorWinnerSlot = /^[1][A-L]$/.test(visitor) ? visitor : '';
+
+                    local = resolveToken(local, visitorWinnerSlot);
+                    visitor = resolveToken(visitor, localWinnerSlot);
                 } else {
                     if (/^[12][A-L]$/.test(local)) local = resolveToken(local);
                     if (/^[12][A-L]$/.test(visitor)) visitor = resolveToken(visitor);
                 }
-        
+
                 return {
                     id: def.id,
                     round: def.round,
@@ -1912,7 +1997,7 @@
                     const pair = p ? normalizeScorePair(p.gl, p.gv) : null; if (pair) userResults[m.id] = pair;
                 });
             }
-            const grouped = computeStandingsFromResults(userResults); const best3 = getBestThirdsStandings(STATE.tableSource).map(x => x.team);
+            const grouped = computeStandingsFromResults(userResults); const best3 = getBestThirdsStandings(STATE.tableSource).filter(x => x.qualifies).map(x => x.team);
             return { grouped, best3, matches: buildKnockoutFromStandings(grouped, best3) };
         }
        
@@ -1933,7 +2018,12 @@
         }
 
         function resolveBracketTokenGeneral(token, matches, myKo, grouped, best3Queue) {
-            if (!token) return ''; if (token === 'Best3') return best3Queue.length ? best3Queue.shift() : 'Mejor 3°';
+            if (!token) return '';
+            if (/^(3[A-L]|Best3)/.test(token)) {
+                const bestThirdRows = normalizeBestThirdRows(best3Queue, grouped);
+                const slotAssignments = buildThirdPlaceSlotAssignments(bestThirdRows, grouped);
+                return resolveThirdPlaceToken(token, grouped, slotAssignments, bestThirdRows.slice(), '');
+            }
             if (/^[12][A-L]$/.test(token)) { const g = token.slice(1); const pos = parseInt(token[0], 10) - 1; return (grouped[g] && grouped[g][pos]) ? grouped[g][pos].team : `Por definir (${token})`; }
             if (token.startsWith('Winner')) {
                 const refId = parseInt(token.replace('Winner', ''), 10);
