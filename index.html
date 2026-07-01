@@ -189,6 +189,35 @@
         .modal-card li { padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.06); display: flex; align-items: center; gap: 10px; font-size: 0.9rem; color: var(--text-main); }
         .modal-card li .pts { margin-left: auto; font-weight: 900; color: var(--green); }
         .modal-close-btn { margin-top: 20px; width: 100%; padding: 12px; border: none; border-radius: 12px; background: var(--green); color: #06201C; font-weight: 800; font-size: 1rem; cursor: pointer; }
+        .ko-points-modal { max-width: 480px; padding: 22px; border-color: rgba(247,201,72,0.78); }
+        .ko-points-lede { margin: -4px 0 14px; color: var(--text-muted); font-size: 0.82rem; line-height: 1.45; text-align: center; }
+        .ko-points-summary { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+        .ko-points-pill { position: relative; overflow: hidden; border-radius: 8px; padding: 12px 11px; border: 1px solid rgba(255,255,255,0.1); background: rgba(13,20,34,0.72); }
+        .ko-points-pill::before { content: ""; position: absolute; inset: 0 auto 0 0; width: 4px; background: var(--gold); }
+        .ko-points-pill.exact { background: linear-gradient(135deg, rgba(247,201,72,0.2), rgba(13,20,34,0.78)); border-color: rgba(247,201,72,0.45); }
+        .ko-points-pill.trend { background: linear-gradient(135deg, rgba(45,212,191,0.18), rgba(13,20,34,0.78)); border-color: rgba(45,212,191,0.42); }
+        .ko-points-pill.trend::before { background: var(--green); }
+        .ko-points-pill strong { display: block; color: var(--gold); font-size: 1.45rem; line-height: 1; margin-bottom: 5px; }
+        .ko-points-pill.trend strong { color: var(--green); }
+        .ko-points-pill span { display: block; color: var(--text-main); font-size: 0.78rem; font-weight: 900; }
+        .ko-points-pill small { display: block; margin-top: 3px; color: var(--text-muted); font-size: 0.68rem; font-weight: 800; }
+        .ko-points-section-title { display: flex; align-items: center; gap: 8px; margin: 4px 0 9px; color: var(--text-main); font-size: 0.78rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0; }
+        .ko-points-section-title::after { content: ""; height: 1px; flex: 1; background: rgba(255,255,255,0.08); }
+        .ko-points-table { display: grid; gap: 7px; margin-top: 0; }
+        .ko-points-row { --row-color: var(--green); display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: center; gap: 10px; padding: 10px 12px; background: linear-gradient(90deg, color-mix(in srgb, var(--row-color) 18%, transparent), rgba(15,23,42,0.78) 42%); border: 1px solid color-mix(in srgb, var(--row-color) 38%, rgba(255,255,255,0.08)); border-radius: 8px; }
+        .ko-points-row.level-1 { --row-color: #38BDF8; }
+        .ko-points-row.level-2 { --row-color: var(--green); }
+        .ko-points-row.level-3 { --row-color: #A78BFA; }
+        .ko-points-row.level-4 { --row-color: #F472B6; }
+        .ko-points-row.level-5 { --row-color: var(--gold); background: linear-gradient(90deg, rgba(247,201,72,0.23), rgba(15,23,42,0.8) 46%); }
+        .ko-points-row .round { min-width: 0; font-size: 0.85rem; font-weight: 900; color: var(--text-main); }
+        .ko-points-row .round small { display: block; margin-top: 2px; color: var(--text-muted); font-size: 0.68rem; font-weight: 800; }
+        .ko-points-row .points { color: var(--row-color); font-size: 1rem; font-weight: 1000; white-space: nowrap; }
+        .ko-points-note { margin-top: 12px; padding: 12px; border: 1px solid rgba(45,212,191,0.22); border-left: 4px solid var(--green); background: rgba(45,212,191,0.08); color: var(--text-muted); font-size: 0.8rem; line-height: 1.45; border-radius: 8px; }
+        .desglose-ko-badges { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 1px; }
+        .desglose-ko-badge { padding: 3px 7px; border-radius: 999px; background: rgba(247,201,72,0.11); color: var(--gold); font-size: 0.68rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0; }
+        .desglose-ko-badge.score { background: rgba(247,201,72,0.13); color: var(--gold); }
+        .desglose-ko-badge.winner { background: rgba(45,212,191,0.13); color: var(--green); }
         
         .btn-rules { background: rgba(247, 201, 72, 0.12); border: 1px solid rgba(247, 201, 72, 0.35); color: var(--gold); width: 100%; padding: 14px; border-radius: var(--radius); font-weight: 800; font-size: 0.95rem; cursor: pointer; margin-top: 16px; transition: background 0.2s; }
         .btn-rules:hover { background: rgba(247, 201, 72, 0.22); }
@@ -1105,7 +1134,7 @@
                 const specialDetails = getSpecialScoreDetails(uid);
                 specialDetails.forEach(detail => desgloseHistorial.push({ kind: 'bonus', sortOrder: 2000, label: detail.label, value: detail.value, evaluacion: { puntos: detail.points, motivo: `${detail.label} (+${detail.points} pts)`, tipo: 'bonus' } }));
                 const knockoutDetails = getKnockoutScoreDetails(uid);
-                knockoutDetails.forEach(detail => desgloseHistorial.push({ kind: 'bonus', sortOrder: 3000 + detail.matchId + (detail.kind === 'winner' ? 0.5 : 0), label: `${detail.label} - partido ${detail.matchId}`, value: detail.team, evaluacion: { puntos: detail.points, motivo: `${detail.label} (+${detail.points} pts)`, tipo: 'bonus' } }));
+                knockoutDetails.forEach(detail => desgloseHistorial.push({ kind: 'bonus', bonusType: 'ko', koKind: detail.kind, round: detail.round, matchId: detail.matchId, sortOrder: 3000 + detail.matchId + (detail.kind === 'winner' ? 0.5 : 0), label: `${detail.label} - partido ${detail.matchId}`, value: detail.team, evaluacion: { puntos: detail.points, motivo: `${detail.label} (+${detail.points} pts)`, tipo: 'bonus' } }));
                 return { id: uid, nombre: usuario.nombre_apodo || 'Usuario Anónimo', puntos: usuario.total_puntos || 0, exactos: exactosContador, campeonAcertado: specialDetails.some(d => d.label === 'Campeon del Mundial'), aciertosKo: knockoutDetails.length, fecha_registro: usuario.date_registered || 0, desglose: desgloseHistorial };
             });
             ranking.sort((a, b) => {
@@ -1137,7 +1166,20 @@
                 ordenados.forEach(item => {
                     if (item.kind === 'bonus') {
                         const div = document.createElement('div'); div.className = 'desglose-item'; div.style.borderLeft = '4px solid var(--gold)';
-                        div.innerHTML = `<div style="display:flex; justify-content:space-between; align-items:center; gap:8px;"><span class="desglose-match-name">${escapeHtml(item.label)}</span><span class="desglose-motivo" style="color:var(--gold);">${escapeHtml(item.evaluacion.motivo)}</span></div><div class="desglose-scores"><div><span class="desglose-score-label">Pronostico acertado: </span><span class="desglose-score-val">${escapeHtml(item.value || '')}</span></div></div>`;
+                        if (item.bonusType === 'ko') {
+                            const koType = item.koKind === 'winner' ? 'Clasificado' : 'Marcador';
+                            const koBadgeClass = item.koKind === 'winner' ? 'winner' : 'score';
+                            const roundLabel = getKoRoundLabel(item.round);
+                            div.innerHTML = `<div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px;">
+                                <div>
+                                    <span class="desglose-match-name">Fase final · Partido ${escapeHtml(String(item.matchId || ''))}</span>
+                                    <div class="desglose-ko-badges"><span class="desglose-ko-badge">${escapeHtml(roundLabel)}</span><span class="desglose-ko-badge ${koBadgeClass}">${escapeHtml(koType)}</span></div>
+                                </div>
+                                <span class="desglose-motivo" style="color:${item.koKind === 'winner' ? 'var(--green)' : 'var(--gold)'}; white-space:nowrap;">+${escapeHtml(String(item.evaluacion.puntos || 0))} pts</span>
+                            </div><div class="desglose-scores"><div><span class="desglose-score-label">${item.koKind === 'winner' ? 'Equipo acertado: ' : 'Marcador acertado: '}</span><span class="desglose-score-val">${escapeHtml(item.value || '')}</span></div></div>`;
+                        } else {
+                            div.innerHTML = `<div style="display:flex; justify-content:space-between; align-items:center; gap:8px;"><span class="desglose-match-name">${escapeHtml(item.label)}</span><span class="desglose-motivo" style="color:var(--gold);">${escapeHtml(item.evaluacion.motivo)}</span></div><div class="desglose-scores"><div><span class="desglose-score-label">Pronostico acertado: </span><span class="desglose-score-val">${escapeHtml(item.value || '')}</span></div></div>`;
+                        }
                         cuerpo.appendChild(div);
                         return;
                     }
@@ -1314,6 +1356,43 @@
                 <li><span>👑 Campeón</span><span class="pts">+10 pts</span></li>
                 <li><span>⚽ Máximo goleador</span><span class="pts">+10 pts</span></li>
             </ul><button type="button" class="modal-close-btn">Cerrar</button></div>`;
+            overlay.querySelector('.modal-close-btn').addEventListener('click', () => overlay.remove());
+            overlay.addEventListener('click', event => { if (event.target === overlay) overlay.remove(); });
+            container.appendChild(overlay);
+        }
+
+        function getKoRoundLabel(roundKey) {
+            const meta = KO_ROUNDS_META.find(r => r.key === roundKey);
+            return meta ? meta.label : roundKey;
+        }
+
+        function showKoPointsModal() {
+            const container = DOM.get('dynamicModalContainer'); if (!container) return;
+            const roundHelp = {
+                dieciseisavos: 'Primer paso',
+                octavos: 'Más difícil',
+                cuartos: 'Top 8',
+                semis: 'Top 4',
+                tercero: 'Podio',
+                final: 'Título'
+            };
+            const rows = KO_ROUNDS_META.map(round => {
+                const points = KO_POINTS[round.key] || 0;
+                return `<div class="ko-points-row level-${points}"><span class="round">${round.emoji} ${escapeHtml(round.label)}<small>${escapeHtml(roundHelp[round.key] || 'Clasificado correcto')}</small></span><span class="points">+${points}</span></div>`;
+            }).join('');
+            const overlay = document.createElement('div'); overlay.className = 'modal-overlay';
+            overlay.innerHTML = `<div class="modal-card ko-points-modal">
+                <h3>🏆 Puntos Fase Final</h3>
+                <p class="ko-points-lede">Primero cuenta el marcador del partido. Luego se suma el bonus si acertaste quién avanza.</p>
+                <div class="ko-points-summary">
+                    <div class="ko-points-pill exact"><strong>+3</strong><span>Marcador exacto</span><small>Ej: pronosticas 2-1 y queda 2-1</small></div>
+                    <div class="ko-points-pill trend"><strong>+1</strong><span>Ganador/tendencia</span><small>Ej: aciertas quién gana o empata</small></div>
+                </div>
+                <div class="ko-points-section-title">Bonus por clasificado correcto</div>
+                <div class="ko-points-table">${rows}</div>
+                <div class="ko-points-note">Ejemplo: si aciertas un 2-1 y también el equipo que avanza en la Final, sumas +3 por marcador exacto y +5 por clasificado correcto.</div>
+                <button type="button" class="modal-close-btn">Entendido</button>
+            </div>`;
             overlay.querySelector('.modal-close-btn').addEventListener('click', () => overlay.remove());
             overlay.addEventListener('click', event => { if (event.target === overlay) overlay.remove(); });
             container.appendChild(overlay);
@@ -2727,7 +2806,7 @@
         }
         
         window.APP = {
-            goToScreen, registerUser, loginExistingUser, logout, saveScoreCloud, setPredictionFilter, setPredictionGroup, setTableGroupActive, saveKo, scheduleKoSave, setKoWinner, saveAllKoDrafts, setTablesView, setTableSource, resetBracketSimulation, showRankingRulesModal, showHomePointsModal, showMyPointsBreakdown, homePronosticar, cerrarDesglose: cerrarModalDesglose, adminLoadResults, generateOfficialBracket, saveOfficialSpecials, loadOfficialSpecials, toggleFaseFinalVisibility, togglePredictionsVisibility, adminDeleteUser, adminResetUser, saveAdmMatchesCloud, saveOfficialKoFromInput, saveOfficialKnockoutBatch,toggleRegistrosStatus, setKoRoundTab, toggleKoRound,
+            goToScreen, registerUser, loginExistingUser, logout, saveScoreCloud, setPredictionFilter, setPredictionGroup, setTableGroupActive, saveKo, scheduleKoSave, setKoWinner, saveAllKoDrafts, setTablesView, setTableSource, resetBracketSimulation, showRankingRulesModal, showHomePointsModal, showKoPointsModal, showMyPointsBreakdown, homePronosticar, cerrarDesglose: cerrarModalDesglose, adminLoadResults, generateOfficialBracket, saveOfficialSpecials, loadOfficialSpecials, toggleFaseFinalVisibility, togglePredictionsVisibility, adminDeleteUser, adminResetUser, saveAdmMatchesCloud, saveOfficialKoFromInput, saveOfficialKnockoutBatch,toggleRegistrosStatus, setKoRoundTab, toggleKoRound,
             saveSpecial: function(field, val) {
                 const mySpec = STATE.specials[STATE.myId] || {};
                 const { globalLocked: comodinesGlobalCerrados, userAlreadyFilled } = getSpecialsLockState(mySpec);
