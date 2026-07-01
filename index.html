@@ -218,6 +218,13 @@
         .desglose-ko-badge { padding: 3px 7px; border-radius: 999px; background: rgba(247,201,72,0.11); color: var(--gold); font-size: 0.68rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0; }
         .desglose-ko-badge.score { background: rgba(247,201,72,0.13); color: var(--gold); }
         .desglose-ko-badge.winner { background: rgba(45,212,191,0.13); color: var(--green); }
+        .desglose-summary { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 7px; margin-bottom: 5px; }
+        .desglose-summary-card { background: rgba(13,20,34,0.72); border: 1px solid rgba(255,255,255,0.07); border-radius: 8px; padding: 9px 8px; }
+        .desglose-summary-card strong { display: block; color: var(--gold); font-size: 1rem; line-height: 1; margin-bottom: 4px; }
+        .desglose-summary-card span { color: var(--text-muted); font-size: 0.68rem; font-weight: 900; text-transform: uppercase; }
+        .desglose-bonus-star { display: inline-flex; align-items: center; gap: 4px; color: var(--gold); font-size: 0.74rem; font-weight: 1000; white-space: nowrap; }
+        .desglose-item.special-bonus { background: linear-gradient(135deg, rgba(247,201,72,0.12), rgba(31,42,63,0.96)); }
+        .desglose-special-badge { display: inline-flex; align-items: center; gap: 4px; width: fit-content; padding: 3px 8px; border-radius: 999px; background: rgba(247,201,72,0.14); color: var(--gold); font-size: 0.68rem; font-weight: 1000; text-transform: uppercase; }
         
         .btn-rules { background: rgba(247, 201, 72, 0.12); border: 1px solid rgba(247, 201, 72, 0.35); color: var(--gold); width: 100%; padding: 14px; border-radius: var(--radius); font-weight: 800; font-size: 0.95rem; cursor: pointer; margin-top: 16px; transition: background 0.2s; }
         .btn-rules:hover { background: rgba(247, 201, 72, 0.22); }
@@ -1132,10 +1139,12 @@
                 const classification = getClassificationScoreDetails(uid);
                 classification.details.forEach(detail => desgloseHistorial.push({ kind: 'bonus', sortOrder: 1000, label: detail.label, value: detail.value, evaluacion: { puntos: detail.points, motivo: `${detail.label} (+${detail.points} pts)`, tipo: 'bonus' } }));
                 const specialDetails = getSpecialScoreDetails(uid);
-                specialDetails.forEach(detail => desgloseHistorial.push({ kind: 'bonus', sortOrder: 2000, label: detail.label, value: detail.value, evaluacion: { puntos: detail.points, motivo: `${detail.label} (+${detail.points} pts)`, tipo: 'bonus' } }));
+                specialDetails.forEach((detail, index) => desgloseHistorial.push({ kind: 'bonus', bonusType: 'special', sortOrder: 2000 + index, label: detail.label, value: detail.value, evaluacion: { puntos: detail.points, motivo: `${detail.label} (+${detail.points} pts)`, tipo: 'bonus' } }));
                 const knockoutDetails = getKnockoutScoreDetails(uid);
                 knockoutDetails.forEach(detail => desgloseHistorial.push({ kind: 'bonus', bonusType: 'ko', koKind: detail.kind, round: detail.round, matchId: detail.matchId, sortOrder: 3000 + detail.matchId + (detail.kind === 'winner' ? 0.5 : 0), label: `${detail.label} - partido ${detail.matchId}`, value: detail.team, evaluacion: { puntos: detail.points, motivo: `${detail.label} (+${detail.points} pts)`, tipo: 'bonus' } }));
-                return { id: uid, nombre: usuario.nombre_apodo || 'Usuario Anónimo', puntos: usuario.total_puntos || 0, exactos: exactosContador, campeonAcertado: specialDetails.some(d => d.label === 'Campeon del Mundial'), aciertosKo: knockoutDetails.length, fecha_registro: usuario.date_registered || 0, desglose: desgloseHistorial };
+                const puntosKo = knockoutDetails.reduce((sum, detail) => sum + detail.points, 0);
+                const puntosComodines = specialDetails.reduce((sum, detail) => sum + detail.points, 0);
+                return { id: uid, nombre: usuario.nombre_apodo || 'Usuario Anónimo', puntos: usuario.total_puntos || 0, exactos: exactosContador, puntosKo, puntosComodines, campeonAcertado: specialDetails.some(d => d.label === 'Campeon del Mundial'), aciertosKo: knockoutDetails.length, fecha_registro: usuario.date_registered || 0, desglose: desgloseHistorial };
             });
             ranking.sort((a, b) => {
                 if (b.puntos !== a.puntos) return b.puntos - a.puntos;
@@ -1163,6 +1172,20 @@
                     if (tieneResultA !== tieneResultB) return tieneResultA - tieneResultB;
                     return a.partidoId - b.partidoId;
                 });
+                const summary = ordenados.reduce((acc, item) => {
+                    const pts = Number(item.evaluacion?.puntos || 0);
+                    if (item.kind === 'bonus' && item.bonusType === 'ko') acc.ko += pts;
+                    else if (item.kind === 'bonus' && item.bonusType === 'special') acc.special += pts;
+                    else acc.base += pts;
+                    return acc;
+                }, { base: 0, ko: 0, special: 0 });
+                const resumen = document.createElement('div');
+                resumen.className = 'desglose-summary';
+                resumen.innerHTML = `
+                    <div class="desglose-summary-card"><strong>${summary.base}</strong><span>Grupos</span></div>
+                    <div class="desglose-summary-card"><strong>${summary.ko}</strong><span>Fase final</span></div>
+                    <div class="desglose-summary-card"><strong>⭐ ${summary.special}</strong><span>Comodines</span></div>`;
+                cuerpo.appendChild(resumen);
                 ordenados.forEach(item => {
                     if (item.kind === 'bonus') {
                         const div = document.createElement('div'); div.className = 'desglose-item'; div.style.borderLeft = '4px solid var(--gold)';
@@ -1177,6 +1200,15 @@
                                 </div>
                                 <span class="desglose-motivo" style="color:${item.koKind === 'winner' ? 'var(--green)' : 'var(--gold)'}; white-space:nowrap;">+${escapeHtml(String(item.evaluacion.puntos || 0))} pts</span>
                             </div><div class="desglose-scores"><div><span class="desglose-score-label">${item.koKind === 'winner' ? 'Equipo acertado: ' : 'Marcador acertado: '}</span><span class="desglose-score-val">${escapeHtml(item.value || '')}</span></div></div>`;
+                        } else if (item.bonusType === 'special') {
+                            div.classList.add('special-bonus');
+                            div.innerHTML = `<div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px;">
+                                <div style="display:flex; flex-direction:column; gap:5px;">
+                                    <span class="desglose-special-badge">⭐ Comodín</span>
+                                    <span class="desglose-match-name">${escapeHtml(item.label)}</span>
+                                </div>
+                                <span class="desglose-bonus-star">⭐ +${escapeHtml(String(item.evaluacion.puntos || 0))} pts</span>
+                            </div><div class="desglose-scores"><div><span class="desglose-score-label">Pronóstico acertado: </span><span class="desglose-score-val">${escapeHtml(item.value || '')}</span></div></div>`;
                         } else {
                             div.innerHTML = `<div style="display:flex; justify-content:space-between; align-items:center; gap:8px;"><span class="desglose-match-name">${escapeHtml(item.label)}</span><span class="desglose-motivo" style="color:var(--gold);">${escapeHtml(item.evaluacion.motivo)}</span></div><div class="desglose-scores"><div><span class="desglose-score-label">Pronostico acertado: </span><span class="desglose-score-val">${escapeHtml(item.value || '')}</span></div></div>`;
                         }
@@ -1893,6 +1925,8 @@
                 const esMiFila = usuario.id === STATE.myId;
                 let posIcon = usuario.posicion === 1 ? '🥇' : usuario.posicion === 2 ? '🥈' : usuario.posicion === 3 ? '🥉' : `<span style="font-size:0.9rem; color:var(--text-muted);">#${usuario.posicion}</span>`;
                 const nombreSafe = usuario.nombre.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+                const koChip = usuario.puntosKo > 0 ? `<span style="font-size:0.72rem; color:var(--green); background:rgba(45,212,191,0.1); padding:2px 6px; border-radius:999px; font-weight:900;" title="Puntos de fase final">🔥 ${usuario.puntosKo}</span>` : '';
+                const specialChip = usuario.puntosComodines > 0 ? `<span style="font-size:0.72rem; color:var(--gold); background:rgba(247,201,72,0.12); padding:2px 6px; border-radius:999px; font-weight:900;" title="Puntos de comodines">⭐ ${usuario.puntosComodines}</span>` : '';
                 html += `<div class="ranking-row${esMiFila ? ' mi-fila' : ''}" onclick="APP.mostrarDesglose('${usuario.id}', '${nombreSafe}')" role="button" tabindex="0" aria-label="Ver desglose de ${escapeHtml(usuario.nombre)}">
                     <div style="display:flex; align-items:center; gap:10px;">
                         <span style="font-size:1.1rem; width:32px; text-align:center;">${posIcon}</span>
@@ -1900,6 +1934,8 @@
                     </div>
                     <div style="display:flex; align-items:center; gap:10px;">
                         <span style="font-size:0.78rem; color:var(--text-muted); background:var(--bg-card-soft); padding:2px 7px; border-radius:4px;" title="Marcadores exactos">🎯 ${usuario.exactos}</span>
+                        ${koChip}
+                        ${specialChip}
                         <span style="font-weight:800; color:var(--gold); font-size:1rem;">${usuario.puntos} pts</span>
                         <span style="color:var(--text-muted); font-size:0.85rem;">›</span>
                     </div>
